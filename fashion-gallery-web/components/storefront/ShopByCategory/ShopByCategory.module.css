@@ -89,45 +89,44 @@
   bottom: 0;
   left: 0;
   right: 0;
-  padding: var(--space-4);
+  padding: var(--space-5);
   color: white;
   z-index: 1;
-}
-
-.imageWrap {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
 }
 
 .label {
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: white;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: var(--space-2);
+  letter-spacing: 0.1em;
+  margin: 0;
   text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 
 .shopNow {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-2);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-rose-gold-light);
-  border: 1px solid var(--color-rose-gold-light);
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.6);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
 }
 
 .card:hover .shopNow {
-  background: var(--color-rose-gold);
-  color: white;
-  border-color: var(--color-rose-gold);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: white;
 }
 
 /* ===================== RESPONSIVE ===================== */

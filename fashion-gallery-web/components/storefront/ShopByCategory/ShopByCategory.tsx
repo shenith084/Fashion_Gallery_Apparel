@@ -70,15 +70,12 @@ export default function ShopByCategory() {
                   className={styles.image}
                 />
                 <div className={styles.overlay} />
-              </div>
-              <div className={styles.content}>
-                <h3 className={styles.label}>{cat.label}</h3>
-                <span className={styles.shopNow}>
-                  Shop Now
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
-                  </svg>
-                </span>
+                <div className={styles.content}>
+                  <h3 className={styles.label}>{cat.label}</h3>
+                  <span className={styles.shopNow}>
+                    Shop Now
+                  </span>
+                </div>
               </div>
             </Link>
           ))}

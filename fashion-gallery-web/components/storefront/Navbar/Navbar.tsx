@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@/lib/store/cartStore';
 import styles from './Navbar.module.css';
 
 const NAV_LINKS = [
-  { label: 'Home', href: '/', active: true },
+  { label: 'Home', href: '/' },
   { label: 'New Arrivals', href: '/new-arrivals' },
   {
     label: 'Dresses',
@@ -29,6 +30,7 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const totalItems = useCartStore((state) => state.getTotalItems());
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -67,7 +69,7 @@ export default function Navbar() {
             >
               <Link
                 href={link.href}
-                className={`${styles.navLink} ${link.active ? styles.navLinkActive : ''}`}
+                className={`${styles.navLink} ${pathname === link.href ? styles.navLinkActive : ''}`}
                 id={`nav-${link.label.toLowerCase().replace(/\s/g, '-')}`}
               >
                 {link.label}

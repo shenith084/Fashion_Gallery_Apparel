@@ -77,15 +77,16 @@
 .submitBtn {
   border-radius: 0;
   padding: 14px 28px;
-  background: var(--color-charcoal);
-  border-color: var(--color-charcoal);
+  background: var(--color-luxury-gold);
+  border-color: var(--color-luxury-gold);
+  color: white;
   white-space: nowrap;
   font-size: 12px;
 }
 
 .submitBtn:hover {
-  background: var(--color-luxury-gold);
-  border-color: var(--color-luxury-gold);
+  background: #c29567;
+  border-color: #c29567;
   transform: none;
 }
 

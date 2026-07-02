@@ -51,8 +51,10 @@ export default function WhyChooseUs() {
           {FEATURES.map((feature) => (
             <div key={feature.id} className={styles.item} id={`feature-${feature.id}`}>
               <span className={styles.icon}>{feature.icon}</span>
-              <h3 className={styles.title}>{feature.title}</h3>
-              <p className={styles.desc}>{feature.description}</p>
+              <div className={styles.textWrapper}>
+                <h3 className={styles.title}>{feature.title}</h3>
+                <p className={styles.desc}>{feature.description}</p>
+              </div>
             </div>
           ))}
         </div>

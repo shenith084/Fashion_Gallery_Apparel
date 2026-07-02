@@ -49,7 +49,7 @@
   top: 10px;
   left: 10px;
   z-index: 2;
-  background: var(--color-burgundy);
+  background: var(--color-burgundy-dark);
   color: var(--color-white);
   font-size: 9px;
   font-weight: 700;
@@ -73,11 +73,7 @@
   justify-content: center;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
-  opacity: 0;
-}
-
-.card:hover .wishlistBtn {
-  opacity: 1;
+  opacity: 1; /* Always visible to match mockup */
 }
 
 .wishlistBtn:hover {

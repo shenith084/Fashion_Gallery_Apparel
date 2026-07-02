@@ -1,8 +1,8 @@
 .infoBar {
-  background: var(--color-white);
-  padding: var(--space-8) 0;
-  border-top: 1px solid rgba(107, 35, 53, 0.06);
-  border-bottom: 1px solid rgba(107, 35, 53, 0.06);
+  position: relative;
+  z-index: 10;
+  margin-top: -60px; /* Pull it up over the hero section */
+  margin-bottom: var(--space-10);
 }
 
 .grid {
@@ -10,6 +10,10 @@
   grid-template-columns: repeat(4, 1fr);
   align-items: center;
   gap: 0;
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(107, 35, 53, 0.08);
+  padding: 10px 0;
   position: relative;
 }
 

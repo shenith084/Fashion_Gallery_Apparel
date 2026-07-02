@@ -65,7 +65,6 @@ export default function FacebookFeed() {
                       <path d="M5 3l14 9-14 9V3z"/>
                     </svg>
                   )}
-                  <span className={styles.views}>▶ {post.views}</span>
                 </div>
               </a>
             ))}
