@@ -1,45 +1,25 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { PRODUCTS } from '@/lib/data/products';
+import { useCartStore } from '@/lib/store/cartStore';
 import styles from './CartClient.module.css';
 
-// Mock cart items based on the seed data
-const initialCart = [
-  {
-    id: 'item-1',
-    product: PRODUCTS[0],
-    size: 'M',
-    color: 'Pink Floral',
-    qty: 1,
-  },
-  {
-    id: 'item-2',
-    product: PRODUCTS[1],
-    size: 'L',
-    color: 'Dusty Rose',
-    qty: 2,
-  },
-];
+// No more mock data needed here.
 
 export default function CartClient() {
-  const [items, setItems] = useState(initialCart);
+  const [mounted, setMounted] = useState(false);
+  const { items, updateQty, removeItem, getSubtotal } = useCartStore();
 
-  const updateQty = (id: string, newQty: number) => {
-    if (newQty < 1) return;
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, qty: newQty } : item))
-    );
-  };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  if (!mounted) return null; // Avoid hydration mismatch
 
-  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.qty, 0);
-  const deliveryFee = 350;
+  const subtotal = getSubtotal();
+  const deliveryFee = subtotal > 0 ? 350 : 0;
   const total = subtotal + deliveryFee;
 
   if (items.length === 0) {

@@ -57,9 +57,9 @@ export default function ProductCard({ id, name, price, image, rating, reviewCoun
           className={styles.image}
         />
         <div className={styles.overlay} />
-        <Link href={href} className={styles.quickView}>
+        <span className={styles.quickView}>
           Quick View
-        </Link>
+        </span>
       </Link>
 
       <button

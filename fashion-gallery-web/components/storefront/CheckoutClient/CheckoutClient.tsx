@@ -1,21 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { PRODUCTS } from '@/lib/data/products';
+import { useCartStore } from '@/lib/store/cartStore';
 import styles from './CheckoutClient.module.css';
 
-const MOCK_CART = [
-  { id: 'item-1', product: PRODUCTS[0], size: 'M', color: 'Pink Floral', qty: 1 },
-  { id: 'item-2', product: PRODUCTS[1], size: 'L', color: 'Dusty Rose', qty: 2 },
-];
-
+// No mock cart
 export default function CheckoutClient() {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bank'>('cod');
   const [submitting, setSubmitting] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { items, getSubtotal, clearCart } = useCartStore();
 
-  const subtotal = MOCK_CART.reduce((sum, item) => sum + item.product.price * item.qty, 0);
-  const deliveryFee = 350;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const subtotal = getSubtotal();
+  const deliveryFee = subtotal > 0 ? 350 : 0;
   const total = subtotal + deliveryFee;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,10 +25,13 @@ export default function CheckoutClient() {
     setSubmitting(true);
     setTimeout(() => {
       setSubmitting(false);
+      clearCart();
       alert('Order Placed Successfully! (This is a demo)');
       window.location.href = '/';
     }, 1500);
   };
+
+  if (!mounted) return null;
 
   return (
     <div className={styles.wrapper}>
@@ -132,7 +137,7 @@ export default function CheckoutClient() {
           <h2 className={styles.summaryTitle}>Your Order</h2>
           
           <div className={styles.itemsList}>
-            {MOCK_CART.map((item) => (
+            {items.map((item) => (
               <div key={item.id} className={styles.itemRow}>
                 <div className={styles.itemImageWrap}>
                   <Image src={item.product.image} alt={item.product.name} fill sizes="60px" className={styles.itemImage} />

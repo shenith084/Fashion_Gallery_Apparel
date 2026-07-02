@@ -6,12 +6,13 @@ import ProductClient from '@/components/storefront/ProductClient';
 import { PRODUCTS } from '@/lib/data/products';
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 // Generate metadata dynamically
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const product = PRODUCTS.find((p) => p.slug === params.slug);
+  const resolvedParams = await params;
+  const product = PRODUCTS.find((p) => p.slug === resolvedParams.slug);
   if (!product) return { title: 'Product Not Found' };
 
   return {
@@ -20,8 +21,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function ProductPage({ params }: Props) {
-  const product = PRODUCTS.find((p) => p.slug === params.slug);
+export default async function ProductPage({ params }: Props) {
+  const resolvedParams = await params;
+  const product = PRODUCTS.find((p) => p.slug === resolvedParams.slug);
 
   if (!product) {
     notFound();

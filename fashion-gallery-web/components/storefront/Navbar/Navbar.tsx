@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useCartStore } from '@/lib/store/cartStore';
 import styles from './Navbar.module.css';
 
 const NAV_LINKS = [
@@ -26,10 +27,13 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const totalItems = useCartStore((state) => state.getTotalItems());
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll, { passive: true });
+    setMounted(true);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -103,7 +107,7 @@ export default function Navbar() {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
-            <span className={styles.cartBadge}>0</span>
+            <span className={styles.cartBadge}>{mounted ? totalItems : 0}</span>
           </Link>
 
           {/* Mobile Hamburger */}

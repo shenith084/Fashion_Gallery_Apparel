@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { type Product } from '@/lib/data/products';
+import { useCartStore } from '@/lib/store/cartStore';
 import styles from './ProductClient.module.css';
 
 interface ProductClientProps {
@@ -16,16 +17,18 @@ export default function ProductClient({ product }: ProductClientProps) {
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
 
+  const addItem = useCartStore((state) => state.addItem);
+
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
       alert('Please select a size and color.');
       return;
     }
     setAdding(true);
-    // Simulate API call for adding to cart
+    addItem(product, selectedSize, selectedColor, qty);
+    
     setTimeout(() => {
       setAdding(false);
-      alert(`Added ${qty} ${product.name} to cart!`);
     }, 600);
   };
 
@@ -157,7 +160,7 @@ export default function ProductClient({ product }: ProductClientProps) {
             onClick={handleAddToCart}
             disabled={adding}
           >
-            {adding ? 'Adding...' : 'Add to Cart'}
+            {adding ? 'Added!' : 'Add to Cart'}
           </button>
           <button className={styles.wishlistBtn} aria-label="Add to wishlist">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
