@@ -1,0 +1,145 @@
+.section {
+  padding: var(--space-16) 0;
+  background: var(--color-warm-ivory);
+}
+
+.heading {
+  margin-bottom: var(--space-10);
+  text-align: center;
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.ornament span {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: var(--color-rose-gold);
+}
+
+/* ===================== GRID ===================== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-4);
+}
+
+/* ===================== CARD ===================== */
+.card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  background: var(--color-white);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.imageWrap {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.card:hover .image {
+  transform: scale(1.06);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(43, 43, 43, 0.72) 0%,
+    rgba(43, 43, 43, 0.15) 50%,
+    transparent 100%
+  );
+  transition: background var(--transition-base);
+}
+
+.card:hover .overlay {
+  background: linear-gradient(
+    to top,
+    rgba(107, 35, 53, 0.75) 0%,
+    rgba(107, 35, 53, 0.2) 50%,
+    transparent 100%
+  );
+}
+
+/* ===================== CONTENT ===================== */
+.content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-4);
+  color: white;
+  z-index: 1;
+}
+
+.imageWrap {
+  position: relative;
+}
+
+.label {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.shopNow {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-rose-gold-light);
+  border: 1px solid var(--color-rose-gold-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.card:hover .shopNow {
+  background: var(--color-rose-gold);
+  color: white;
+  border-color: var(--color-rose-gold);
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+}

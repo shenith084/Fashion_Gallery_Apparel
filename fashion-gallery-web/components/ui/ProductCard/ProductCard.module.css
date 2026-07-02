@@ -1,0 +1,161 @@
+.card {
+  position: relative;
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ===================== IMAGE ===================== */
+.imageWrap {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  display: block;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(43, 43, 43, 0);
+  transition: background var(--transition-base);
+}
+
+.card:hover .overlay {
+  background: rgba(43, 43, 43, 0.12);
+}
+
+/* ===================== BADGES ===================== */
+.newBadge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background: var(--color-burgundy);
+  color: var(--color-white);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* ===================== WISHLIST ===================== */
+.wishlistBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  background: white;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  opacity: 0;
+}
+
+.card:hover .wishlistBtn {
+  opacity: 1;
+}
+
+.wishlistBtn:hover {
+  transform: scale(1.15);
+  box-shadow: var(--shadow-md);
+}
+
+.wished {
+  opacity: 1 !important;
+}
+
+/* ===================== QUICK VIEW ===================== */
+.quickView {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: rgba(107, 35, 53, 0.9);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px;
+  text-decoration: none;
+  transition: bottom var(--transition-base);
+  z-index: 2;
+}
+
+.card:hover .quickView {
+  bottom: 0;
+}
+
+/* ===================== INFO ===================== */
+.info {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-charcoal);
+  line-height: 1.3;
+}
+
+.name a {
+  text-decoration: none;
+  color: inherit;
+  transition: color var(--transition-fast);
+}
+
+.name a:hover {
+  color: var(--color-burgundy);
+}
+
+.price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-burgundy);
+}
+
+/* ===================== RATING ===================== */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.reviewCount {
+  font-size: 10px;
+  color: var(--color-charcoal-light);
+}

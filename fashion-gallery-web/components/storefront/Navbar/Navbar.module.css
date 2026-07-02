@@ -1,0 +1,258 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--color-warm-ivory);
+  border-bottom: 1px solid transparent;
+  transition: all var(--transition-base);
+}
+
+.scrolled {
+  border-bottom-color: rgba(107, 35, 53, 0.1);
+  box-shadow: 0 2px 20px rgba(43, 43, 43, 0.08);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  gap: var(--space-6);
+}
+
+/* ===================== LOGO ===================== */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logoMark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.logoMain {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-burgundy);
+  letter-spacing: 0.08em;
+}
+
+.logoSub {
+  font-family: var(--font-body);
+  font-size: 7.5px;
+  font-weight: 500;
+  color: var(--color-charcoal-light);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ===================== NAV ===================== */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.navItem {
+  position: relative;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-charcoal);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  color: var(--color-burgundy);
+  background: rgba(107, 35, 53, 0.06);
+}
+
+.navLinkActive {
+  color: var(--color-burgundy);
+  position: relative;
+}
+
+.navLinkActive::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--color-burgundy);
+  border-radius: 2px;
+}
+
+
+/* ===================== DROPDOWN ===================== */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 180px;
+  background: var(--color-white);
+  border: 1px solid rgba(107, 35, 53, 0.1);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-2);
+  animation: fadeInUp 0.18s ease;
+}
+
+.dropdownItem {
+  display: block;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-charcoal);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.dropdownItem:hover {
+  background: var(--color-soft-beige);
+  color: var(--color-burgundy);
+  padding-left: 18px;
+}
+
+/* ===================== ACTIONS ===================== */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.iconBtn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--color-charcoal);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.iconBtn:hover {
+  color: var(--color-burgundy);
+  background: rgba(107, 35, 53, 0.06);
+}
+
+.cartBadge {
+  position: absolute;
+  top: 6px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  background: var(--color-burgundy);
+  color: var(--color-white);
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ===================== HAMBURGER ===================== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.hamburger:hover {
+  background: var(--color-soft-beige);
+}
+
+.hamburgerLine {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-charcoal);
+  border-radius: 2px;
+  transition: all var(--transition-base);
+}
+
+.hamburgerLine.open:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburgerLine.open:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+.hamburgerLine.open:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ===================== MOBILE MENU ===================== */
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-warm-ivory);
+  border-top: 1px solid rgba(107, 35, 53, 0.1);
+  padding: var(--space-4) var(--container-pad);
+  animation: fadeIn 0.2s ease;
+}
+
+.mobileLink {
+  padding: 14px 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--color-charcoal);
+  border-bottom: 1px solid rgba(43, 43, 43, 0.06);
+  transition: color var(--transition-fast);
+}
+
+.mobileLink:hover {
+  color: var(--color-burgundy);
+}
+
+
+
+/* ===================== RESPONSIVE ===================== */
+@media (max-width: 1024px) {
+  .nav {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .logoSub {
+    display: none;
+  }
+}

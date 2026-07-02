@@ -1,0 +1,121 @@
+rules_version = '2';
+// =====================================================
+// FIRESTORE SECURITY RULES
+// Fashion Gallery Apparel — My Moon Clothing
+// =====================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── HELPER FUNCTIONS ─────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'admin';
+    }
+
+    function isStaff() {
+      return isAuthenticated() &&
+        (request.auth.token.role == 'admin' || request.auth.token.role == 'staff');
+    }
+
+    function hasPermission(permission) {
+      return isAdmin() || (
+        isStaff() &&
+        get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.permissions[permission] == true
+      );
+    }
+
+    // ─── PRODUCTS ─────────────────────────────────────────────
+    match /products/{productId} {
+      // Public can read active products
+      allow read: if resource.data.status == 'active' || isStaff();
+      // Only staff with permission can write
+      allow create: if hasPermission('product.edit_details');
+      allow update: if hasPermission('product.edit_details') || hasPermission('product.edit_stock');
+      allow delete: if hasPermission('product.delete');
+
+      // Private financial subcollection — Admin only
+      match /private/{document} {
+        allow read, write: if isAdmin();
+      }
+    }
+
+    // ─── CATEGORIES ───────────────────────────────────────────
+    match /categories/{categoryId} {
+      allow read: if true;           // public
+      allow write: if isAdmin();
+    }
+
+    // ─── ORDERS ───────────────────────────────────────────────
+    match /orders/{orderId} {
+      // Orders are written ONLY via Server Actions (never from the client directly)
+      // Customers can read their own order by orderNumber lookup
+      allow read: if isStaff() || (
+        isAuthenticated() && resource.data.customerId == request.auth.uid
+      );
+      // Writes only allowed server-side (admin SDK bypasses rules)
+      allow create: if false;         // use Server Action
+      allow update: if hasPermission('order.update_status');
+      allow delete: if false;         // soft delete only
+    }
+
+    // ─── CUSTOMERS ────────────────────────────────────────────
+    match /customers/{customerId} {
+      allow read: if isStaff() || request.auth.uid == customerId;
+      allow write: if false;          // created via Server Action only
+    }
+
+    // ─── INQUIRIES ────────────────────────────────────────────
+    match /inquiries/{inquiryId} {
+      allow read: if hasPermission('wholesale.view');
+      allow create: if true;          // public can submit inquiries
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    // ─── STAFF ────────────────────────────────────────────────
+    match /staff/{staffId} {
+      // Staff can read their own doc (for real-time permission updates)
+      allow read: if isAuthenticated() && (
+        request.auth.uid == staffId || isAdmin()
+      );
+      // Only Admin can write staff documents
+      allow write: if isAdmin();
+    }
+
+    // ─── SETTINGS ─────────────────────────────────────────────
+    match /settings/public {
+      allow read: if true;            // public readable
+      allow write: if isAdmin();
+    }
+
+    match /settings/business {
+      allow read, write: if isAdmin();  // Admin only
+    }
+
+    // ─── AUDIT LOGS ───────────────────────────────────────────
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isStaff();     // staff/admin can create log entries
+      allow update, delete: if false; // audit logs are immutable
+    }
+
+    // ─── NOTIFICATIONS ────────────────────────────────────────
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && (
+        resource.data.audience == request.auth.uid ||
+        resource.data.audience == request.auth.token.role ||
+        isAdmin()
+      );
+      allow create: if false;         // created server-side only
+      allow update: if isAuthenticated() && (
+        resource.data.audience == request.auth.uid  // mark as read
+      );
+      allow delete: if isAdmin();
+    }
+
+  }
+}
