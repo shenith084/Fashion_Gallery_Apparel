@@ -1,0 +1,174 @@
+import { useState, useEffect } from 'react';
+import styles from './WholesaleApplicationModal.module.css';
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function WholesaleApplicationModal({ isOpen, onClose }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [isOpen]);
+
+  if (!mounted || !isOpen) return null;
+
+  return (
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        <button className={styles.closeBtn} onClick={onClose}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+
+        <div className={styles.modalHeader}>
+          <h2 className={styles.modalTitle}>WHOLESALE APPLICATION</h2>
+          <div className={styles.divider}></div>
+          <p className={styles.modalSubtitle}>
+            Fill out the form below to apply for our wholesale program.<br/>
+            Our team will review your application and get back to you soon.
+          </p>
+        </div>
+
+        <form className={styles.form} onSubmit={e => e.preventDefault()}>
+          <h3 className={styles.sectionTitle}>BUSINESS INFORMATION</h3>
+          
+          <div className={styles.formGrid}>
+            <div className={styles.formGroup}>
+              <label>Full Name *</label>
+              <div className={styles.inputWrap}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                <input type="text" placeholder="Enter your full name" />
+              </div>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>Business Name *</label>
+              <div className={styles.inputWrap}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                <input type="text" placeholder="Enter your business name" />
+              </div>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>Business Type *</label>
+              <select defaultValue="">
+                <option value="" disabled>Select business type</option>
+                <option value="retail">Retail Store</option>
+                <option value="online">Online Boutique</option>
+                <option value="distributor">Distributor</option>
+              </select>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>Business Address *</label>
+              <div className={styles.inputWrap}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+                <input type="text" placeholder="Enter your complete business address" />
+              </div>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>City *</label>
+              <div className={styles.inputWrap}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+                <input type="text" placeholder="Enter your city" />
+              </div>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>Country *</label>
+              <select defaultValue="">
+                <option value="" disabled>Select your country</option>
+                <option value="lk">Sri Lanka</option>
+                <option value="us">United States</option>
+                <option value="uk">United Kingdom</option>
+              </select>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>Phone Number *</label>
+              <div className={styles.inputWrap}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+                <input type="tel" placeholder="Enter phone number" />
+              </div>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>Email Address *</label>
+              <div className={styles.inputWrap}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                </svg>
+                <input type="email" placeholder="Enter email address" />
+              </div>
+            </div>
+          </div>
+
+          <h3 className={styles.sectionTitle} style={{ marginTop: 'var(--space-6)' }}>BUSINESS DETAILS</h3>
+          
+          <div className={styles.formGrid}>
+            <div className={styles.formGroup}>
+              <label>Estimated Monthly Order Value *</label>
+              <select defaultValue="">
+                <option value="" disabled>Select range</option>
+                <option value="under100k">Under LKR 100,000</option>
+                <option value="100k500k">LKR 100,000 - LKR 500,000</option>
+                <option value="over500k">Over LKR 500,000</option>
+              </select>
+            </div>
+            
+            <div className={styles.formGroup}>
+              <label>Products Interested In *</label>
+              <select defaultValue="">
+                <option value="" disabled>Select products</option>
+                <option value="dresses">Dresses</option>
+                <option value="office">Office Wear</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.formGroupFull}>
+            <label>Additional Information</label>
+            <textarea rows={4} placeholder="Tell us more about your business..."></textarea>
+            <div className={styles.charCount}>0/500</div>
+          </div>
+
+          <label className={styles.checkboxLabel}>
+            <input type="checkbox" required />
+            <span>I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a> *</span>
+          </label>
+
+          <div className={styles.formActions}>
+            <button type="button" className={`btn btn-secondary ${styles.cancelBtn}`} onClick={onClose}>
+              CANCEL
+            </button>
+            <button type="submit" className={`btn btn-primary ${styles.submitBtn}`}>
+              SUBMIT APPLICATION
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

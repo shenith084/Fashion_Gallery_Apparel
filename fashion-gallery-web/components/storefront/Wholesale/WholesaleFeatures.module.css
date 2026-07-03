@@ -1,0 +1,74 @@
+.featuresSection {
+  padding: var(--space-12) 0;
+  background: var(--color-white);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-4);
+  background: #FDFBFA;
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  margin-top: var(--space-6);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.card:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 10%;
+  bottom: 10%;
+  width: 1px;
+  background: rgba(0,0,0,0.05);
+}
+
+.iconBox {
+  color: var(--color-burgundy);
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-burgundy);
+  margin-bottom: var(--space-2);
+}
+
+.desc {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.5;
+}
+
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+  .card:not(:last-child)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

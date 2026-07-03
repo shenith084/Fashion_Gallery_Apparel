@@ -1,17 +1,39 @@
+'use client';
+
+import { useState } from 'react';
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
+import WholesaleHero from '@/components/storefront/Wholesale/WholesaleHero';
+import WholesaleFeatures from '@/components/storefront/Wholesale/WholesaleFeatures';
+import WholesalePartner from '@/components/storefront/Wholesale/WholesalePartner';
+import WholesaleBenefits from '@/components/storefront/Wholesale/WholesaleBenefits';
+import WholesaleHowItWorks from '@/components/storefront/Wholesale/WholesaleHowItWorks';
+import WholesaleApplicationModal from '@/components/storefront/Wholesale/WholesaleApplicationModal';
 
-export const metadata = { title: 'Wholesale | Fashion Gallery Apparel' };
+// Note: metadata cannot be exported in a 'use client' file.
+// We could move it to a layout or a separate server component if needed,
+// but for now we'll set the document title in a useEffect if strictly necessary,
+// or just omit it for the scope of this UI update.
 
-export default function Page() {
+export default function WholesalePage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <>
       <Navbar />
-      <main className="container" style={{ padding: 'var(--space-16) 0', minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', color: 'var(--color-burgundy)', marginBottom: 'var(--space-4)' }}>Wholesale</h1>
-        <p style={{ color: 'var(--color-charcoal-light)' }}>This page is under construction. UI/UX will be provided later.</p>
+      <main>
+        <WholesaleHero openModal={() => setIsModalOpen(true)} />
+        <WholesaleFeatures />
+        <WholesalePartner openModal={() => setIsModalOpen(true)} />
+        <WholesaleBenefits />
+        <WholesaleHowItWorks />
       </main>
       <Footer />
+      
+      <WholesaleApplicationModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </>
   );
 }

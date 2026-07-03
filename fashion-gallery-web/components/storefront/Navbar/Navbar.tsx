@@ -9,15 +9,7 @@ import styles from './Navbar.module.css';
 const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'New Arrivals', href: '/new-arrivals' },
-  {
-    label: 'Dresses',
-    href: '/dresses',
-    dropdown: [
-      { label: 'All Dresses', href: '/dresses' },
-      { label: 'Maxi Dresses', href: '/dresses/maxi' },
-      { label: 'Midi Dresses', href: '/dresses/midi' },
-    ],
-  },
+  { label: 'Dresses', href: '/dresses' },
   { label: 'Office Wear', href: '/office-wear' },
   { label: 'Wholesale', href: '/wholesale' },
   { label: 'About Us', href: '/about' },

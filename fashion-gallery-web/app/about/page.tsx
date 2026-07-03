@@ -1,15 +1,25 @@
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
+import AboutHero from '@/components/storefront/About/AboutHero';
+import AboutStory from '@/components/storefront/About/AboutStory';
+import AboutValues from '@/components/storefront/About/AboutValues';
+import AboutStats from '@/components/storefront/About/AboutStats';
+import AboutFeatures from '@/components/storefront/About/AboutFeatures';
+import AboutPromise from '@/components/storefront/About/AboutPromise';
 
 export const metadata = { title: 'About Us | Fashion Gallery Apparel' };
 
-export default function Page() {
+export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main className="container" style={{ padding: 'var(--space-16) 0', minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', color: 'var(--color-burgundy)', marginBottom: 'var(--space-4)' }}>About Us</h1>
-        <p style={{ color: 'var(--color-charcoal-light)' }}>This page is under construction. UI/UX will be provided later.</p>
+      <main>
+        <AboutHero />
+        <AboutStory />
+        <AboutValues />
+        <AboutStats />
+        <AboutFeatures />
+        <AboutPromise />
       </main>
       <Footer />
     </>

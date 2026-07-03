@@ -1,0 +1,132 @@
+.heroSection {
+  position: relative;
+  background: linear-gradient(to right, #FDFBFA 0%, #F5EAE1 100%);
+  min-height: 550px;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-top: 80px;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.heroContent {
+  width: 100%;
+  max-width: 480px;
+  padding: var(--space-8) 0;
+}
+
+.heroEyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-burgundy);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+.heroTitle {
+  font-family: var(--font-heading);
+  font-size: 3.8rem;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: var(--space-2);
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+}
+
+.scriptText {
+  font-family: 'Dancing Script', cursive;
+  font-size: 5.5rem;
+  font-weight: 400;
+  color: var(--color-burgundy);
+  margin-top: -20px;
+  margin-left: 10px;
+}
+
+.divider {
+  width: 40px;
+  height: 2px;
+  background: var(--color-rose-gold);
+  margin: var(--space-4) 0 var(--space-6) 0;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-rose-gold);
+}
+
+.divider::before {
+  left: -8px;
+}
+
+.divider::after {
+  right: -8px;
+}
+
+.heroDesc {
+  font-size: 13px;
+  color: #333;
+  line-height: 1.7;
+  font-weight: 400;
+  margin-bottom: var(--space-8);
+}
+
+.heroDesc strong {
+  font-weight: 600;
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+}
+
+.collectionBtn {
+  font-size: 11px;
+  padding: 14px 28px;
+  letter-spacing: 0.1em;
+}
+
+.heroImageWrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60vw;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
+  mask-image: linear-gradient(to right, transparent 0%, black 30%);
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 900px) {
+  .heroImageWrap {
+    width: 100vw;
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 60%);
+    mask-image: linear-gradient(to top, transparent 0%, black 60%);
+  }
+  .heroContent {
+    max-width: 100%;
+    margin-top: 250px;
+    padding-bottom: var(--space-8);
+  }
+}
