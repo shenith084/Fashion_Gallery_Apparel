@@ -9,6 +9,7 @@ const MENU_ITEMS = [
   { name: 'Dashboard', path: '/', icon: '📊' },
   { name: 'Orders', path: '/orders', icon: '📦' },
   { name: 'Products', path: '/products', icon: '👗' },
+  { name: 'Inquiries', path: '/inquiries', icon: '💬' },
   { name: 'Staff & Permissions', path: '/staff', icon: '👥' },
   { name: 'Settings', path: '/settings', icon: '⚙️' },
 ];

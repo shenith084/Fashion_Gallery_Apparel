@@ -1,0 +1,133 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableCard {
+  background: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.loading, .empty {
+  padding: var(--space-10);
+  text-align: center;
+  color: var(--color-charcoal-light);
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th {
+  padding: var(--space-4) var(--space-6);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-charcoal-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(107, 35, 53, 0.08);
+  background: var(--color-warm-ivory);
+}
+
+.table td {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid rgba(107, 35, 53, 0.05);
+  font-size: 14px;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-weight: 500;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: var(--color-soft-beige);
+  color: var(--color-burgundy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badgeAdmin {
+  background: rgba(107, 35, 53, 0.1);
+  color: var(--color-burgundy);
+}
+
+.badgeStaff {
+  background: rgba(43, 43, 43, 0.08);
+  color: var(--color-charcoal);
+}
+
+.statusBadge {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.statusActive {
+  color: var(--color-success);
+}
+
+.statusInactive {
+  color: var(--color-error);
+}
+
+.actionsCell {
+  display: flex;
+  gap: var(--space-4);
+}
+
+.actionBtn {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-charcoal-light);
+  transition: color var(--transition-fast);
+}
+
+.actionBtn:hover {
+  color: var(--color-burgundy);
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.textError { color: var(--color-error); }
+.textSuccess { color: var(--color-success); }

@@ -20,7 +20,6 @@ export default function LoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Wait a moment for auth state to propagate before redirecting
       setTimeout(() => router.push('/'), 500);
     } catch (err: any) {
       console.error('Login error', err);
