@@ -22,7 +22,7 @@ import {
 
 // ── Load env manually for script context ──────────────────────
 const firebaseConfig = {
-  apiKey: 'AIzaSyDLXWM08oKwXJPMK18Tn8ay8BWofGl7T8k',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: 'fashion-gallery-dev.firebaseapp.com',
   projectId: 'fashion-gallery-dev',
   storageBucket: 'fashion-gallery-dev.firebasestorage.app',
