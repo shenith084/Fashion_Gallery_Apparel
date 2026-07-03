@@ -4,8 +4,7 @@ import Hero from '@/components/storefront/Hero';
 import InfoBar from '@/components/storefront/InfoBar';
 import ShopByCategory from '@/components/storefront/ShopByCategory';
 import NewArrivals from '@/components/storefront/NewArrivals';
-import FacebookFeed from '@/components/storefront/FacebookFeed';
-import WhyChooseUs from '@/components/storefront/WhyChooseUs';
+import LatestFashionVideos from '@/components/storefront/LatestFashionVideos';
 import Newsletter from '@/components/storefront/Newsletter';
 import Footer from '@/components/storefront/Footer';
 
@@ -26,8 +25,7 @@ export default function HomePage() {
       <InfoBar />
       <ShopByCategory />
       <NewArrivals />
-      <FacebookFeed />
-      <WhyChooseUs />
+      <LatestFashionVideos />
       <Newsletter />
       <Footer />
     </main>

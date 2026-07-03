@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { type Product } from '@/lib/data/products';
 import { useCartStore } from '@/lib/store/cartStore';
@@ -16,20 +17,22 @@ export default function ProductClient({ product }: ProductClientProps) {
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
+  const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
 
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
-      alert('Please select a size and color.');
+      setErrorMsg('Please select a size and color.');
       return;
     }
+    setErrorMsg('');
     setAdding(true);
     addItem(product, selectedSize, selectedColor, qty);
     
-    setTimeout(() => {
-      setAdding(false);
-    }, 600);
+    // Redirect to cart immediately
+    router.push('/cart');
   };
 
   return (
@@ -149,6 +152,7 @@ export default function ProductClient({ product }: ProductClientProps) {
         </div>
 
         {/* Actions */}
+        {errorMsg && <div className={styles.errorMsg}>{errorMsg}</div>}
         <div className={styles.actions}>
           <div className={styles.qtyControl}>
             <button onClick={() => setQty(Math.max(1, qty - 1))} aria-label="Decrease quantity">−</button>

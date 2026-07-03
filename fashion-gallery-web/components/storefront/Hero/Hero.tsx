@@ -2,35 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Hero.module.css';
 
-const TRUST_BADGES = [
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-      </svg>
-    ),
-    title: 'Island-wide Delivery',
-    subtitle: 'Fast & reliable delivery',
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-      </svg>
-    ),
-    title: 'Cash on Delivery',
-    subtitle: 'Pay when you receive',
-  },
-  {
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-    ),
-    title: 'Secure Payments',
-    subtitle: '100% safe & secure',
-  },
-];
 
 export default function Hero() {
   return (
@@ -46,8 +17,8 @@ export default function Hero() {
           </h1>
 
           <p className={styles.description}>
-            Discover elegant dresses, office wear and<br />
-            new arrivals designed just for you.
+            Elegant dresses, office wear and new arrivals<br />
+            designed to make you feel your best.
           </p>
 
           <div className={styles.ctas}>
@@ -69,25 +40,12 @@ export default function Hero() {
               WHATSAPP ORDER
             </a>
           </div>
-
-          {/* Trust Badges */}
-          <div className={styles.trustRow}>
-            {TRUST_BADGES.map((badge) => (
-              <div key={badge.title} className={styles.trustBadge}>
-                <span className={styles.trustIcon}>{badge.icon}</span>
-                <div>
-                  <p className={styles.trustTitle}>{badge.title}</p>
-                  <p className={styles.trustSub}>{badge.subtitle}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Right Image */}
         <div className={styles.imageWrapper}>
           <Image
-            src="/hero-bg-v5.png"
+            src="/hero-bg-v6.jpg"
             alt="Fashion Gallery Apparel Models"
             fill
             priority

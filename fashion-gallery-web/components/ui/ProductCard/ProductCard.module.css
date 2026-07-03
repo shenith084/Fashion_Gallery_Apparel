@@ -1,9 +1,9 @@
 .card {
   position: relative;
   background: var(--color-white);
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(0,0,0,0.05);
   transition: transform var(--transition-base), box-shadow var(--transition-base);
   display: flex;
   flex-direction: column;
@@ -17,7 +17,7 @@
 /* ===================== IMAGE ===================== */
 .imageWrap {
   position: relative;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 5;
   display: block;
   overflow: hidden;
   text-decoration: none;
@@ -85,27 +85,70 @@
   opacity: 1 !important;
 }
 
-/* ===================== QUICK VIEW ===================== */
-.quickView {
-  position: absolute;
-  bottom: -40px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  background: rgba(107, 35, 53, 0.9);
-  color: white;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 10px;
-  text-decoration: none;
-  transition: bottom var(--transition-base);
-  z-index: 2;
+/* ===================== COLOR SWATCHES ===================== */
+.colorSwatches {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 2px;
 }
 
-.card:hover .quickView {
-  bottom: 0;
+.colorSwatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* ===================== ACTION ROW ===================== */
+.actionRow {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.addToCartBtn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid rgba(107, 35, 53, 0.4);
+  background: white;
+  color: var(--color-burgundy);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.addToCartBtn:hover {
+  background: var(--color-burgundy);
+  color: white;
+  border-color: var(--color-burgundy);
+}
+
+.viewBtn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(107, 35, 53, 0.4);
+  background: white;
+  color: var(--color-burgundy);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.viewBtn:hover {
+  background: var(--color-burgundy);
+  color: white;
+  border-color: var(--color-burgundy);
 }
 
 /* ===================== INFO ===================== */

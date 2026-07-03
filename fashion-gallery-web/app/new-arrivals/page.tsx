@@ -1,6 +1,8 @@
+import Image from 'next/image';
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
 import ShopClient from '@/components/storefront/ShopClient/ShopClient';
+import styles from './NewArrivalsPage.module.css';
 
 export const metadata = { title: 'New Arrivals | Fashion Gallery Apparel' };
 
@@ -8,12 +10,27 @@ export default function Page() {
   return (
     <>
       <Navbar />
-      <div style={{ background: 'var(--color-soft-beige)', padding: 'var(--space-12) 0 var(--space-8)', textAlign: 'center', borderBottom: '1px solid rgba(107, 35, 53, 0.08)' }}>
-        <div className="container">
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.5rem', color: 'var(--color-charcoal)' }}>New Arrivals</h1>
+      <div className={styles.heroSection}>
+        <div className={`container ${styles.heroInner}`}>
+          <div className={styles.heroContent}>
+            <p className={styles.heroSubtitle}>FRESH STYLES, JUST FOR YOU</p>
+            <h1 className={styles.heroTitle}>New Arrivals</h1>
+            <p className={styles.heroDesc}>
+              Discover our latest collection of elegant dresses and office wear, designed to make you feel confident and beautiful.
+            </p>
+          </div>
+        </div>
+        <div className={styles.heroImageWrap}>
+          <Image
+            src="/new-arrivals-hero-generated.png"
+            alt="New Arrivals Fashion"
+            fill
+            className={styles.heroImage}
+            priority
+          />
         </div>
       </div>
-      <div className="container">
+      <div className="container" style={{ padding: 'var(--space-12) 0' }}>
         <ShopClient initialCategory="new-arrivals" />
       </div>
       <Footer />

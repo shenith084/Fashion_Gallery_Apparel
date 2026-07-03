@@ -3,7 +3,7 @@
    My Moon Clothing | Brand Design System v1.0
    ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* =====================================================
    CSS CUSTOM PROPERTIES (DESIGN TOKENS)
@@ -88,7 +88,7 @@ body {
   font-size: 15px;
   line-height: 1.6;
   color: var(--color-charcoal);
-  background-color: var(--color-warm-ivory);
+  background-color: var(--color-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

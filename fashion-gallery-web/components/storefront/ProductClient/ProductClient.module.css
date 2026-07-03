@@ -197,7 +197,14 @@
 .optionsList {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-2);
+}
+
+.errorMsg {
+  color: var(--color-error);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: var(--space-3);
 }
 
 .colorBtn, .sizeBtn {

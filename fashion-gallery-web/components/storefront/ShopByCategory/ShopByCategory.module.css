@@ -1,6 +1,6 @@
 .section {
-  padding: var(--space-16) 0;
-  background: var(--color-warm-ivory);
+  padding: var(--space-12) 0;
+  background: var(--color-white);
 }
 
 .heading {

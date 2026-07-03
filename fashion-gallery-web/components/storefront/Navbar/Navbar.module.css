@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: var(--color-warm-ivory);
+  background: var(--color-white);
   border-bottom: 1px solid transparent;
   transition: all var(--transition-base);
 }
@@ -221,7 +221,7 @@
 .mobileMenu {
   display: flex;
   flex-direction: column;
-  background: var(--color-warm-ivory);
+  background: var(--color-white);
   border-top: 1px solid rgba(107, 35, 53, 0.1);
   padding: var(--space-4) var(--container-pad);
   animation: fadeIn 0.2s ease;

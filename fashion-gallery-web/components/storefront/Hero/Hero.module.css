@@ -17,7 +17,7 @@
 
 /* ===================== CONTENT ===================== */
 .content {
-  width: 55%;
+  width: 42%;
   padding-bottom: var(--space-10);
   position: relative;
   z-index: 2;
@@ -110,48 +110,18 @@
   background-color: rgba(255, 255, 255, 0.8);
 }
 
-/* ===================== TRUST ===================== */
-.trustRow {
-  display: flex;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-}
-
-.trustBadge {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.trustIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.trustTitle {
-  font-size: 11px;
-  font-weight: 700;
-  color: #212529;
-  margin-bottom: 2px;
-}
-
-.trustSub {
-  font-size: 10px;
-  color: #6C757D;
-}
 
 /* ===================== IMAGE ===================== */
 .imageWrapper {
   position: absolute;
   right: 0;
-  top: 0;
+  top: 70px; /* Start below the navbar so heads are not hidden */
   bottom: 0;
-  width: 45%; /* Narrower to prevent vertical cropping of heads */
+  width: 58%; /* Enough width to fit all 3 girls without zooming too much */
   z-index: 1;
-  /* Use mask-image to smoothly fade opacity instead of overlaying a solid color */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%);
-  mask-image: linear-gradient(to right, transparent 0%, black 25%);
+  /* Tighter mask so the left girl is not faded out */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%);
+  mask-image: linear-gradient(to right, transparent 0%, black 15%);
 }
 
 .heroImage {

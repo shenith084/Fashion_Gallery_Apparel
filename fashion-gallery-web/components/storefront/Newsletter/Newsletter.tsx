@@ -24,12 +24,13 @@ export default function Newsletter() {
         <div className={styles.inner}>
           <div className={styles.textContent}>
             <div className={styles.mailIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>
+                <polyline points="3 7 12 13 21 7"/>
               </svg>
             </div>
             <div>
-              <h2 className={styles.title}>Stay in Style</h2>
+              <h2 className={styles.title} style={{ textTransform: 'uppercase' }}>Stay in Style</h2>
               <p className={styles.desc}>
                 Subscribe to get special offers, new arrivals and exclusive discounts.
               </p>

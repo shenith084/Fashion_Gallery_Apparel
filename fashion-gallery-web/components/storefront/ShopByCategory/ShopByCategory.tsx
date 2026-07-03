@@ -41,7 +41,7 @@ export default function ShopByCategory() {
       <div className="container">
         <div className={styles.heading}>
           <div className="section-title-line">
-            <span className="section-title">Shop by Category</span>
+            <span className="section-title" style={{ textTransform: 'uppercase', color: 'var(--color-burgundy)', letterSpacing: '0.05em' }}>SHOP BY CATEGORY</span>
           </div>
           <div className={styles.ornament}>
             <span />

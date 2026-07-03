@@ -1,5 +1,5 @@
 .section {
-  background: var(--color-burgundy);
+  background: #5C1D2C;
   padding: var(--space-12) 0;
 }
 
@@ -19,15 +19,12 @@
 }
 
 .mailIcon {
-  width: 56px;
-  height: 56px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   flex-shrink: 0;
+  opacity: 0.8;
 }
 
 .title {

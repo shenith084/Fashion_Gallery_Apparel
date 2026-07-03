@@ -1,62 +1,62 @@
 .infoBar {
   position: relative;
   z-index: 10;
-  margin-top: -60px; /* Pull it up over the hero section */
-  margin-bottom: var(--space-10);
+  margin-top: 0;
+  margin-bottom: var(--space-12);
+  padding: var(--space-6) 0;
+  background: #FAFAFA;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   align-items: center;
   gap: 0;
-  background: var(--color-white);
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 20px rgba(107, 35, 53, 0.08);
-  padding: 10px 0;
-  position: relative;
 }
 
 .item {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-6);
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
   position: relative;
 }
 
 .divider {
   position: absolute;
   left: 0;
-  top: 10%;
-  height: 80%;
+  top: 15%;
+  height: 70%;
   width: 1px;
-  background: rgba(107, 35, 53, 0.12);
+  background: rgba(0, 0, 0, 0.08);
 }
 
 .icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  background: var(--color-soft-beige);
-  border-radius: var(--radius-sm);
   color: var(--color-burgundy);
   flex-shrink: 0;
 }
 
+.icon svg {
+  width: 32px;
+  height: 32px;
+}
+
 .title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-charcoal);
-  margin-bottom: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 4px;
+  text-transform: uppercase;
 }
 
 .subtitle {
-  font-size: 11px;
-  color: var(--color-charcoal-light);
-  line-height: 1.4;
+  font-size: 10px;
+  color: #666;
+  line-height: 1.3;
 }
 
 @media (max-width: 1024px) {

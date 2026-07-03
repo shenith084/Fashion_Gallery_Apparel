@@ -1,6 +1,8 @@
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
+import OfficeWearHero from '@/components/storefront/OfficeWearHero/OfficeWearHero';
 import ShopClient from '@/components/storefront/ShopClient/ShopClient';
+import InfoBar from '@/components/storefront/InfoBar';
 
 export const metadata = { title: 'Office Wear | Fashion Gallery Apparel' };
 
@@ -8,14 +10,11 @@ export default function Page() {
   return (
     <>
       <Navbar />
-      <div style={{ background: 'var(--color-soft-beige)', padding: 'var(--space-12) 0 var(--space-8)', textAlign: 'center', borderBottom: '1px solid rgba(107, 35, 53, 0.08)' }}>
-        <div className="container">
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.5rem', color: 'var(--color-charcoal)' }}>Office Wear</h1>
-        </div>
+      <OfficeWearHero />
+      <div className="container" style={{ paddingTop: '32px' }}>
+        <ShopClient initialCategory="office-wear" columns={3} />
       </div>
-      <div className="container">
-        <ShopClient initialCategory="office-wear" />
-      </div>
+      <InfoBar />
       <Footer />
     </>
   );

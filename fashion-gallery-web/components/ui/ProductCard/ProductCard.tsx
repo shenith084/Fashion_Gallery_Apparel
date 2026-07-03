@@ -57,9 +57,6 @@ export default function ProductCard({ id, name, price, image, rating, reviewCoun
           className={styles.image}
         />
         <div className={styles.overlay} />
-        <span className={styles.quickView}>
-          Quick View
-        </span>
       </Link>
 
       <button
@@ -74,6 +71,11 @@ export default function ProductCard({ id, name, price, image, rating, reviewCoun
       </button>
 
       <div className={styles.info}>
+        <div className={styles.colorSwatches}>
+          <span className={styles.colorSwatch} style={{ backgroundColor: '#6B2335' }}></span>
+          <span className={styles.colorSwatch} style={{ backgroundColor: '#EAD1D8' }}></span>
+          <span className={styles.colorSwatch} style={{ backgroundColor: '#E4DFD8' }}></span>
+        </div>
         <h3 className={styles.name}>
           <Link href={href}>{name}</Link>
         </h3>
@@ -81,6 +83,26 @@ export default function ProductCard({ id, name, price, image, rating, reviewCoun
         <div className={styles.rating}>
           <StarRating rating={rating} />
           <span className={styles.reviewCount}>({reviewCount})</span>
+        </div>
+        <div className={styles.actionRow}>
+          <button 
+            className={styles.addToCartBtn} 
+            id={`add-to-cart-${id}`}
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = href;
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            ADD TO CART
+          </button>
+          <Link href={href} className={styles.viewBtn} aria-label="Quick view" id={`view-${id}`}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </Link>
         </div>
       </div>
     </div>

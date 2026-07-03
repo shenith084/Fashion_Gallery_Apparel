@@ -16,11 +16,11 @@ export default function NewArrivals() {
     <section className={styles.section} id="new-arrivals-section">
       <div className="container">
         <div className={styles.header}>
-          <h2 className={styles.title}>New Arrivals</h2>
+          <h2 className={styles.title} style={{ textTransform: 'uppercase', color: '#111', letterSpacing: '0.05em' }}>NEW ARRIVALS</h2>
           <Link href="/new-arrivals" className={styles.viewAll} id="view-all-arrivals">
-            View All
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"/><path d="M12 8l4 4-4 4"/><path d="M8 12h8"/>
+            VIEW ALL
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="m10 8 4 4-4 4"/>
             </svg>
           </Link>
         </div>
