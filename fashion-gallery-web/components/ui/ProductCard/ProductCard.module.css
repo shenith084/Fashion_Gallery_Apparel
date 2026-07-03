@@ -130,27 +130,6 @@
   border-color: var(--color-burgundy);
 }
 
-.viewBtn {
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(107, 35, 53, 0.4);
-  background: white;
-  color: var(--color-burgundy);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.viewBtn:hover {
-  background: var(--color-burgundy);
-  color: white;
-  border-color: var(--color-burgundy);
-}
-
 /* ===================== INFO ===================== */
 .info {
   padding: var(--space-3) var(--space-4) var(--space-4);

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { type Product } from '@/lib/data/products';
 import { useCartStore } from '@/lib/store/cartStore';
 import styles from './ProductClient.module.css';
@@ -68,7 +69,7 @@ export default function ProductClient({ product }: ProductClientProps) {
       <div className={styles.info}>
         <nav className={styles.breadcrumb}>
           <a href="/">Home</a> <span>›</span>
-          <a href="/shop">Shop</a> <span>›</span>
+          <Link href="/dresses">Dresses</Link> <span>›</span>
           <a href={`/category/${product.categorySlug}`}>{product.category}</a> <span>›</span>
           <span>{product.name}</span>
         </nav>

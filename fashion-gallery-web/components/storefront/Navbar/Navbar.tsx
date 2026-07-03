@@ -21,8 +21,22 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  
   const totalItems = useCartStore((state) => state.getTotalItems());
   const pathname = usePathname();
+  const { useRouter } = require('next/navigation');
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -87,7 +101,24 @@ export default function Navbar() {
 
         {/* Action Icons */}
         <div className={styles.actions}>
-          <button className={styles.iconBtn} aria-label="Search" id="btn-search">
+          {isSearchOpen && (
+            <form onSubmit={handleSearch} className={styles.searchForm}>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={styles.searchInput}
+                autoFocus
+              />
+            </form>
+          )}
+          <button 
+            className={styles.iconBtn} 
+            aria-label="Search" 
+            id="btn-search"
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+          >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
             </svg>

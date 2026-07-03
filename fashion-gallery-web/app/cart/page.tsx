@@ -13,14 +13,13 @@ export default function CartPage() {
   return (
     <>
       <Navbar />
-      <div className={styles.pageHero}>
+      <div className={styles.header}>
         <div className="container">
-          <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-            <a href="/">Home</a>
-            <span>›</span>
-            <span>Cart</span>
-          </nav>
-          <h1 className={styles.pageTitle}>Your Cart</h1>
+          <p className={styles.eyebrow}>REVIEW YOUR ITEMS</p>
+          <h1 className={styles.title}>
+            Shopping <span className={styles.scriptText}>Cart</span>
+          </h1>
+          <div className={styles.divider}></div>
         </div>
       </div>
 

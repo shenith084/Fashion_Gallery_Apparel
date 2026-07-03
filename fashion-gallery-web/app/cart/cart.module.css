@@ -1,34 +1,57 @@
-.pageHero {
-  background: var(--color-soft-beige);
-  padding: var(--space-8) 0 var(--space-6);
+.header {
+  padding: 120px 0 40px 0;
   text-align: center;
-  border-bottom: 1px solid rgba(107, 35, 53, 0.08);
+  background: linear-gradient(to bottom, #FDFBFA 0%, var(--color-white) 100%);
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  font-size: 12px;
-  color: var(--color-charcoal-light);
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-burgundy);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
   margin-bottom: var(--space-4);
 }
 
-.breadcrumb a {
-  color: var(--color-charcoal);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color var(--transition-fast);
-}
-
-.breadcrumb a:hover {
-  color: var(--color-burgundy);
-}
-
-.pageTitle {
+.title {
   font-family: var(--font-heading);
-  font-size: clamp(1.8rem, 3vw, 2.25rem);
-  color: var(--color-charcoal);
-  letter-spacing: 0.02em;
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: var(--space-2);
+}
+
+.scriptText {
+  font-family: 'Dancing Script', cursive;
+  font-size: 5rem;
+  font-weight: 400;
+  color: var(--color-burgundy);
+  margin-left: 8px;
+}
+
+.divider {
+  width: 40px;
+  height: 2px;
+  background: var(--color-rose-gold);
+  margin: var(--space-4) auto 0 auto;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-rose-gold);
+}
+
+.divider::before {
+  left: -8px;
+}
+
+.divider::after {
+  right: -8px;
 }

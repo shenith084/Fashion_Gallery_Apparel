@@ -1,0 +1,108 @@
+.layout {
+  padding-bottom: var(--space-16);
+  background: var(--color-white);
+}
+
+.heroSection {
+  position: relative;
+  background: linear-gradient(to right, #F8F4F0 0%, #E8DCC4 100%);
+  min-height: 450px;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  padding-top: 80px;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.heroContent {
+  width: 100%;
+  max-width: 540px;
+  padding: var(--space-8) 0;
+}
+
+.heroEyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-burgundy);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-4);
+}
+
+.heroTitle {
+  font-family: var(--font-heading);
+  font-size: 3.8rem;
+  font-weight: 500;
+  color: #111;
+  margin-bottom: var(--space-4);
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+}
+
+.scriptText {
+  font-family: 'Dancing Script', cursive;
+  font-size: 4.8rem;
+  font-weight: 400;
+  color: var(--color-burgundy);
+  margin-top: -15px;
+  margin-left: 20px;
+}
+
+.heroImageWrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 60vw;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 30%);
+  mask-image: linear-gradient(to right, transparent 0%, black 30%);
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 900px) {
+  .heroImageWrap {
+    width: 100vw;
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, black 60%);
+    mask-image: linear-gradient(to top, transparent 0%, black 60%);
+  }
+  .heroContent {
+    max-width: 100%;
+    margin-top: 150px;
+    padding-bottom: var(--space-8);
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--space-8);
+  margin-top: -30px;
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .title {
+    font-size: 2.8rem;
+  }
+  .scriptText {
+    font-size: 4rem;
+  }
+}

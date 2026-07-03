@@ -8,9 +8,13 @@ import styles from './CheckoutClient.module.css';
 // No mock cart
 export default function CheckoutClient() {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bank'>('cod');
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { items, getSubtotal, clearCart } = useCartStore();
+  const { useRouter } = require('next/navigation');
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -20,14 +24,17 @@ export default function CheckoutClient() {
   const deliveryFee = subtotal > 0 ? 350 : 0;
   const total = subtotal + deliveryFee;
 
+  const isFormValid = paymentMethod === 'cod' || (paymentMethod === 'bank' && receiptFile !== null);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isFormValid) return;
+    
     setSubmitting(true);
     setTimeout(() => {
       setSubmitting(false);
       clearCart();
-      alert('Order Placed Successfully! (This is a demo)');
-      window.location.href = '/';
+      setShowSuccessModal(true);
     }, 1500);
   };
 
@@ -113,19 +120,43 @@ export default function CheckoutClient() {
                   <span className={styles.paymentDesc}>Transfer directly to our bank account.</span>
                 </div>
               </label>
-            </div>
 
-            {paymentMethod === 'bank' && (
-              <div className={styles.bankDetails}>
-                <p><strong>Bank:</strong> Commercial Bank</p>
-                <p><strong>Account Name:</strong> Fashion Gallery Apparel</p>
-                <p><strong>Account Number:</strong> 1000 2345 6789</p>
-                <p><strong>Branch:</strong> Moratuwa</p>
-                <p className={styles.bankNote}>
-                  Please deposit the total amount to the account above. Your order will not ship until the funds have cleared in our account. We will contact you via WhatsApp for the deposit slip.
-                </p>
-              </div>
-            )}
+              {paymentMethod === 'bank' && (
+                <div className={styles.bankDetails}>
+                  <p><strong>Bank:</strong> Commercial Bank</p>
+                  <p><strong>Account Name:</strong> Fashion Gallery Apparel</p>
+                  <p><strong>Account Number:</strong> 1000 2345 6789</p>
+                  <p><strong>Branch:</strong> Moratuwa</p>
+                  <p className={styles.bankNote}>
+                    Please deposit the total amount to the account above. Your order will not ship until the funds have cleared in our account.
+                  </p>
+                  <div className={styles.receiptUpload}>
+                    <label htmlFor="receipt">Upload Payment Receipt *</label>
+                    <input
+                      type="file"
+                      id="receipt"
+                      accept="image/*,application/pdf"
+                      onChange={(e) => setReceiptFile(e.target.files?.[0] || null)}
+                      required={paymentMethod === 'bank'}
+                    />
+                    {receiptFile && <span className={styles.fileName}>{receiptFile.name}</span>}
+                  </div>
+                </div>
+              )}
+
+              <label className={`${styles.paymentOption} ${styles.disabledPayment}`}>
+                <input
+                  type="radio"
+                  name="payment"
+                  value="card"
+                  disabled
+                />
+                <div className={styles.paymentDetails}>
+                  <span className={styles.paymentName}>Credit / Debit Card (Coming Soon)</span>
+                  <span className={styles.paymentDesc}>Secure online payment via card.</span>
+                </div>
+              </label>
+            </div>
           </div>
 
         </form>
@@ -173,12 +204,37 @@ export default function CheckoutClient() {
             type="submit" 
             form="checkout-form"
             className={`btn btn-primary ${styles.submitBtn}`}
-            disabled={submitting}
+            disabled={submitting || !isFormValid}
           >
             {submitting ? 'Processing...' : 'Place Order'}
           </button>
         </div>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.successIcon}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <h2 className={styles.modalTitle}>Order Placed Successfully!</h2>
+            <p className={styles.modalDesc}>
+              Thank you for your purchase. Your order has been received and is being processed. 
+              {paymentMethod === 'bank' && ' We will check your payment receipt and confirm your order shortly.'}
+            </p>
+            <button 
+              className={`btn btn-primary ${styles.continueBtn}`}
+              onClick={() => router.push('/')}
+            >
+              CONTINUE SHOPPING
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -30,7 +30,7 @@ export default function CartClient() {
         </svg>
         <h2>Your cart is empty</h2>
         <p>Looks like you haven&apos;t added anything to your cart yet.</p>
-        <Link href="/shop" className="btn btn-primary">
+        <Link href="/dresses" className="btn btn-primary">
           Continue Shopping
         </Link>
       </div>
@@ -109,7 +109,7 @@ export default function CartClient() {
             Proceed to Checkout
           </Link>
           
-          <Link href="/shop" className={styles.continueLink}>
+          <Link href="/dresses" className={styles.continueLink}>
             Continue Shopping
           </Link>
         </div>
