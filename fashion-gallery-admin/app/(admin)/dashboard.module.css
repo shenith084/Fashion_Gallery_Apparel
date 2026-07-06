@@ -1,0 +1,402 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-bottom: var(--space-8);
+}
+
+.pageHeader {
+  margin-bottom: var(--space-2);
+}
+
+.pageTitle {
+  font-family: var(--font-body);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  margin-bottom: 4px;
+}
+
+.pageSubtitle {
+  font-size: 13px;
+  color: var(--color-charcoal-light);
+}
+
+/* --- Metrics Grid --- */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-4);
+}
+
+.metricCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.metricTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.metricIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconPink { background: rgba(219, 39, 119, 0.1); color: #db2777; }
+.iconGreen { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.iconPurple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+.iconOrange { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+.metricTitle {
+  font-size: 12px;
+  color: var(--color-charcoal-light);
+  font-weight: 600;
+}
+
+.metricValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin-bottom: var(--space-3);
+}
+
+.metricBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.changePos {
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 600;
+}
+
+.changeNeg {
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 600;
+}
+
+.changeText {
+  color: var(--color-charcoal-light);
+}
+
+/* --- Middle Grid --- */
+.middleGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.cardTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+}
+
+.dropdownBtn {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--color-charcoal);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.viewAllBtn {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  cursor: pointer;
+}
+
+.chartArea {
+  height: 250px;
+  width: 100%;
+}
+
+/* --- Donut Chart Custom Legend --- */
+.legendList {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.legendLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-charcoal);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legendRight {
+  color: var(--color-charcoal-light);
+}
+
+/* --- Low Stock List --- */
+.lowStockList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.stockItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.stockImage {
+  width: 36px;
+  height: 48px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: var(--color-soft-beige);
+}
+
+.stockInfo {
+  flex: 1;
+}
+
+.stockName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-charcoal);
+  margin-bottom: 2px;
+}
+
+.stockCount {
+  font-size: 11px;
+  color: #ef4444;
+}
+
+/* --- Bottom Grid --- */
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: var(--space-4);
+}
+
+/* --- Table --- */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 0 0 var(--space-4) 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-charcoal-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.table td {
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: 12px;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.orderId {
+  font-weight: 600;
+  color: var(--color-charcoal);
+}
+
+.customerCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.customerAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.bgProcessing { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+.bgShipped { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.bgDelivered { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.bgOut { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+.actionBtn {
+  background: none;
+  border: none;
+  color: var(--color-charcoal-light);
+  cursor: pointer;
+}
+
+/* --- Top Selling --- */
+.topSellingList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sellingItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sellingRank {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-charcoal-light);
+  width: 16px;
+}
+
+.sellingImage {
+  width: 32px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.sellingName {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-charcoal);
+}
+
+.sellingCount {
+  font-size: 11px;
+  color: var(--color-charcoal-light);
+}
+
+/* --- Banner --- */
+.bannerCard {
+  background: linear-gradient(135deg, #f3aebc 0%, #e68fa1 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  margin-top: var(--space-4);
+}
+
+.bannerTitle {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bannerDesc {
+  font-size: 11px;
+  opacity: 0.9;
+  line-height: 1.4;
+  margin-bottom: var(--space-4);
+  max-width: 80%;
+}
+
+.bannerBtn {
+  background: white;
+  color: #db2777;
+  border: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bannerDecor {
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 100px;
+  height: 100px;
+  opacity: 0.8;
+  object-fit: cover;
+}
+
+@media (max-width: 1200px) {
+  .metricsGrid { grid-template-columns: repeat(3, 1fr); }
+  .middleGrid { grid-template-columns: 1fr; }
+  .bottomGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .metricsGrid { grid-template-columns: 1fr 1fr; }
+}

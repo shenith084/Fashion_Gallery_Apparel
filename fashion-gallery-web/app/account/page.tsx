@@ -1,15 +1,50 @@
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
+import Image from 'next/image';
+import AccountClient from '@/components/storefront/AccountClient/AccountClient';
+import Newsletter from '@/components/storefront/Newsletter/Newsletter';
+import styles from './account.module.css';
 
-export const metadata = { title: 'My Account | Fashion Gallery Apparel' };
+export const metadata = { title: 'My Profile | Fashion Gallery Apparel' };
 
 export default function Page() {
   return (
     <>
       <Navbar />
-      <main className="container" style={{ padding: 'var(--space-16) 0', minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', color: 'var(--color-burgundy)', marginBottom: 'var(--space-4)' }}>My Account</h1>
-        <p style={{ color: 'var(--color-charcoal-light)' }}>This page is under construction. UI/UX will be provided later.</p>
+      <main>
+        {/* Hero Section */}
+        <div className={styles.heroSection}>
+          <div className="container">
+            <div className={styles.heroInner}>
+              <div className={styles.heroContent}>
+                <h1 className={styles.title}>My Profile</h1>
+                <nav className={styles.breadcrumb} aria-label="Breadcrumb">
+                  <a href="/">Home</a>
+                  <span>›</span>
+                  <span>My Profile</span>
+                </nav>
+              </div>
+            </div>
+          </div>
+          
+          <div className={styles.heroImageWrap}>
+            <Image 
+              src="/prod-wrap-midi.png" 
+              alt="Profile Banner" 
+              fill 
+              sizes="(max-width: 768px) 50vw, 35vw"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Account Client */}
+        <div className="container" style={{ background: '#fafafa', paddingBottom: '40px' }}>
+          <AccountClient />
+        </div>
+
+        {/* Newsletter */}
+        <Newsletter />
       </main>
       <Footer />
     </>
