@@ -325,12 +325,8 @@
       "name": "Floral Maxi Dress",
       "slug": "floral-maxi-dress",
       "price": 4990,
-      "image": "/prod-floral-maxi.png",
-      "images": [
-        "/prod-floral-maxi.png",
-        "/prod-wrap-midi.png",
-        "/prod-printed-long.png"
-      ],
+      "image": "",
+      "images": [],
       "category": "New Arrivals",
       "categorySlug": "new-arrivals",
       "rating": 4,

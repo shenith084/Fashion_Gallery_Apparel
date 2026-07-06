@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import styles from './orders.module.css';
 import { Search, ChevronDown, Calendar, MoreVertical, X, CheckCircle, ChevronLeft, ChevronRight, FileText, Eye, Trash2, AlertTriangle } from 'lucide-react';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -57,17 +59,19 @@ export default function OrdersPage() {
   });
 
   React.useEffect(() => {
-    const fetchOrders = () => {
-      fetch('/api/orders')
-        .then(res => res.json())
-        .then(data => {
-          setOrders(data);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.error('Failed to fetch orders', err);
-          setLoading(false);
+    const fetchOrders = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'orders'));
+        const data: any[] = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
         });
+        setOrders(data);
+      } catch (err) {
+        console.error('Failed to fetch orders', err);
+      } finally {
+        setLoading(false);
+      }
     };
     
     fetchOrders();
@@ -78,18 +82,16 @@ export default function OrdersPage() {
   const handleUpdateStatus = async (status: string) => {
     if (!selectedOrderId) return;
     try {
-      const res = await fetch('/api/orders', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: selectedOrderId, status })
-      });
-      if (res.ok) {
-        setOrders(orders.map(o => o.id === selectedOrderId ? { ...o, status } : o));
-        setUpdateSuccess(true);
-        setTimeout(() => setUpdateSuccess(false), 3000);
-      }
-    } catch (error) {
-      console.error('Failed to update status', error);
+      await updateDoc(doc(db, 'orders', selectedOrderId), { status });
+      setOrders(prev => prev.map(o => o.id === selectedOrderId ? { ...o, status } : o));
+      
+      setUpdateSuccess(true);
+      setTimeout(() => setUpdateSuccess(false), 3000);
+      
+      // Close dropdown
+      setActionMenuOpenId(null);
+    } catch (err) {
+      console.error('Failed to update status', err);
     }
   };
 
@@ -116,11 +118,7 @@ export default function OrdersPage() {
         try {
           // Immediately update UI
           setOrders(prev => prev.map(o => o.id === id ? { ...o, isNew: false } : o));
-          await fetch('/api/orders', {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, isNew: false })
-          });
+          await updateDoc(doc(db, 'orders', id), { isNew: false });
         } catch (error) {
           console.error('Failed to mark order as read', error);
         }
@@ -128,18 +126,14 @@ export default function OrdersPage() {
     }
   };
 
-  const confirmDeleteOrder = async () => {
+  const handleDeleteOrder = async () => {
     if (!deleteConfirmId) return;
     try {
-      const res = await fetch(`/api/orders?id=${encodeURIComponent(deleteConfirmId)}`, { method: 'DELETE' });
-      if (res.ok) {
-        setOrders(orders.filter(o => o.id !== deleteConfirmId));
-        setDeleteConfirmId(null);
-      } else {
-        alert('Failed to delete order.');
-      }
-    } catch (error) {
-      console.error('Failed to delete order', error);
+      await deleteDoc(doc(db, 'orders', deleteConfirmId));
+      setOrders(prev => prev.filter(o => o.id !== deleteConfirmId));
+      setDeleteConfirmId(null);
+    } catch (err) {
+      console.error('Failed to delete order', err);
     }
   };
 
@@ -495,7 +489,7 @@ export default function OrdersPage() {
               <button className={styles.cancelDeleteBtn} onClick={() => setDeleteConfirmId(null)}>
                 Cancel
               </button>
-              <button className={styles.confirmDeleteBtn} onClick={confirmDeleteOrder}>
+              <button className={styles.confirmDeleteBtn} onClick={handleDeleteOrder}>
                 Yes, Delete Order
               </button>
             </div>

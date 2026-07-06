@@ -1,6 +1,6 @@
 # MASTER PROMPT
 ## Fashion Gallery Apparel ("My Moon Clothing") — Full-Stack E-Commerce System
-### Public Website + Unified Real-Time Admin Panel (Role-Based Access: Admin & Staff) + Backend + API
+### Public Website + Admin Panel (Separate Codebases) + Backend + API
 
 | | |
 |---|---|
@@ -8,13 +8,13 @@
 | **Business Type** | Women's fashion / apparel — Moratuwa, Sri Lanka |
 | **Prepared By** | Senith Chanidu (Group B) |
 | **Assigned By** | Pixzora Lab |
-| **Document Version** | v3.0 — Unified Admin Panel + Cloudinary Media |
+| **Document Version** | v3.1 — Separated Admin/Web Codebases + Cloudinary Media |
 | **Based On** | Project Research Document (30/06/2026) + Master Prompt v2.0 |
 | **Date** | 01/07/2026 |
 
 ### What's New in This Version
 This version updates v2.0 based on new client decisions:
-1. **Unified admin structure** — one single Admin Panel (`/admin`), not two separate panels. The website itself and the admin panel are the only two top-level experiences. Inside the one Admin Panel, two roles exist — **Admin (Owner)** and **Staff** — and what each person sees is controlled entirely by role/permissions (conditional UI), not by separate routes or separate codebases.
+1. **Separated Codebases** — The public website (`fashion-gallery-web`) and the Admin Panel (`fashion-gallery-admin`) are built as two distinct Next.js applications communicating with the same Firebase backend. Inside the Admin Panel, two roles exist — **Admin (Owner)** and **Staff** — controlled by role/permissions.
 2. **Admin can change staff permissions in real time**, from inside the same Admin Panel (no separate portal needed to manage this).
 3. **Cloudinary replaces Firebase Storage** for all product photography and media assets. Firebase (Firestore + Auth) remains mandatory for the database and authentication, but image/video hosting, transformation, and optimization is handled by Cloudinary.
 4. Brand identity, fixed color system, typography, and the global popup/notification system are carried over unchanged from v2.0.
@@ -77,7 +77,7 @@ Design a **production-grade, secure, mobile-first fashion e-commerce platform** 
 *Justification:* This is a single-brand boutique with a small team, not a multi-tenant enterprise product. A modular monolith keeps deployment simple (single Vercel project), keeps cost low (fits Firebase's and Cloudinary's free/low tiers), and still enforces clean module boundaries (`/products`, `/orders`, `/staff`, `/notifications`) so it can be split into services later if the brand scales into multiple stores.
 
 ### 3.2 Layered Architecture
-- **Presentation Layer** — Public site + one unified Admin Panel (role-adaptive UI, same codebase, same routes)
+- **Presentation Layer** — Public site (`fashion-gallery-web`) + Admin Panel (`fashion-gallery-admin`) as two separate Next.js repositories.
 - **Application Layer** — Server Actions / API route handlers (cart, checkout, order status, staff permission changes, Cloudinary signed-upload requests)
 - **Domain Layer** — Order workflow rules, stock rules, RBAC permission rules, notification rules
 - **Data Layer** — Firestore (primary data), Firebase Auth (identity/roles), Cloudinary (all images/media — product photos, banners)
@@ -85,7 +85,7 @@ Design a **production-grade, secure, mobile-first fashion e-commerce platform** 
 ### 3.3 System Components
 - Public Website (storefront)
 - Guest checkout (no forced account creation — matches "as easy as chatting" expectation)
-- **One Admin Panel** (`/admin`) — Owner and Staff log into the same panel; the interface adapts per role/permission (see Section 5)
+- **Admin Panel App** — Owner and Staff log into the Admin panel (`fashion-gallery-admin`); the interface adapts per role/permission (see Section 5)
 - Real-Time Notification / Popup Engine (shared by customer site + admin panel, both roles)
 - Marketing & Analytics Layer (Meta Pixel, TikTok Pixel, admin marketing dashboard)
 - Media Manager (Cloudinary upload widget + transformation pipeline)
@@ -213,13 +213,13 @@ This is the core of the updated requirements: **a single Admin Panel** at `/admi
 
 | | Admin (Owner) | Staff |
 |---|---|---|
-| Route | `/admin` | `/admin` (same route, same app) |
+| Route | Admin App (`fashion-gallery-admin`) | Admin App (`fashion-gallery-admin`) |
 | Who | Business owner | Employees hired to help with orders/stock |
 | Auth | Firebase Auth + `role: admin` custom claim | Firebase Auth + `role: staff` custom claim |
 | What they see | Full sidebar/menu — every module | Sidebar/menu filtered to only the modules and actions their `permissions` map grants |
 | Access enforcement | Route guard (any authenticated `admin`/`staff` user may enter `/admin`) + per-module UI conditional rendering + Server Action permission checks + Firestore security rules (defense in depth, never UI-only) | Same enforcement stack, just with a smaller permission set |
 
-**Why one panel instead of two:** the owner and staff are the same small team doing overlapping day-to-day work (orders, stock). One shared codebase/route with role-based conditional rendering is simpler to build, simpler to maintain, and still fully secure — because the real access control lives in Server Actions and Firestore Security Rules, not in which URL someone visits.
+**Why two separate codebases:** The public storefront and the admin panel have very different performance, security, and scaling requirements. Keeping them in separate Next.js projects ensures the public site remains lightweight and fast for SEO and mobile customers, while the heavy dashboard logic is isolated securely in the admin repository. Both applications securely connect to the same Firebase database.
 
 ### 5.2 Admin Panel — Full Module List
 
@@ -494,7 +494,7 @@ notifications/{notificationId}
 | 1 | Finalize pages, layout, and confirm brand palette with owner |
 | 2 | Firebase setup — Firestore schema, Auth, security rules; Cloudinary account + folder/preset setup |
 | 3 | Build storefront (Home, Shop, Product, Cart, Checkout) |
-| 4 | Build unified Admin Panel (`/admin`) — Dashboard, Products, Orders, Staff Management & Permissions, Settings, Audit Log, all with role-based conditional rendering + RBAC enforcement |
+| 4 | Build Admin Panel App (`fashion-gallery-admin`) — Dashboard, Products, Orders, Staff Management & Permissions, Settings, Audit Log, all with role-based conditional rendering + RBAC enforcement |
 | 5 | Real-time layer (order feed, stock counters, live permission updates, popup/notification engine) |
 | 6 | Integrate Cloudinary media pipeline (signed uploads, transformations), Resend email, Meta/TikTok pixels |
 | 7 | QA on mobile + desktop, PageSpeed tuning |
@@ -509,7 +509,7 @@ notifications/{notificationId}
 - [ ] API / Server Action structure
 - [ ] RBAC permission matrix (Admin vs. Staff, inside one panel)
 - [ ] Folder structure
-- [ ] Unified Admin Panel module set with role-based visibility rules
+- [ ] Admin Panel App module set with role-based visibility rules
 - [ ] Public website pages
 - [ ] Design system (Primary Palette + Premium Alternative + Semantic colors)
 - [ ] Popup/notification system (customer + admin panel, both roles)

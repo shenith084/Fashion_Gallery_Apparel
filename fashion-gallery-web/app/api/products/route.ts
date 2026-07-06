@@ -1,18 +1,18 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-
-const DB_PATH = path.join(process.cwd(), '..', 'database.json');
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 export async function GET() {
   try {
-    if (fs.existsSync(DB_PATH)) {
-      const db = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
-      return NextResponse.json(db.products || []);
-    }
-    return NextResponse.json([]);
+    const q = query(collection(db, 'products'), where('status', '==', 'Active'));
+    const querySnapshot = await getDocs(q);
+    const products: any[] = [];
+    querySnapshot.forEach((doc) => {
+      products.push({ id: doc.id, ...doc.data() });
+    });
+    return NextResponse.json(products);
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    console.error('Error fetching products from Firestore:', error);
+    return NextResponse.json([], { status: 500 });
   }
 }

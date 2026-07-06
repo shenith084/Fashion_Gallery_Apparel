@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './returns.module.css';
 import { Search, ChevronDown, Calendar, MoreVertical, X, Check, XCircle } from 'lucide-react';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 export default function ReturnsPage() {
   const [returns, setReturns] = useState<any[]>([]);
@@ -17,12 +19,16 @@ export default function ReturnsPage() {
   useEffect(() => {
     const fetchReturns = async () => {
       try {
-        const res = await fetch('/api/returns');
-        const data = await res.json();
+        const querySnapshot = await getDocs(collection(db, 'returns'));
+        const data: any[] = [];
+        querySnapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
         setReturns(data);
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch returns', error);
+        setLoading(false);
       }
     };
     
@@ -66,25 +72,15 @@ export default function ReturnsPage() {
     const clickedReturn = returns.find(r => r.id === id);
     if (clickedReturn && clickedReturn.isNew) {
       setReturns(prev => prev.map(r => r.id === id ? { ...r, isNew: false } : r));
-      await fetch('/api/returns', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, isNew: false })
-      });
+      await updateDoc(doc(db, 'returns', id), { isNew: false });
     }
   };
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {
-      const res = await fetch('/api/returns', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, status: newStatus })
-      });
-      if (res.ok) {
-        setReturns(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
-        setSelectedReturnId(null);
-      }
+      await updateDoc(doc(db, 'returns', id), { status: newStatus });
+      setReturns(prev => prev.map(r => r.id === id ? { ...r, status: newStatus } : r));
+      setSelectedReturnId(null);
     } catch (error) {
       console.error('Failed to update return', error);
     }

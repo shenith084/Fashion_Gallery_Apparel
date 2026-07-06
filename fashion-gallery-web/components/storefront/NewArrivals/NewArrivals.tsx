@@ -1,22 +1,28 @@
 import Link from 'next/link';
-import fs from 'fs';
-import path from 'path';
 import ProductCard from '@/components/ui/ProductCard';
 import styles from './NewArrivals.module.css';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
-const DB_PATH = path.join(process.cwd(), '..', 'database.json');
-
-export default function NewArrivals() {
-  let newArrivals: any[] = [];
+export default async function NewArrivals() {
+  let products: any[] = [];
   try {
-    if (fs.existsSync(DB_PATH)) {
-      const db = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
-      newArrivals = (db.products || [])
-        .filter((p: any) => p.isNew || p.categorySlug === 'new-arrivals')
-        .slice(0, 6)
-        .map((p: any) => ({ ...p, href: `/product/${p.slug}` }));
-    }
-  } catch {}
+    // Firestore rules require the query to match the rule filters (Rules are not filters)
+    const q = query(collection(db, 'products'), where('status', '==', 'Active'));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      products.push({ id: doc.id, ...doc.data() });
+    });
+  } catch (error) {
+    console.error("Error reading from Firestore:", error);
+  }
+  
+  // Get latest 4 active products
+  const activeProducts = products.filter(p => p.status === 'Active');
+  const newArrivals = activeProducts
+    .slice(-4)
+    .reverse()
+    .map(p => ({ ...p, href: `/product/${p.slug}` }));
 
   return (
     <section className={styles.section} id="new-arrivals-section">

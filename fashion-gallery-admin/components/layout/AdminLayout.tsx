@@ -10,6 +10,8 @@ import {
   Link as LinkIcon, Settings, Search, MessageSquare,
   Moon
 } from 'lucide-react';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 
 type MenuItem = {
   name: string;
@@ -31,9 +33,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   React.useEffect(() => {
     const fetchNewOrderCount = async () => {
       try {
-        const res = await fetch('/api/orders');
-        const data = await res.json();
-        const count = data.filter((o: any) => o.isNew).length;
+        const querySnapshot = await getDocs(collection(db, 'orders'));
+        let count = 0;
+        querySnapshot.forEach((doc) => {
+          if (doc.data().isNew) count++;
+        });
         setNewOrderCount(count);
       } catch (error) {
         console.error('Failed to fetch orders for badge', error);

@@ -36,7 +36,7 @@ service cloud.firestore {
     // ─── PRODUCTS ─────────────────────────────────────────────
     match /products/{productId} {
       // Public can read active products
-      allow read: if resource.data.status == 'active' || isStaff();
+      allow read: if resource.data.status == 'Active' || isStaff();
       // Only staff with permission can write
       allow create: if hasPermission('product.edit_details');
       allow update: if hasPermission('product.edit_details') || hasPermission('product.edit_stock');

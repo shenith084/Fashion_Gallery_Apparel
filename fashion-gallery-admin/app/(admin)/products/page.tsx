@@ -1,7 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { Eye, Edit2, MoreVertical, Plus, Search, X, Trash2, Upload } from 'lucide-react';
+import { Eye, Edit2, MoreVertical, Plus, Search, X, Trash2, Upload, ImagePlus } from 'lucide-react';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import styles from './Products.module.css';
 
 const CATEGORIES = ['All Categories', 'New Arrivals', 'Dresses', 'Office Wear', 'Tops', 'Bottoms'];
@@ -34,14 +36,19 @@ export default function ProductsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [notification, setNotification] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      setProducts(Array.isArray(data) ? data : []);
+      const querySnapshot = await getDocs(collection(db, 'products'));
+      const data: any[] = [];
+      querySnapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() });
+      });
+      setProducts(data);
     } catch (err) {
       console.error('Failed to fetch products', err);
     } finally {
@@ -92,6 +99,31 @@ export default function ProductsPage() {
   const openEditModal = (product: Product) => { setEditProduct({ ...product }); setIsEditing(true); setOpenMenuId(null); };
   const closeModal = () => setEditProduct(null);
 
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    const currentImages = editProduct?.images || [];
+    const remaining = 3 - currentImages.length;
+    if (remaining <= 0) { showNotification('Maximum 3 images allowed.', 'error'); return; }
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      Array.from(files).slice(0, remaining).forEach(f => formData.append('files', f));
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok && data.urls) {
+        const newImages = [...currentImages, ...data.urls].slice(0, 3);
+        setEditProduct(p => ({ ...p, image: newImages[0], images: newImages }));
+        showNotification('Images uploaded!');
+      } else showNotification('Upload failed.', 'error');
+    } catch { showNotification('Upload error.', 'error'); }
+    finally { setUploading(false); }
+  };
+
+  const removeImage = (idx: number) => {
+    const imgs = [...(editProduct?.images || [])].filter((_, i) => i !== idx);
+    setEditProduct(p => ({ ...p, image: imgs[0] || '', images: imgs }));
+  };
+
   const handleStockStatusSync = (stock: number) => {
     if (stock === 0) return 'Out of Stock';
     if (stock < 15) return 'Low Stock';
@@ -102,25 +134,36 @@ export default function ProductsPage() {
     if (!editProduct) return;
     setSaving(true);
     try {
-      const method = isEditing ? 'PATCH' : 'POST';
       const payload = { ...editProduct, slug: editProduct.name?.toLowerCase().replace(/\s+/g, '-') };
-      const res = await fetch('/api/products', {
-        method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        await fetchProducts(); closeModal();
-        showNotification(isEditing ? 'Product updated!' : 'Product created!');
-      } else showNotification('Failed to save product.', 'error');
-    } catch { showNotification('Network error.', 'error'); }
+      if (isEditing && payload.id) {
+        const docRef = doc(db, 'products', payload.id);
+        delete payload.id;
+        await updateDoc(docRef, payload);
+        showNotification('Product updated!');
+      } else {
+        await addDoc(collection(db, 'products'), payload);
+        showNotification('Product created!');
+      }
+      await fetchProducts(); 
+      closeModal();
+    } catch (error) { 
+      console.error(error);
+      showNotification('Failed to save product.', 'error'); 
+    }
     finally { setSaving(false); }
   };
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`/api/products?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
-      if (res.ok) { await fetchProducts(); setDeleteConfirmId(null); setOpenMenuId(null); showNotification('Product deleted.'); }
-      else showNotification('Failed to delete.', 'error');
-    } catch { showNotification('Network error.', 'error'); }
+      await deleteDoc(doc(db, 'products', id));
+      await fetchProducts(); 
+      setDeleteConfirmId(null); 
+      setOpenMenuId(null); 
+      showNotification('Product deleted.');
+    } catch (error) { 
+      console.error(error);
+      showNotification('Failed to delete.', 'error'); 
+    }
   };
 
   return (
@@ -214,17 +257,8 @@ export default function ProductsPage() {
                     <td><span className={`${styles.badge} ${getStatusClass(product.status)}`}>{product.status}</span></td>
                     <td>
                       <div className={styles.actionButtons} ref={menuRef}>
-                        <button className={styles.actionBtn} title="View"><Eye size={16} /></button>
                         <button className={styles.actionBtn} title="Edit" onClick={() => openEditModal(product)}><Edit2 size={16} /></button>
-                        <div className={styles.menuWrap}>
-                          <button className={styles.actionBtn} onClick={() => setOpenMenuId(openMenuId === product.id ? null : product.id)}><MoreVertical size={16} /></button>
-                          {openMenuId === product.id && (
-                            <div className={styles.dropMenu}>
-                              <button onClick={() => openEditModal(product)}><Edit2 size={14} /> Edit</button>
-                              <button className={styles.deleteMenuItem} onClick={() => setDeleteConfirmId(product.id)}><Trash2 size={14} /> Delete</button>
-                            </div>
-                          )}
-                        </div>
+                        <button className={styles.actionBtn} title="Delete" onClick={() => setDeleteConfirmId(product.id)}><Trash2 size={16} color="#ef4444" /></button>
                       </div>
                     </td>
                   </tr>
@@ -259,10 +293,6 @@ export default function ProductsPage() {
               <button className={styles.modalClose} onClick={closeModal}><X size={20} /></button>
             </div>
             <div className={styles.modalBody}>
-              <div className={styles.imagePreviewWrap}>
-                {editProduct.image ? <img src={editProduct.image} alt="Preview" className={styles.imagePreview} /> :
-                  <div className={styles.imagePlaceholder}><Upload size={32} color="#ccc" /><span>No image</span></div>}
-              </div>
               <div className={styles.formGrid}>
                 <div className={styles.formGroup}><label>Product Name</label><input type="text" value={editProduct.name||''} onChange={e=>setEditProduct(p=>({...p,name:e.target.value}))} placeholder="e.g. Floral Maxi Dress" /></div>
                 <div className={styles.formGroup}><label>SKU</label><input type="text" value={editProduct.sku||''} onChange={e=>setEditProduct(p=>({...p,sku:e.target.value}))} placeholder="e.g. MM-DRESS-001" /></div>
@@ -278,11 +308,57 @@ export default function ProductsPage() {
                     <option>Active</option><option>Low Stock</option><option>Out of Stock</option>
                   </select>
                 </div>
-                <div className={styles.formGroup} style={{gridColumn:'1/-1'}}><label>Image URL</label><input type="text" value={editProduct.image||''} onChange={e=>setEditProduct(p=>({...p,image:e.target.value,images:[e.target.value]}))} placeholder="https:// or /filename.png" /></div>
                 <div className={styles.formGroup} style={{gridColumn:'1/-1'}}><label>Fabric</label><input type="text" value={editProduct.fabric||''} onChange={e=>setEditProduct(p=>({...p,fabric:e.target.value}))} /></div>
                 <div className={styles.formGroup} style={{gridColumn:'1/-1'}}><label>Description</label><textarea rows={3} value={editProduct.description||''} onChange={e=>setEditProduct(p=>({...p,description:e.target.value}))} /></div>
                 <div className={styles.formGroup}><label>Sizes (comma separated)</label><input type="text" value={(editProduct.sizes||[]).join(', ')} onChange={e=>setEditProduct(p=>({...p,sizes:e.target.value.split(',').map(s=>s.trim())}))} /></div>
                 <div className={styles.formGroup}><label>Colors (comma separated)</label><input type="text" value={(editProduct.colors||[]).join(', ')} onChange={e=>setEditProduct(p=>({...p,colors:e.target.value.split(',').map(s=>s.trim())}))} /></div>
+                {/* IMAGE UPLOAD SECTION */}
+                <div className={styles.formGroup} style={{gridColumn:'1/-1'}}>
+                  <label>Product Images <span style={{fontWeight:400, color:'#999', textTransform:'none'}}>(Max 3 images — first image is the main card image)</span></label>
+                  <div className={styles.imageUploadGrid}>
+                    {/* Existing images */}
+                    {(editProduct.images||[]).map((img, idx) => (
+                      <div key={idx} className={styles.imageUploadSlot} style={{position:'relative'}}>
+                        <img src={img} alt={`Image ${idx+1}`} className={styles.uploadedImg} />
+                        {idx === 0 && <span className={styles.mainBadge}>Main</span>}
+                        <button className={styles.removeImgBtn} onClick={() => removeImage(idx)} type="button"><X size={12} /></button>
+                      </div>
+                    ))}
+                    {/* Upload slot — show if less than 3 */}
+                    {(editProduct.images||[]).length < 3 && (
+                      <div
+                        className={styles.imageUploadSlot}
+                        onClick={() => fileInputRef.current?.click()}
+                        style={{cursor:'pointer'}}
+                      >
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          style={{display:'none'}}
+                          onChange={e => handleImageUpload(e.target.files)}
+                        />
+                        {uploading ? (
+                          <div className={styles.uploadPlaceholder}>
+                            <div className={styles.uploadSpinner} />
+                            <span>Uploading...</span>
+                          </div>
+                        ) : (
+                          <div className={styles.uploadPlaceholder}>
+                            <ImagePlus size={24} color="#bbb" />
+                            <span>Upload Image</span>
+                            <span style={{fontSize:'10px',color:'#ccc'}}>{3-(editProduct.images||[]).length} slot(s) left</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {/* Empty placeholder slots */}
+                    {Array.from({length: Math.max(0, 3 - Math.max((editProduct.images||[]).length, 1))}).map((_, i) => (
+                      <div key={`empty-${i}`} className={`${styles.imageUploadSlot} ${styles.imageUploadEmpty}`} />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
             <div className={styles.modalFooter}>

@@ -1,0 +1,72 @@
+.container { display: flex; flex-direction: column; gap: 24px; }
+
+/* Page Header */
+.pageHeader { display: flex; justify-content: space-between; align-items: flex-start; }
+.pageTitle { font-size: 24px; font-weight: 700; color: #1a1a1a; margin: 0; }
+.breadcrumb { font-size: 13px; color: #999; margin: 4px 0 0 0; }
+.headerActions { display: flex; gap: 12px; }
+.adjustBtn { display: flex; align-items: center; gap: 8px; background: #a62a4b; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.adjustBtn:hover { background: #8a1f3c; }
+
+/* Summary Cards */
+.statsGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 1000px) { .statsGrid { grid-template-columns: repeat(2, 1fr); } }
+.statCard { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); display: flex; gap: 16px; align-items: center; border: 1px solid #f0f0f0; }
+.statIcon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.statIcon.purple { background: #f3f0ff; color: #7c3aed; }
+.statIcon.green { background: #ecfdf5; color: #10b981; }
+.statIcon.orange { background: #fff7ed; color: #f97316; }
+.statIcon.red { background: #fef2f2; color: #ef4444; }
+.statContent { flex: 1; }
+.statLabel { font-size: 13px; color: #888; margin: 0; font-weight: 600; }
+.statValue { font-size: 24px; font-weight: 700; color: #1a1a1a; margin: 4px 0; }
+.statSub { font-size: 12px; color: #999; margin: 0; }
+
+/* Filter Bar */
+.filterBar { display: flex; gap: 12px; align-items: center; background: white; padding: 16px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; flex-wrap: wrap; justify-content: space-between; }
+.filterGroup { display: flex; gap: 12px; align-items: center; flex: 1; }
+.searchWrap { flex: 1; max-width: 300px; position: relative; display: flex; align-items: center; }
+.searchIcon { position: absolute; left: 12px; color: #aaa; pointer-events: none; }
+.searchInput { width: 100%; padding: 9px 12px 9px 36px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.searchInput:focus { border-color: #6b2335; }
+.filterSelect { padding: 9px 32px 9px 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; outline: none; background: white; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
+
+/* Table */
+.tableCard { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; overflow: hidden; }
+.tableWrapper { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; text-align: left; }
+.table th { padding: 14px 20px; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f0f0f0; background: #fafafa; white-space: nowrap; }
+.table td { padding: 16px 20px; border-bottom: 1px solid #f5f5f5; font-size: 14px; color: #333; vertical-align: middle; }
+.table tr:hover td { background: #fafafa; }
+.emptyState { padding: 60px; text-align: center; color: #aaa; font-size: 15px; }
+
+/* Cells */
+.productCell { display: flex; align-items: center; gap: 8px; }
+.thumbnail { display: none; }
+.productInfo { display: flex; flex-direction: column; gap: 2px; }
+.productName { font-weight: 600; color: #1a1a1a; font-size: 13px; }
+.productSku { font-size: 11px; color: #888; }
+.skuCell { font-size: 13px; color: #666; }
+.varCell { font-size: 13px; color: #666; }
+.stockZero { color: #ef4444; font-weight: 700; }
+.stockLow { color: #f97316; font-weight: 700; }
+.stockOk { color: #1a1a1a; font-weight: 600; }
+
+.badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.badgeActive { background: #f3f0ff; color: #7c3aed; }
+.badgeLowStock { background: #fff7ed; color: #f97316; }
+.badgeOutOfStock { background: #fef2f2; color: #ef4444; }
+
+.dateCell { font-size: 13px; color: #666; white-space: nowrap; }
+
+.actionBtn { padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #fca5a5; background: #fef2f2; color: #ef4444; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.actionBtn:hover { background: #ef4444; color: white; }
+
+/* Pagination */
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid #f0f0f0; flex-wrap: wrap; gap: 10px; }
+.paginationInfo { font-size: 13px; color: #888; }
+.pageButtons { display: flex; gap: 4px; align-items: center; }
+.pageBtn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #e5e7eb; background: white; color: #666; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.pageBtn:hover:not(:disabled) { border-color: #a62a4b; color: #a62a4b; }
+.pageBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pageBtnActive { background: #fdf2f5 !important; color: #a62a4b !important; border-color: #fbcfe8 !important; }
