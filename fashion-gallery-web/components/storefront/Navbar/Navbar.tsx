@@ -6,7 +6,13 @@ import Link from 'next/link';
 import { useCartStore } from '@/lib/store/cartStore';
 import styles from './Navbar.module.css';
 
-const NAV_LINKS = [
+type NavLink = {
+  label: string;
+  href: string;
+  dropdown?: { label: string; href: string; }[];
+};
+
+const NAV_LINKS: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'New Arrivals', href: '/new-arrivals' },
   { label: 'Dresses', href: '/dresses' },
@@ -51,16 +57,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className={styles.logo} id="navbar-logo">
           <div className={styles.logoMark}>
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="18" cy="18" r="17" fill="#2B2B2B" stroke="#6B2335" strokeWidth="1.5"/>
-              <path d="M22 12C22 15.31 19.31 18 16 18C12.69 18 10 15.31 10 12C10 12 13 13 16 11C19 9 22 12 22 12Z" fill="white"/>
-              <path d="M14 19C14 21.21 15.79 23 18 23C20.21 23 22 21.21 22 19" stroke="#6B2335" strokeWidth="2" strokeLinecap="round"/>
-              <circle cx="18" cy="24" r="1.5" fill="#6B2335"/>
-            </svg>
-          </div>
-          <div className={styles.logoText}>
-            <span className={styles.logoMain}>MY MOON</span>
-            <span className={styles.logoSub}>FASHION GALLERY APPAREL</span>
+            <img src="/logo.svg" alt="My Moon Clothing" style={{ height: '48px', width: 'auto' }} />
           </div>
         </Link>
 

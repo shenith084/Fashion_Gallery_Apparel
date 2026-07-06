@@ -1,9 +1,11 @@
 'use client';
 
 import Image from 'next/image';
+import { useAuthStore } from '@/lib/store/authStore';
 import styles from './ProfileOverview.module.css';
 
 export default function ProfileOverview() {
+  const user = useAuthStore(state => state.user);
   return (
     <div className={styles.container}>
       {/* Profile Card */}
@@ -11,20 +13,20 @@ export default function ProfileOverview() {
         <div className={styles.profileMain}>
           <div className={styles.avatarWrap}>
             <Image 
-              src="/prod-floral-maxi.png" 
-              alt="Nethmi Perera" 
+              src={user?.avatar || "/prod-floral-maxi.png"} 
+              alt={user?.name || "Profile"} 
               fill 
               className={styles.avatar} 
             />
           </div>
           <div className={styles.profileDetails}>
             <div className={styles.nameRow}>
-              <h2 className={styles.name}>Nethmi Perera</h2>
+              <h2 className={styles.name}>{user?.name}</h2>
               <button className={styles.editBtn}>
                 <EditIcon /> EDIT PROFILE
               </button>
             </div>
-            <p className={styles.email}>nethmiperera@gmail.com</p>
+            <p className={styles.email}>{user?.email}</p>
             <span className={styles.badge}>
               <CheckCircleIcon /> Verified Customer
             </span>

@@ -1,17 +1,23 @@
 import Link from 'next/link';
+import fs from 'fs';
+import path from 'path';
 import ProductCard from '@/components/ui/ProductCard';
 import styles from './NewArrivals.module.css';
 
-const NEW_ARRIVALS = [
-  { id: 'floral-maxi', name: 'Floral Maxi Dress', price: 4990, image: '/prod-floral-maxi.png', rating: 4, reviewCount: 128, isNew: true, href: '/product/floral-maxi-dress' },
-  { id: 'wrap-midi', name: 'Wrap Midi Dress', price: 4490, image: '/prod-wrap-midi.png', rating: 4.5, reviewCount: 84, isNew: true, href: '/product/wrap-midi-dress' },
-  { id: 'printed-long', name: 'Printed Long Dress', price: 4790, image: '/prod-printed-long.png', rating: 4, reviewCount: 87, isNew: true, href: '/product/printed-long-dress' },
-  { id: 'vneck-midi', name: 'V-Neck Midi Dress', price: 4290, image: '/prod-vneck.png', rating: 4, reviewCount: 74, isNew: true, href: '/product/vneck-midi-dress' },
-  { id: 'shirt-dress', name: 'Shirt Dress', price: 4290, image: '/prod-shirt.png', rating: 4, reviewCount: 51, isNew: true, href: '/product/shirt-dress' },
-  { id: 'office-dress', name: 'Office Wear Dress', price: 4290, image: '/prod-office.png', rating: 4, reviewCount: 63, isNew: true, href: '/product/office-wear-dress' },
-];
+const DB_PATH = path.join(process.cwd(), '..', 'database.json');
 
 export default function NewArrivals() {
+  let newArrivals: any[] = [];
+  try {
+    if (fs.existsSync(DB_PATH)) {
+      const db = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8'));
+      newArrivals = (db.products || [])
+        .filter((p: any) => p.isNew || p.categorySlug === 'new-arrivals')
+        .slice(0, 6)
+        .map((p: any) => ({ ...p, href: `/product/${p.slug}` }));
+    }
+  } catch {}
+
   return (
     <section className={styles.section} id="new-arrivals-section">
       <div className="container">
@@ -26,7 +32,7 @@ export default function NewArrivals() {
         </div>
 
         <div className={styles.grid}>
-          {NEW_ARRIVALS.map((product) => (
+          {newArrivals.map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}
         </div>

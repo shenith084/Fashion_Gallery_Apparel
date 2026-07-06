@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useAuthStore } from '@/lib/store/authStore';
 import styles from './AccountSidebar.module.css';
 
 const MENU_ITEMS = [
@@ -14,8 +15,21 @@ const MENU_ITEMS = [
   { id: 'logout', label: 'Logout', icon: <LogOutIcon /> },
 ];
 
-export default function AccountSidebar() {
-  const activeTab = 'overview';
+interface AccountSidebarProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+}
+
+export default function AccountSidebar({ activeTab, onTabChange }: AccountSidebarProps) {
+  const logout = useAuthStore(state => state.logout);
+
+  const handleMenuClick = (id: string) => {
+    if (id === 'logout') {
+      logout();
+    } else {
+      onTabChange(id);
+    }
+  };
 
   return (
     <aside className={styles.sidebar}>
@@ -26,6 +40,7 @@ export default function AccountSidebar() {
             <button 
               key={item.id} 
               className={`${styles.navItem} ${activeTab === item.id ? styles.active : ''}`}
+              onClick={() => handleMenuClick(item.id)}
             >
               <span className={styles.iconWrap}>{item.icon}</span>
               {item.label}

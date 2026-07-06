@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './AdminLayout.module.css';
@@ -23,53 +23,71 @@ type MenuSection = {
   items: MenuItem[];
 };
 
-const MENU_SECTIONS: MenuSection[] = [
-  {
-    title: null,
-    items: [
-      { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={18} /> },
-    ]
-  },
-  {
-    title: 'SALES & ORDERS',
-    items: [
-      { name: 'Orders', path: '/orders', icon: <ShoppingBag size={18} />, badge: 12 },
-      { name: 'Returns', path: '/returns', icon: <RotateCcw size={18} /> },
-    ]
-  },
-  {
-    title: 'CATALOG',
-    items: [
-      { name: 'Products', path: '/products', icon: <Box size={18} /> },
-      { name: 'Stock', path: '/stock', icon: <Layers size={18} /> },
-    ]
-  },
-  {
-    title: 'STAFF & PERMISSIONS',
-    items: [
-      { name: 'Staff Management', path: '/staff', icon: <Users size={18} /> },
-      { name: 'Roles & Permissions', path: '/roles', icon: <Shield size={18} /> },
-      { name: 'Activity Logs', path: '/logs', icon: <Activity size={18} /> },
-    ]
-  },
-  {
-    title: 'MARKETING',
-    items: [
-      { name: 'Banners', path: '/banners', icon: <ImageIcon size={18} /> },
-      { name: 'Social Links', path: '/social', icon: <LinkIcon size={18} /> },
-    ]
-  },
-  {
-    title: 'SETTINGS',
-    items: [
-      { name: 'Settings', path: '/settings', icon: <Settings size={18} /> },
-    ]
-  }
-];
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [newOrderCount, setNewOrderCount] = useState(0);
+
+  React.useEffect(() => {
+    const fetchNewOrderCount = async () => {
+      try {
+        const res = await fetch('/api/orders');
+        const data = await res.json();
+        const count = data.filter((o: any) => o.isNew).length;
+        setNewOrderCount(count);
+      } catch (error) {
+        console.error('Failed to fetch orders for badge', error);
+      }
+    };
+    
+    fetchNewOrderCount();
+    const interval = setInterval(fetchNewOrderCount, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const MENU_SECTIONS: MenuSection[] = [
+    {
+      title: null,
+      items: [
+        { name: 'Dashboard', path: '/', icon: <LayoutDashboard size={18} /> },
+      ]
+    },
+    {
+      title: 'SALES & ORDERS',
+      items: [
+        { name: 'Orders', path: '/orders', icon: <ShoppingBag size={18} />, badge: newOrderCount > 0 ? newOrderCount : undefined },
+        { name: 'Returns', path: '/returns', icon: <RotateCcw size={18} /> },
+      ]
+    },
+    {
+      title: 'CATALOG',
+      items: [
+        { name: 'Products', path: '/products', icon: <Box size={18} /> },
+        { name: 'Stock', path: '/stock', icon: <Layers size={18} /> },
+      ]
+    },
+    {
+      title: 'STAFF & PERMISSIONS',
+      items: [
+        { name: 'Staff Management', path: '/staff', icon: <Users size={18} /> },
+        { name: 'Roles & Permissions', path: '/roles', icon: <Shield size={18} /> },
+        { name: 'Activity Logs', path: '/logs', icon: <Activity size={18} /> },
+      ]
+    },
+    {
+      title: 'MARKETING',
+      items: [
+        { name: 'Banners', path: '/banners', icon: <ImageIcon size={18} /> },
+        { name: 'Social Links', path: '/social', icon: <LinkIcon size={18} /> },
+      ]
+    },
+    {
+      title: 'SETTINGS',
+      items: [
+        { name: 'Settings', path: '/settings', icon: <Settings size={18} /> },
+      ]
+    }
+  ];
 
   return (
     <div className={styles.layout}>
@@ -82,11 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.sidebarHeader}>
           <Link href="/" className={styles.logo}>
-            <Moon className={styles.logoIcon} fill="currentColor" stroke="none" size={28} />
-            <div className={styles.logoText}>
-              <span className={styles.logoMain}>MY MOON</span>
-              <span className={styles.logoSub}>CLOTHING</span>
-            </div>
+            <img src="/logo.svg" alt="My Moon Clothing" style={{ height: '48px', width: 'auto', borderRadius: '4px' }} />
           </Link>
         </div>
         

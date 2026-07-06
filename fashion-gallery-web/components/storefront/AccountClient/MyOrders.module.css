@@ -1,0 +1,112 @@
+.container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  padding: 30px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 24px;
+}
+
+.orderList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.orderCard {
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+.orderId {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.orderDate {
+  font-size: 13px;
+  color: #64748b;
+  margin-left: 8px;
+}
+
+.orderStatus {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.statusProcessing { background: #fef3c7; color: #d97706; }
+.statusShipped { background: #e0f2fe; color: #0284c7; }
+.statusDelivered { background: #dcfce7; color: #16a34a; }
+.statusCancelled { background: #fee2e2; color: #dc2626; }
+
+.orderBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orderItem {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #334155;
+}
+
+.orderTotal {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 16px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
+
+.orderActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.returnBtn {
+  padding: 8px 16px;
+  border: 1px solid #6b2335;
+  color: #6b2335;
+  background: white;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.returnBtn:hover {
+  background: #fdf2f8;
+}
+
+.returnedText {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}

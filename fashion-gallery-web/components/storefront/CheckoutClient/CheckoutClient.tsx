@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useCartStore } from '@/lib/store/cartStore';
+import { useAuthStore } from '@/lib/store/authStore';
 import styles from './CheckoutClient.module.css';
 
 // No mock cart
@@ -15,10 +16,14 @@ export default function CheckoutClient() {
   const { items, getSubtotal, clearCart } = useCartStore();
   const { useRouter } = require('next/navigation');
   const router = useRouter();
+  const user = useAuthStore(state => state.user);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (!useAuthStore.getState().user) {
+      router.push('/login?returnUrl=/checkout');
+    }
+  }, [router]);
 
   const subtotal = getSubtotal();
   const deliveryFee = subtotal > 0 ? 350 : 0;
@@ -26,16 +31,59 @@ export default function CheckoutClient() {
 
   const isFormValid = paymentMethod === 'cod' || (paymentMethod === 'bank' && receiptFile !== null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isFormValid) return;
     
     setSubmitting(true);
-    setTimeout(() => {
+    
+    try {
+      // Collect form data
+      const formData = new FormData(e.target as HTMLFormElement);
+      const customer = `${formData.get('firstName')} ${formData.get('lastName')}`;
+      const phone = formData.get('phone') as string;
+      const email = formData.get('email') as string;
+      const address = formData.get('address') as string;
+      
+      let receiptImage = null;
+      if (receiptFile) {
+        receiptImage = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(receiptFile);
+        });
+      }
+
+      const orderData = {
+        customer,
+        phone,
+        email,
+        address,
+        total: `LKR ${total.toLocaleString('en-LK')}`,
+        payment: paymentMethod === 'cod' ? 'Cash on Delivery' : 'Bank Transfer',
+        items: items,
+        receiptImage: receiptImage,
+        avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(customer)}&backgroundColor=6B2335&textColor=ffffff`
+      };
+
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+      
+      if (res.ok) {
+        clearCart();
+        setShowSuccessModal(true);
+      } else {
+        alert('Failed to place order. Please try again.');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred. Please try again.');
+    } finally {
       setSubmitting(false);
-      clearCart();
-      setShowSuccessModal(true);
-    }, 1500);
+    }
   };
 
   if (!mounted) return null;
@@ -50,11 +98,11 @@ export default function CheckoutClient() {
             <div className={styles.inputRow}>
               <div className={styles.inputCol}>
                 <label htmlFor="email">Email Address *</label>
-                <input type="email" id="email" required placeholder="your@email.com" />
+                <input type="email" id="email" name="email" defaultValue={user?.email} required placeholder="your@email.com" />
               </div>
               <div className={styles.inputCol}>
                 <label htmlFor="phone">Phone Number *</label>
-                <input type="tel" id="phone" required placeholder="07X XXX XXXX" />
+                <input type="tel" id="phone" name="phone" defaultValue={user?.phone} required placeholder="07X XXX XXXX" />
               </div>
             </div>
           </div>
@@ -64,17 +112,17 @@ export default function CheckoutClient() {
             <div className={styles.inputRow}>
               <div className={styles.inputCol}>
                 <label htmlFor="firstName">First Name *</label>
-                <input type="text" id="firstName" required />
+                <input type="text" id="firstName" name="firstName" defaultValue={user?.name?.split(' ')[0]} required placeholder="First Name" />
               </div>
               <div className={styles.inputCol}>
                 <label htmlFor="lastName">Last Name *</label>
-                <input type="text" id="lastName" required />
+                <input type="text" id="lastName" name="lastName" defaultValue={user?.name?.split(' ').slice(1).join(' ')} required placeholder="Last Name" />
               </div>
             </div>
             
             <div className={styles.inputCol}>
-              <label htmlFor="address">Street Address *</label>
-              <input type="text" id="address" required placeholder="House number and street name" />
+              <label htmlFor="address">Delivery Address *</label>
+              <input type="text" id="address" name="address" defaultValue={user?.address} required placeholder="House No, Street, City" />
             </div>
 
             <div className={styles.inputRow}>

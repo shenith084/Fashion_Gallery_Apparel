@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import ProductCard from '@/components/ui/ProductCard';
-import { PRODUCTS, CATEGORIES_LIST, SIZES_LIST } from '@/lib/data/products';
+import { CATEGORIES_LIST, SIZES_LIST } from '@/lib/data/products';
 import styles from './ShopClient.module.css';
 
 const COLORS = ['#722F37', '#D8A7B1', '#E8DCC4', '#A8D0E6', '#000000'];
@@ -22,9 +22,18 @@ export default function ShopClient({
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [currentPage, setCurrentPage] = useState(1);
+  const [products, setProducts] = useState<any[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/products')
+      .then(r => r.json())
+      .then(data => { setProducts(Array.isArray(data) ? data : []); setProductsLoading(false); })
+      .catch(() => setProductsLoading(false));
+  }, []);
 
   const filtered = useMemo(() => {
-    let list = [...PRODUCTS];
+    let list = [...products];
 
     if (activeCategory !== 'all') {
       if (activeCategory === 'best-sellers') {
@@ -35,10 +44,9 @@ export default function ShopClient({
     }
 
     if (activeSize !== 'all') {
-      list = list.filter((p) => p.sizes.includes(activeSize));
+      list = list.filter((p) => p.sizes?.includes(activeSize));
     }
     
-    // Filter by Price Range
     list = list.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
 
     if (sortBy === 'price-asc') list.sort((a, b) => a.price - b.price);
@@ -47,12 +55,12 @@ export default function ShopClient({
     else list.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
 
     return list;
-  }, [activeCategory, activeSize, priceRange, sortBy]);
+  }, [activeCategory, activeSize, priceRange, sortBy, products]);
 
   const getCategoryCount = (slug: string) => {
-    if (slug === 'all') return PRODUCTS.length;
-    if (slug === 'best-sellers') return PRODUCTS.filter((p) => p.isBestSeller).length;
-    return PRODUCTS.filter((p) => p.categorySlug === slug).length;
+    if (slug === 'all') return products.length;
+    if (slug === 'best-sellers') return products.filter((p) => p.isBestSeller).length;
+    return products.filter((p) => p.categorySlug === slug).length;
   };
 
   const handleClearAll = () => {
