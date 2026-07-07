@@ -10,25 +10,27 @@ cloudinary.config({
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    const files = formData.getAll('files') as File[];
     
-    if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+    if (!files || files.length === 0) {
+      return NextResponse.json({ error: 'No files provided' }, { status: 400 });
     }
 
-    // Convert file to base64
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64String = `data:${file.type};base64,${buffer.toString('base64')}`;
-
-    // Upload to Cloudinary
-    const result = await cloudinary.uploader.upload(base64String, {
-      folder: 'fashion-gallery/products',
+    const uploadPromises = files.map(async (file) => {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const base64String = `data:${file.type};base64,${buffer.toString('base64')}`;
+      const result = await cloudinary.uploader.upload(base64String, {
+        folder: 'fashion-gallery/products',
+      });
+      return result.secure_url;
     });
+
+    const urls = await Promise.all(uploadPromises);
 
     return NextResponse.json({ 
       success: true, 
-      url: result.secure_url 
+      urls 
     });
 
   } catch (error) {

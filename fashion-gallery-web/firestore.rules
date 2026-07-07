@@ -13,8 +13,8 @@ service cloud.firestore {
     }
 
     function isSuperAdmin() {
-      // Temporary super admin until Admin SDK custom claims are set up
-      return isAuthenticated() && request.auth.uid == 'WqO0cTDYVWMHrJh3PsZqB0LL6xj1';
+      // Allow the hardcoded UID or anyone with the 'super_admin' custom claim
+      return isAuthenticated() && (request.auth.uid == 'WqO0cTDYVWMHrJh3PsZqB0LL6xj1' || request.auth.token.role == 'super_admin');
     }
 
     function isAdmin() {
@@ -61,8 +61,8 @@ service cloud.firestore {
       allow read: if isStaff() || (
         isAuthenticated() && resource.data.customerId == request.auth.uid
       );
-      // Writes only allowed server-side (admin SDK bypasses rules)
-      allow create: if false;         // use Server Action
+      // Guests can create orders directly from the client checkout
+      allow create: if request.resource.data.keys().hasAll(['customer', 'items', 'total', 'status']);
       allow update: if hasPermission('order.update_status');
       allow delete: if false;         // soft delete only
     }
@@ -71,6 +71,13 @@ service cloud.firestore {
     match /customers/{customerId} {
       allow read: if isStaff() || request.auth.uid == customerId;
       allow write: if false;          // created via Server Action only
+    }
+
+    // ─── WHOLESALE APPLICATIONS ───────────────────────────────
+    match /wholesale_applications/{appId} {
+      allow read: if isStaff() && hasPermission('wholesale.view');
+      allow create: if true; // Public can apply
+      allow update, delete: if isStaff() && hasPermission('wholesale.view');
     }
 
     // ─── INQUIRIES ────────────────────────────────────────────
@@ -83,23 +90,32 @@ service cloud.firestore {
 
     // ─── STAFF ────────────────────────────────────────────────
     match /staff/{staffId} {
-      // Staff can read their own doc (for real-time permission updates)
-      allow read: if isAuthenticated() && (
-        request.auth.uid == staffId || isAdmin()
+      allow read: if isStaff();
+      
+      // Creating staff is strictly done via Admin SDK (bypasses rules)
+      allow create: if false; 
+      
+      // Updates allowed by admins, but no one can modify a super admin's role except a super admin
+      allow update: if isAdmin() && (
+        isSuperAdmin() || resource.data.role != 'super_admin'
       );
-      // Only Admin can write staff documents
-      allow write: if isAdmin();
+      
+      // Deleting staff requires admin. Super admins cannot be deleted by anyone!
+      allow delete: if isAdmin() && resource.data.role != 'super_admin';
     }
 
     // ─── SETTINGS ─────────────────────────────────────────────
-    match /settings/public {
+    match /settings/{docId} {
       allow read: if true;            // public readable
-      allow write: if isAdmin();
+      allow write: if (docId == 'business' && isAdmin()) || (docId != 'business' && hasPermission('settings.manage'));
     }
 
-    match /settings/business {
-      allow read, write: if isAdmin();  // Admin only
+    // ─── ROLES & PERMISSIONS ──────────────────────────────────
+    match /roles/{roleId} {
+      allow read: if isStaff();
+      allow write: if hasPermission('staff.manage');
     }
+
 
     // ─── AUDIT LOGS ───────────────────────────────────────────
     match /auditLogs/{logId} {

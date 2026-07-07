@@ -1,17 +1,22 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useSettingsStore, ContactSettings } from '@/store/settingsStore';
+import React, { useState, useEffect } from 'react';
+import { db, storage, auth } from '@/lib/firebase/config';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 
-export default function SettingsPage() {
-  const { contactSettings, loading, fetchContactSettings, updateContactSettings } = useSettingsStore();
+import { useSettingsStore, ContactSettings } from '@/store/settingsStore';
+import FashionVideosManager from '@/components/admin/FashionVideosManager';
+
+export default function StorefrontSettingsPage() {
+  // Settings state
+  const { contactSettings, loading: settingsLoading, fetchContactSettings, updateContactSettings } = useSettingsStore();
   const [formData, setFormData] = useState<ContactSettings | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
     fetchContactSettings();
-  }, [fetchContactSettings]);
+  }, []);
 
   useEffect(() => {
     if (contactSettings) {
@@ -19,16 +24,16 @@ export default function SettingsPage() {
     }
   }, [contactSettings]);
 
-  if (loading || !formData) {
-    return <div style={{ padding: '2rem' }}>Loading settings...</div>;
-  }
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!formData) return;
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData) return;
     setIsSaving(true);
     setSaveSuccess(false);
     try {
@@ -42,12 +47,16 @@ export default function SettingsPage() {
     }
   };
 
+  if (settingsLoading || !formData) return <div className="p-8">Loading...</div>;
+
   return (
     <div style={{ padding: '2rem' }}>
-      <h1 className="text-3xl font-bold mb-2">Store Settings</h1>
-      <p className="text-gray-500 mb-8">Manage public store information and contact details.</p>
+      <h1 className="text-3xl font-bold mb-2">Storefront Settings</h1>
+      <p className="text-gray-500 mb-8">Manage the short promotional video and public store contact details.</p>
 
-      <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', maxWidth: '600px' }}>
+      <FashionVideosManager />
+
+      <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', maxWidth: '800px', marginTop: '2rem' }}>
         <h2 className="text-xl font-bold mb-4">Contact Information</h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
@@ -59,7 +68,7 @@ export default function SettingsPage() {
               value={formData.address}
               onChange={handleChange}
               required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
+              style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '1rem' }}
             />
           </div>
 
@@ -71,7 +80,7 @@ export default function SettingsPage() {
               value={formData.phone}
               onChange={handleChange}
               required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
+              style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '1rem' }}
             />
           </div>
 
@@ -83,7 +92,7 @@ export default function SettingsPage() {
               value={formData.email}
               onChange={handleChange}
               required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
+              style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '1rem' }}
             />
           </div>
 
@@ -95,7 +104,7 @@ export default function SettingsPage() {
               value={formData.businessHoursMain}
               onChange={handleChange}
               required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
+              style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '1rem' }}
             />
           </div>
 
@@ -107,7 +116,7 @@ export default function SettingsPage() {
               value={formData.businessHoursWeekend}
               onChange={handleChange}
               required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
+              style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '1rem' }}
             />
           </div>
 
@@ -117,7 +126,7 @@ export default function SettingsPage() {
               disabled={isSaving}
               style={{ 
                 padding: '0.75rem 2rem', 
-                background: 'var(--primary)', 
+                background: 'var(--color-burgundy)', 
                 color: 'white', 
                 border: 'none', 
                 borderRadius: '6px', 
@@ -126,10 +135,10 @@ export default function SettingsPage() {
                 opacity: isSaving ? 0.7 : 1
               }}
             >
-              {isSaving ? 'Saving...' : 'Save Settings'}
+              {isSaving ? 'Saving...' : 'Save Contact Info'}
             </button>
             {saveSuccess && (
-              <span style={{ color: 'var(--success)', fontWeight: 500 }}>✓ Saved Successfully</span>
+              <span style={{ color: 'var(--color-success)', fontWeight: 500 }}>✓ Saved Successfully</span>
             )}
           </div>
         </form>

@@ -16,13 +16,33 @@ const CUSTOMER_CARE = [
   { label: 'Delivery Information', href: '/policies/delivery' },
   { label: 'Return & Refund Policy', href: '/policies/returns' },
   { label: 'Terms & Conditions', href: '/policies/terms' },
-  { label: 'Size Guide', href: '/policies/size-guide' },
   { label: 'Privacy Policy', href: '/policies/privacy' },
   { label: 'FAQ', href: '/faq' },
 ];
 
-export default function Footer() {
+import { db } from '@/lib/firebase/client';
+import { doc, getDoc } from 'firebase/firestore';
+
+export default async function Footer() {
   const year = new Date().getFullYear();
+
+  let settings = {
+    phone: '076 416 5908',
+    email: 'mymoonclothingsl@gmail.com',
+    address: '186 Main St, Colombo, Western 01100',
+    businessHoursMain: 'Mon – Sat: 9:00 AM – 7:00 PM',
+    businessHoursWeekend: 'Sunday: 9:00 AM – 2:00 PM'
+  };
+
+  try {
+    const docRef = doc(db, 'settings', 'contact');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      settings = { ...settings, ...docSnap.data() } as any;
+    }
+  } catch (e) {
+    console.error('Error fetching contact settings', e);
+  }
 
   return (
     <footer className={styles.footer} id="site-footer">
@@ -127,24 +147,24 @@ export default function Footer() {
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                   <circle cx="12" cy="10" r="3"/>
                 </svg>
-                186 Main St, Colombo, Western 01100
+                {settings.address}
               </li>
               <li className={styles.contactItem}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.74a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
-                <a href="tel:+94764165908" className={styles.contactLink}>076 416 5908</a>
+                <a href={`tel:${settings.phone.replace(/[^0-9+]/g, '')}`} className={styles.contactLink}>{settings.phone}</a>
               </li>
               <li className={styles.contactItem}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
                 </svg>
-                <a href="mailto:mymoonclothingsl@gmail.com" className={styles.contactLink}>mymoonclothingsl@gmail.com</a>
+                <a href={`mailto:${settings.email}`} className={styles.contactLink}>{settings.email}</a>
               </li>
               <li className={styles.hoursBlock}>
                 <p className={styles.hoursTitle}>Business Hours</p>
-                <p>Mon – Sat: 9:00 AM – 7:00 PM</p>
-                <p>Sunday: 9:00 AM – 2:00 PM</p>
+                <p>{settings.businessHoursMain}</p>
+                <p>{settings.businessHoursWeekend}</p>
               </li>
             </ul>
           </div>

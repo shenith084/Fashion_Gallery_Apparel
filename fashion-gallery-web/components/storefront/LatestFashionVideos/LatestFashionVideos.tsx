@@ -1,7 +1,12 @@
 import Image from 'next/image';
 import styles from './LatestFashionVideos.module.css';
 
-const VIDEOS = [
+import { getDocs, doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase/client';
+
+import FashionVideoCard from './FashionVideoCard';
+
+const FALLBACK_VIDEOS = [
   { id: 'v1', title: 'Summer Collection', views: '12.5K', image: '/prod-floral-maxi.png' },
   { id: 'v2', title: 'Office Wear Looks', views: '9.0K', image: '/prod-wrap-midi.png' },
   { id: 'v3', title: 'New Arrivals', views: '15.3K', image: '/prod-printed-long.png' },
@@ -10,7 +15,19 @@ const VIDEOS = [
   { id: 'v6', title: 'Weekend Outfits', views: '7.6K', image: '/prod-office.png' },
 ];
 
-export default function LatestFashionVideos() {
+export default async function LatestFashionVideos() {
+  let videos = FALLBACK_VIDEOS;
+  
+  try {
+    const docRef = doc(db, 'settings', 'fashion_videos');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists() && docSnap.data().videos) {
+      videos = docSnap.data().videos;
+    }
+  } catch (error) {
+    console.error('Failed to fetch fashion videos (using fallback):', error);
+  }
+
   return (
     <section className={styles.section} id="latest-videos">
       <div className="container">
@@ -33,36 +50,8 @@ export default function LatestFashionVideos() {
         </div>
 
         <div className={styles.grid}>
-          {VIDEOS.map((video) => (
-            <div key={video.id} className={styles.card}>
-              <div className={styles.imageWrap}>
-                <Image
-                  src={video.image}
-                  alt={video.title}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 16vw"
-                  className={styles.image}
-                />
-                <div className={styles.overlay} />
-                
-                {/* Play Button */}
-                <div className={styles.playIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                  </svg>
-                </div>
-
-                <div className={styles.content}>
-                  <h3 className={styles.videoTitle}>{video.title}</h3>
-                  <div className={styles.views}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polygon points="5 3 19 12 5 21 5 3" />
-                    </svg>
-                    {video.views} views
-                  </div>
-                </div>
-              </div>
-            </div>
+          {videos.map((video: any) => (
+            <FashionVideoCard key={video.id} video={video} />
           ))}
         </div>
       </div>

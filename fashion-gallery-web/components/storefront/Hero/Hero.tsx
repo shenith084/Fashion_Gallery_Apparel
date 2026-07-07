@@ -2,8 +2,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Hero.module.css';
 
+import { db } from '@/lib/firebase/client';
+import { doc, getDoc } from 'firebase/firestore';
 
-export default function Hero() {
+export default async function Hero() {
+  let videoUrl = null;
+  try {
+    const docRef = doc(db, 'settings', 'banner');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      videoUrl = docSnap.data()?.videoUrl;
+    }
+  } catch (e) {
+    console.error('Error fetching banner', e);
+  }
   return (
     <section className={styles.hero} id="hero-section">
       <div className={`container ${styles.inner}`}>
@@ -42,15 +54,27 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right Image */}
+        {/* Right Image/Video */}
         <div className={styles.imageWrapper}>
-          <Image
-            src="/hero-bg-v6.jpg"
-            alt="Fashion Gallery Apparel Models"
-            fill
-            priority
-            className={styles.heroImage}
-          />
+          {videoUrl ? (
+            <video 
+              src={videoUrl}
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className={styles.heroImage}
+              style={{ objectFit: 'cover' }}
+            />
+          ) : (
+            <Image
+              src="/hero-bg-v6.jpg"
+              alt="Fashion Gallery Apparel Models"
+              fill
+              priority
+              className={styles.heroImage}
+            />
+          )}
         </div>
       </div>
     </section>

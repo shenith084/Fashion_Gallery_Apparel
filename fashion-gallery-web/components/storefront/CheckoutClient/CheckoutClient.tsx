@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useAuthStore } from '@/lib/store/authStore';
 import styles from './CheckoutClient.module.css';
-
-// No mock cart
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 export default function CheckoutClient() {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bank'>('cod');
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
@@ -20,10 +20,7 @@ export default function CheckoutClient() {
 
   useEffect(() => {
     setMounted(true);
-    if (!useAuthStore.getState().user) {
-      router.push('/login?returnUrl=/checkout');
-    }
-  }, [router]);
+  }, []);
 
   const subtotal = getSubtotal();
   const deliveryFee = subtotal > 0 ? 350 : 0;
@@ -66,13 +63,13 @@ export default function CheckoutClient() {
         avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(customer)}&backgroundColor=6B2335&textColor=ffffff`
       };
 
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderData)
+      const docRef = await addDoc(collection(db, 'orders'), {
+        ...orderData,
+        createdAt: serverTimestamp(),
+        isNew: true
       });
       
-      if (res.ok) {
+      if (docRef.id) {
         clearCart();
         setShowSuccessModal(true);
       } else {

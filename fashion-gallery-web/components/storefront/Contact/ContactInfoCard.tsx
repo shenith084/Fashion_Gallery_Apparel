@@ -1,6 +1,27 @@
 import styles from './ContactInfoCard.module.css';
 
-export default function ContactInfoCard() {
+import { db } from '@/lib/firebase/client';
+import { doc, getDoc } from 'firebase/firestore';
+
+export default async function ContactInfoCard() {
+  let settings = {
+    phone: '076 415 5008',
+    email: 'mymoonclothing@gmail.com',
+    address: 'Fashion Gallery,\n186 Main St,\nColombo, Western 01100,\nSri Lanka',
+    businessHoursMain: 'Mon - Sat: 8:00 AM - 7:00 PM',
+    businessHoursWeekend: 'Sunday: 9:00 AM - 2:00 PM'
+  };
+
+  try {
+    const docRef = doc(db, 'settings', 'contact');
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      settings = { ...settings, ...docSnap.data() } as any;
+    }
+  } catch (e) {
+    console.error('Error fetching contact settings', e);
+  }
+
   return (
     <div className={styles.card}>
       <h2 className={styles.title}>GET IN TOUCH</h2>
@@ -15,7 +36,7 @@ export default function ContactInfoCard() {
           </div>
           <div>
             <h3 className={styles.label}>WHATSAPP</h3>
-            <p className={styles.value}>076 415 5008</p>
+            <p className={styles.value}>{settings.phone}</p>
           </div>
         </div>
         
@@ -42,7 +63,7 @@ export default function ContactInfoCard() {
           </div>
           <div>
             <h3 className={styles.label}>EMAIL</h3>
-            <p className={styles.value}>mymoonclothing@gmail.com</p>
+            <p className={styles.value}>{settings.email}</p>
           </div>
         </div>
         
@@ -56,11 +77,8 @@ export default function ContactInfoCard() {
           </div>
           <div>
             <h3 className={styles.label}>ADDRESS</h3>
-            <p className={styles.value}>
-              Fashion Gallery,<br />
-              186 Main St,<br />
-              Colombo, Western 01100,<br />
-              Sri Lanka
+            <p className={styles.value} style={{ whiteSpace: 'pre-line' }}>
+              {settings.address}
             </p>
           </div>
         </div>
@@ -75,8 +93,8 @@ export default function ContactInfoCard() {
           </div>
           <div>
             <h3 className={styles.label}>BUSINESS HOURS</h3>
-            <p className={styles.value}>Mon - Sat: 8:00 AM - 7:00 PM</p>
-            <p className={styles.value}>Sunday: 9:00 AM - 2:00 PM</p>
+            <p className={styles.value}>{settings.businessHoursMain}</p>
+            <p className={styles.value}>{settings.businessHoursWeekend}</p>
           </div>
         </div>
       </div>

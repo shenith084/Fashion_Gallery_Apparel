@@ -50,7 +50,7 @@ export default function ProductCard({ id, name, price, image, rating, reviewCoun
       <Link href={href} className={styles.imageWrap}>
         {isNew && <span className={styles.newBadge}>NEW</span>}
         <Image
-          src={image}
+          src={image || '/placeholder-product.png'}
           alt={name}
           fill
           sizes="(max-width: 768px) 45vw, 16vw"

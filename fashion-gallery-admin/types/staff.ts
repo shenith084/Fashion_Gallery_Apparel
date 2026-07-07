@@ -1,4 +1,4 @@
-export type Role = 'admin' | 'staff';
+export type Role = string;
 
 export interface PermissionsMap {
   'product.view': boolean;
@@ -21,11 +21,22 @@ export interface PermissionsMap {
   'audit_log.view': boolean;
 }
 
+export type RoleDef = {
+  id: string;
+  name: string;
+  users: number;
+  description: string;
+  permissions: PermissionsMap;
+  isCustom?: boolean;
+};
+
 export interface StaffMember {
   id: string; // Firebase Auth UID
   name: string;
   email: string;
-  role: Role;
+  phone?: string;
+  avatar?: string;
+  role: Role | 'super_admin';
   isActive: boolean;
   permissions: PermissionsMap;
   createdAt: number;
