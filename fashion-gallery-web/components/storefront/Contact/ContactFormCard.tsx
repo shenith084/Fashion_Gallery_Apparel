@@ -1,12 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuthStore } from '@/lib/store/authStore';
+import Link from 'next/link';
 import styles from './ContactFormCard.module.css';
 
 export default function ContactFormCard() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [mounted, setMounted] = useState(false);
+  const user = useAuthStore(state => state.user);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,7 +50,15 @@ export default function ContactFormCard() {
     <div className={styles.card}>
       <h2 className={styles.title}>SEND US A MESSAGE</h2>
       
-      {success ? (
+      {!mounted ? null : !user ? (
+        <div style={{ background: '#f9f9f9', padding: '2rem', borderRadius: '8px', textAlign: 'center', border: '1px solid var(--color-gray-200)' }}>
+          <h3 style={{ marginBottom: '1rem', color: 'var(--color-charcoal)' }}>Login Required</h3>
+          <p style={{ color: 'var(--color-charcoal-light)', marginBottom: '1.5rem' }}>You must be logged in to send us a message.</p>
+          <Link href="/login?returnUrl=/contact" className="btn btn-primary">
+            Login Now
+          </Link>
+        </div>
+      ) : success ? (
         <div style={{ background: 'var(--color-success)', color: 'white', padding: '1rem', borderRadius: '8px', textAlign: 'center' }}>
           <h3 style={{ marginBottom: '0.5rem' }}>Message Sent!</h3>
           <p>Thank you for reaching out. We will get back to you shortly.</p>

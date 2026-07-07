@@ -26,7 +26,10 @@ export default function CheckoutClient({
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (mounted && !user) {
+      router.push('/login?returnUrl=/checkout');
+    }
+  }, [mounted, user, router]);
 
   const subtotal = getSubtotal();
   

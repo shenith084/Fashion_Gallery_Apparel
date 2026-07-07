@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useCartStore } from '@/lib/store/cartStore';
+import { useAuthStore } from '@/lib/store/authStore';
 import styles from './CartClient.module.css';
 
 // No more mock data needed here.
@@ -11,6 +12,7 @@ import styles from './CartClient.module.css';
 export default function CartClient({ deliverySettings }: { deliverySettings?: any }) {
   const [mounted, setMounted] = useState(false);
   const { items, updateQty, removeItem, getSubtotal } = useCartStore();
+  const user = useAuthStore(state => state.user);
 
   useEffect(() => {
     setMounted(true);
@@ -110,9 +112,15 @@ export default function CartClient({ deliverySettings }: { deliverySettings?: an
 
           <p className={styles.taxNote}>Taxes included. Delivery calculated here.</p>
 
-          <Link href="/checkout" className={`btn btn-primary ${styles.checkoutBtn}`}>
-            Proceed to Checkout
-          </Link>
+          {user ? (
+            <Link href="/checkout" className={`btn btn-primary ${styles.checkoutBtn}`}>
+              Proceed to Checkout
+            </Link>
+          ) : (
+            <Link href="/login?returnUrl=/checkout" className={`btn btn-primary ${styles.checkoutBtn}`}>
+              Login to Checkout
+            </Link>
+          )}
           
           <Link href="/dresses" className={styles.continueLink}>
             Continue Shopping

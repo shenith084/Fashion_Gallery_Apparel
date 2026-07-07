@@ -6,6 +6,11 @@ import { useAuthStore } from '@/lib/store/authStore';
 import AccountSidebar from './AccountSidebar';
 import ProfileOverview from './ProfileOverview';
 import MyOrders from './MyOrders';
+import Wishlist from './Wishlist';
+import Addresses from './Addresses';
+import PaymentMethods from './PaymentMethods';
+import ChangePassword from './ChangePassword';
+import Notifications from './Notifications';
 import styles from './AccountClient.module.css';
 
 export default function AccountClient() {
@@ -31,6 +36,11 @@ export default function AccountClient() {
       <div className={styles.content}>
         {activeTab === 'overview' && <ProfileOverview />}
         {activeTab === 'orders' && <MyOrders />}
+        {activeTab === 'wishlist' && <Wishlist />}
+        {activeTab === 'addresses' && <Addresses />}
+        {activeTab === 'payment' && <PaymentMethods />}
+        {activeTab === 'password' && <ChangePassword />}
+        {activeTab === 'notifications' && <Notifications />}
       </div>
     </div>
   );
