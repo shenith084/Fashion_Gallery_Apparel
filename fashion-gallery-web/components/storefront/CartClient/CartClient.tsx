@@ -8,7 +8,7 @@ import styles from './CartClient.module.css';
 
 // No more mock data needed here.
 
-export default function CartClient() {
+export default function CartClient({ deliverySettings }: { deliverySettings?: any }) {
   const [mounted, setMounted] = useState(false);
   const { items, updateQty, removeItem, getSubtotal } = useCartStore();
 
@@ -19,7 +19,12 @@ export default function CartClient() {
   if (!mounted) return null; // Avoid hydration mismatch
 
   const subtotal = getSubtotal();
-  const deliveryFee = subtotal > 0 ? 350 : 0;
+  
+  let deliveryFee = 0;
+  if (subtotal > 0) {
+    deliveryFee = deliverySettings?.standardDeliveryCharge || 350;
+  }
+
   const total = subtotal + deliveryFee;
 
   if (items.length === 0) {
@@ -53,7 +58,7 @@ export default function CartClient() {
               {/* Product Info */}
               <div className={styles.itemProduct}>
                 <Link href={`/product/${item.product.slug}`} className={styles.itemImageWrap}>
-                  <Image src={item.product.image} alt={item.product.name} fill sizes="80px" className={styles.itemImage} />
+                  <Image src={item.product.image || '/logo.svg'} alt={item.product.name} fill sizes="80px" className={styles.itemImage} />
                 </Link>
                 <div className={styles.itemDetails}>
                   <Link href={`/product/${item.product.slug}`} className={styles.itemName}>

@@ -3,13 +3,27 @@ import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
 import CartClient from '@/components/storefront/CartClient';
 import styles from './cart.module.css';
+import { getAdminDb } from '@/lib/firebase/admin';
 
 export const metadata: Metadata = {
   title: 'Shopping Cart | Fashion Gallery Apparel',
   description: 'Review your items and proceed to checkout.',
 };
 
-export default function CartPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function CartPage() {
+  let deliverySettings = null;
+  try {
+    const adminDb = getAdminDb();
+    const docSnap = await adminDb.collection('settings').doc('delivery').get();
+    if (docSnap.exists) {
+      deliverySettings = docSnap.data();
+    }
+  } catch (e) {
+    console.error('Error fetching delivery settings', e);
+  }
+
   return (
     <>
       <Navbar />
@@ -24,7 +38,7 @@ export default function CartPage() {
       </div>
 
       <main className="container">
-        <CartClient />
+        <CartClient deliverySettings={deliverySettings} />
       </main>
       <Footer />
     </>

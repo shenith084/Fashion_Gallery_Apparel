@@ -8,6 +8,8 @@ import LatestFashionVideos from '@/components/storefront/LatestFashionVideos';
 import Newsletter from '@/components/storefront/Newsletter';
 import Footer from '@/components/storefront/Footer';
 
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: 'Fashion Gallery Apparel | My Moon Clothing — Elegant Women\'s Dresses Sri Lanka',
   description:

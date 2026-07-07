@@ -19,11 +19,23 @@ export async function POST(request: Request) {
     const uploadPromises = files.map(async (file) => {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
-      const base64String = `data:${file.type};base64,${buffer.toString('base64')}`;
-      const result = await cloudinary.uploader.upload(base64String, {
-        folder: 'fashion-gallery/products',
+      
+      return new Promise<string>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'fashion-gallery/products',
+            resource_type: 'auto',
+          },
+          (error, result) => {
+            if (error || !result) {
+              reject(error || new Error('No result from Cloudinary'));
+            } else {
+              resolve(result.secure_url);
+            }
+          }
+        );
+        uploadStream.end(buffer);
       });
-      return result.secure_url;
     });
 
     const urls = await Promise.all(uploadPromises);

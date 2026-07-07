@@ -13,7 +13,9 @@ interface ProductClientProps {
 }
 
 export default function ProductClient({ product }: ProductClientProps) {
-  const [activeImage, setActiveImage] = useState(product.images[0]);
+  const validImages = product.images.filter(Boolean);
+  const fallbackImage = '/logo.svg'; // Fallback if no images are present
+  const [activeImage, setActiveImage] = useState(validImages[0] || fallbackImage);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [qty, setQty] = useState(1);
@@ -41,20 +43,20 @@ export default function ProductClient({ product }: ProductClientProps) {
       {/* ──── IMAGE GALLERY ──── */}
       <div className={styles.gallery}>
         <div className={styles.thumbnailList}>
-          {product.images.map((img, idx) => (
+          {validImages.map((img, idx) => (
             <button
               key={idx}
               className={`${styles.thumbnail} ${activeImage === img ? styles.thumbnailActive : ''}`}
               onClick={() => setActiveImage(img)}
               aria-label={`View image ${idx + 1}`}
             >
-              <Image src={img} alt="" fill sizes="80px" className={styles.thumbImg} />
+              <Image src={img || fallbackImage} alt="" fill sizes="80px" className={styles.thumbImg} />
             </button>
           ))}
         </div>
         <div className={styles.mainImageWrap}>
           <Image
-            src={activeImage}
+            src={activeImage || fallbackImage}
             alt={product.name}
             fill
             sizes="(max-width: 900px) 100vw, 50vw"

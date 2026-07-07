@@ -8,9 +8,7 @@ import { Trash2, Plus, GripVertical, Image as ImageIcon } from 'lucide-react';
 export type FashionVideo = {
   id: string;
   title: string;
-  views: string;
-  image: string;
-  videoUrl?: string;
+  videoUrl: string;
 };
 
 export default function FashionVideosManager() {
@@ -19,13 +17,10 @@ export default function FashionVideosManager() {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // New video form state
   const [newTitle, setNewTitle] = useState('');
-  const [newViews, setNewViews] = useState('');
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [newImage, setNewImage] = useState('');
   
   const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [newVideoUrl, setNewVideoUrl] = useState('');
 
   useEffect(() => {
@@ -79,36 +74,9 @@ export default function FashionVideosManager() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      alert('Please select a valid image file for the thumbnail');
-      return;
-    }
 
-    setUploadingImage(true);
-    const storageRef = ref(storage, `fashion_videos/thumb_${Date.now()}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on(
-      'state_changed',
-      null,
-      (error) => {
-        console.error('Upload failed', error);
-        alert('Upload failed.');
-        setUploadingImage(false);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        setNewImage(url);
-        setUploadingImage(false);
-      }
-    );
-  };
-
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -123,36 +91,65 @@ export default function FashionVideosManager() {
     }
 
     setUploadingVideo(true);
-    const storageRef = ref(storage, `fashion_videos/vid_${Date.now()}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+    setUploadProgress(0);
+    
+    try {
+      const formData = new FormData();
+      formData.append('files', file);
 
-    uploadTask.on(
-      'state_changed',
-      null,
-      (error) => {
-        console.error('Upload failed', error);
-        alert('Upload failed.');
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/upload', true);
+
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percentComplete = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(percentComplete);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const data = JSON.parse(xhr.responseText);
+          if (data.urls && data.urls[0]) {
+            setNewVideoUrl(data.urls[0]);
+          } else {
+            console.error('No URL returned');
+            alert('Upload failed: No URL returned');
+          }
+        } else {
+          console.error('Upload failed', xhr.responseText);
+          alert('Upload failed. Server returned ' + xhr.status);
+        }
         setUploadingVideo(false);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        setNewVideoUrl(url);
+        setUploadProgress(0);
+      };
+
+      xhr.onerror = () => {
+        console.error('Upload failed');
+        alert('Upload failed. Please try again.');
         setUploadingVideo(false);
-      }
-    );
+        setUploadProgress(0);
+      };
+
+      xhr.send(formData);
+
+    } catch (error) {
+      console.error('Upload failed', error);
+      alert('Upload failed. Note: Node.js max body size limits might apply if the file is too large.');
+      setUploadingVideo(false);
+      setUploadProgress(0);
+    }
   };
 
   const handleAddVideo = async () => {
-    if (!newTitle || !newViews || !newImage) {
-      alert('Please provide title, views, and thumbnail image.');
+    if (!newTitle || !newVideoUrl) {
+      alert('Please provide title and upload a video file.');
       return;
     }
 
     const newVideo: FashionVideo = {
       id: `v_${Date.now()}`,
       title: newTitle,
-      views: newViews,
-      image: newImage,
       videoUrl: newVideoUrl
     };
 
@@ -161,8 +158,6 @@ export default function FashionVideosManager() {
 
     // Reset form
     setNewTitle('');
-    setNewViews('');
-    setNewImage('');
     setNewVideoUrl('');
   };
 
@@ -210,15 +205,14 @@ export default function FashionVideosManager() {
                 <button onClick={() => moveDown(index)} disabled={index === videos.length - 1} style={{ opacity: index === videos.length - 1 ? 0.3 : 1 }}>▼</button>
               </div>
 
-              <div style={{ width: '80px', height: '120px', background: '#eee', borderRadius: '4px', overflow: 'hidden', flexShrink: 0 }}>
-                <img src={video.image} alt={video.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <div style={{ width: '120px', height: '80px', background: '#eee', borderRadius: '4px', overflow: 'hidden', flexShrink: 0 }}>
+                <video src={video.videoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} preload="metadata" />
               </div>
 
               <div style={{ flexGrow: 1 }}>
                 <h4 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.25rem' }}>{video.title}</h4>
                 <div style={{ color: 'var(--color-charcoal-light)', fontSize: '0.875rem' }}>
-                  Views: {video.views}
-                  {video.videoUrl && <span style={{ marginLeft: '1rem', color: 'var(--color-success)' }}>✓ Video Attached</span>}
+                  <span style={{ color: 'var(--color-success)' }}>✓ Video Uploaded</span>
                 </div>
               </div>
 
@@ -242,7 +236,7 @@ export default function FashionVideosManager() {
       <div style={{ padding: '1.5rem', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '8px', background: 'white' }}>
         <h3 style={{ fontWeight: 600, marginBottom: '1rem', fontSize: '1.125rem' }}>Add New Item</h3>
         
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Title</label>
             <input 
@@ -253,80 +247,41 @@ export default function FashionVideosManager() {
               style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '1rem' }}
             />
           </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>View Count (Text)</label>
-            <input 
-              type="text" 
-              placeholder="e.g. 12.5K"
-              value={newViews}
-              onChange={(e) => setNewViews(e.target.value)}
-              style={{ padding: '0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '1rem' }}
-            />
-          </div>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
-          <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Thumbnail Image</label>
-          
-          {newImage ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ width: '80px', height: '120px', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(0,0,0,0.1)' }}>
-                <img src={newImage} alt="Thumbnail preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <button 
-                onClick={() => setNewImage('')}
-                style={{ padding: '0.5rem 1rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '0.875rem', background: 'white' }}
-              >
-                Change Image
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <label style={{ padding: '0.75rem 1.5rem', background: '#f5f5f5', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <ImageIcon size={16} />
-                {uploadingImage ? 'Uploading...' : 'Upload Image'}
-                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} disabled={uploadingImage} />
-              </label>
-            </div>
-          )}
-        </div>
+
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
           <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Video File (Optional)</label>
           
           {newVideoUrl ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ padding: '0.5rem 1rem', background: 'var(--color-success)', color: 'white', borderRadius: '4px', fontSize: '0.875rem' }}>
-                Video Uploaded Successfully
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: '#f5f5f5', padding: '0.75rem 1rem', borderRadius: '6px', border: '1px solid rgba(0,0,0,0.1)' }}>
+              <span style={{ color: 'var(--color-success)', fontWeight: 500, fontSize: '0.875rem' }}>✓ Video ready</span>
               <button 
                 onClick={() => setNewVideoUrl('')}
-                style={{ padding: '0.5rem 1rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', fontSize: '0.875rem', background: 'white' }}
+                style={{ padding: '0.25rem 0.75rem', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '4px', fontSize: '0.75rem', background: 'white' }}
               >
-                Remove Video
+                Remove
               </button>
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <label style={{ padding: '0.75rem 1.5rem', background: '#f5f5f5', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <ImageIcon size={16} />
-                {uploadingVideo ? 'Uploading...' : 'Upload MP4 Video'}
-                <input type="file" accept="video/mp4,video/quicktime,video/webm" style={{ display: 'none' }} onChange={handleVideoUpload} disabled={uploadingVideo} />
-              </label>
-              <span style={{ fontSize: '0.875rem', color: 'var(--color-charcoal-light)' }}>(Max 50MB)</span>
-            </div>
+            <label style={{ padding: '0.75rem 1.5rem', background: '#f5f5f5', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'fit-content' }}>
+              <Plus size={16} />
+              {uploadingVideo ? `Uploading... ${uploadProgress}%` : 'Upload Video'}
+              <input type="file" accept="video/mp4,video/quicktime" style={{ display: 'none' }} onChange={handleVideoUpload} disabled={uploadingVideo} />
+            </label>
           )}
+          <span style={{ fontSize: '0.875rem', color: 'var(--color-charcoal-light)' }}>(Max 50MB)</span>
         </div>
 
         <button 
           onClick={handleAddVideo}
-          disabled={saving || uploadingImage || uploadingVideo}
+          disabled={saving || uploadingVideo}
           style={{ 
             display: 'flex', alignItems: 'center', gap: '0.5rem',
             padding: '0.75rem 2rem', background: 'var(--color-burgundy)', color: 'white', 
-            border: 'none', borderRadius: '6px', fontWeight: 500, cursor: (saving || uploadingImage || uploadingVideo) ? 'not-allowed' : 'pointer',
-            opacity: (saving || uploadingImage || uploadingVideo) ? 0.7 : 1
+            border: 'none', borderRadius: '6px', fontWeight: 500, cursor: (saving || uploadingVideo) ? 'not-allowed' : 'pointer',
+            opacity: (saving || uploadingVideo) ? 0.7 : 1
           }}
         >
           <Plus size={18} />

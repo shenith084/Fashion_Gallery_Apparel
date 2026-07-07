@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Secure admin portal for Fashion Gallery Apparel",
 };
 
+import NextTopLoader from 'nextjs-toploader';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -13,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NextTopLoader color="var(--color-burgundy)" showSpinner={false} />
+        {children}
+      </body>
     </html>
   );
 }

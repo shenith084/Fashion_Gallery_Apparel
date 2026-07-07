@@ -112,16 +112,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       ]
     },
     {
-      title: 'MARKETING & STOREFRONT',
-      items: [
-        { name: 'Storefront Settings', path: '/banners', icon: <ImageIcon size={18} />, permissionKey: 'settings.manage' },
-        { name: 'Social Links', path: '/social', icon: <LinkIcon size={18} />, permissionKey: 'reports.view_marketing' },
-      ]
-    },
-    {
       title: 'SYSTEM',
       items: [
-        { name: 'Advanced Settings', path: '/settings', icon: <Settings size={18} />, permissionKey: 'settings.manage' },
+        { name: 'Settings', path: '/settings', icon: <Settings size={18} />, permissionKey: 'settings.manage' },
       ]
     }
   ];
@@ -182,13 +175,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           <div className={styles.headerRight}>
-            <button className={styles.messagesBtn}>
+            <Link href="/inquiries" className={styles.messagesBtn} style={{ textDecoration: 'none' }}>
               <div className={styles.msgIconWrap}>
                 <MessageSquare size={20} />
-                <span className={styles.msgBadge}>5</span>
+                <span className={styles.msgBadge}>New</span>
               </div>
               <span className={styles.msgText}>Messages</span>
-            </button>
+            </Link>
 
             <div 
               className={styles.profileDropdown} 

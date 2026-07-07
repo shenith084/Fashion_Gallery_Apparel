@@ -5,14 +5,20 @@ import Image from 'next/image';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useAuthStore } from '@/lib/store/authStore';
 import styles from './CheckoutClient.module.css';
-import { db } from '@/lib/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-export default function CheckoutClient() {
+
+export default function CheckoutClient({ 
+  initialPaymentSettings,
+  deliverySettings 
+}: { 
+  initialPaymentSettings?: any,
+  deliverySettings?: any 
+}) {
   const [paymentMethod, setPaymentMethod] = useState<'cod' | 'bank'>('cod');
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [paymentSettings, setPaymentSettings] = useState<any>(initialPaymentSettings || null);
   const { items, getSubtotal, clearCart } = useCartStore();
   const { useRouter } = require('next/navigation');
   const router = useRouter();
@@ -23,7 +29,12 @@ export default function CheckoutClient() {
   }, []);
 
   const subtotal = getSubtotal();
-  const deliveryFee = subtotal > 0 ? 350 : 0;
+  
+  let deliveryFee = 0;
+  if (subtotal > 0) {
+    deliveryFee = deliverySettings?.standardDeliveryCharge || 350;
+  }
+
   const total = subtotal + deliveryFee;
 
   const isFormValid = paymentMethod === 'cod' || (paymentMethod === 'bank' && receiptFile !== null);
@@ -63,16 +74,14 @@ export default function CheckoutClient() {
         avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(customer)}&backgroundColor=6B2335&textColor=ffffff`
       };
 
-      const docRef = await addDoc(collection(db, 'orders'), {
-        ...orderData,
-        createdAt: serverTimestamp(),
-        isNew: true
-      });
+      const { createOrderAction } = await import('@/app/actions/checkout');
+      const result = await createOrderAction(orderData);
       
-      if (docRef.id) {
+      if (result.success) {
         clearCart();
         setShowSuccessModal(true);
       } else {
+        console.error(result.error);
         alert('Failed to place order. Please try again.');
       }
     } catch (error) {
@@ -168,10 +177,25 @@ export default function CheckoutClient() {
 
               {paymentMethod === 'bank' && (
                 <div className={styles.bankDetails}>
-                  <p><strong>Bank:</strong> Commercial Bank</p>
-                  <p><strong>Account Name:</strong> Fashion Gallery Apparel</p>
-                  <p><strong>Account Number:</strong> 1000 2345 6789</p>
-                  <p><strong>Branch:</strong> Moratuwa</p>
+                  {paymentSettings?.bankAccounts?.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1rem' }}>
+                      {paymentSettings.bankAccounts.map((bank: any, idx: number) => (
+                        <div key={idx} style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '8px', background: '#f9fafb' }}>
+                          <p style={{ margin: '0 0 0.5rem 0' }}><strong>Bank:</strong> {bank.bankName}</p>
+                          <p style={{ margin: '0 0 0.5rem 0' }}><strong>Account Name:</strong> {bank.accountName}</p>
+                          <p style={{ margin: '0 0 0.5rem 0' }}><strong>Account Number:</strong> {bank.accountNumber}</p>
+                          <p style={{ margin: 0 }}><strong>Branch:</strong> {bank.branch}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ padding: '1rem', border: '1px solid #e5e7eb', borderRadius: '8px', background: '#f9fafb', marginBottom: '1rem' }}>
+                      <p><strong>Bank:</strong> Commercial Bank</p>
+                      <p><strong>Account Name:</strong> Fashion Gallery Apparel</p>
+                      <p><strong>Account Number:</strong> 1000 2345 6789</p>
+                      <p><strong>Branch:</strong> Moratuwa</p>
+                    </div>
+                  )}
                   <p className={styles.bankNote}>
                     Please deposit the total amount to the account above. Your order will not ship until the funds have cleared in our account.
                   </p>
@@ -216,7 +240,7 @@ export default function CheckoutClient() {
             {items.map((item) => (
               <div key={item.id} className={styles.itemRow}>
                 <div className={styles.itemImageWrap}>
-                  <Image src={item.product.image} alt={item.product.name} fill sizes="60px" className={styles.itemImage} />
+                  <Image src={item.product.image || '/logo.svg'} alt={item.product.name} fill sizes="60px" className={styles.itemImage} />
                   <span className={styles.itemBadge}>{item.qty}</span>
                 </div>
                 <div className={styles.itemInfo}>

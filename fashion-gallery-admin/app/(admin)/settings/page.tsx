@@ -1,138 +1,80 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useSettingsStore, ContactSettings } from '@/store/settingsStore';
+import React, { useState } from 'react';
+import { Phone, Truck, CreditCard, Share2, Video } from 'lucide-react';
+
+import ContactSettingsManager from '@/components/admin/ContactSettingsManager';
+import DeliverySettingsManager from '@/components/admin/DeliverySettingsManager';
+import PaymentSettingsManager from '@/components/admin/PaymentSettingsManager';
+import SocialLinksManager from '@/components/admin/SocialLinksManager';
+import FashionVideosManager from '@/components/admin/FashionVideosManager';
+
+type Tab = 'contact' | 'delivery' | 'payment' | 'social' | 'video';
 
 export default function SettingsPage() {
-  const { contactSettings, loading, fetchContactSettings, updateContactSettings } = useSettingsStore();
-  const [formData, setFormData] = useState<ContactSettings | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>('contact');
 
-  useEffect(() => {
-    fetchContactSettings();
-  }, [fetchContactSettings]);
-
-  useEffect(() => {
-    if (contactSettings) {
-      setFormData(contactSettings);
-    }
-  }, [contactSettings]);
-
-  if (loading || !formData) {
-    return <div style={{ padding: '2rem' }}>Loading settings...</div>;
-  }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setSaveSuccess(false);
-    try {
-      await updateContactSettings(formData);
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (error) {
-      alert("Failed to save settings");
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: 'contact', label: 'Contact Info', icon: <Phone size={18} /> },
+    { id: 'delivery', label: 'Delivery', icon: <Truck size={18} /> },
+    { id: 'payment', label: 'Payment Methods', icon: <CreditCard size={18} /> },
+    { id: 'social', label: 'Social Links', icon: <Share2 size={18} /> },
+    { id: 'video', label: 'Video Gallery', icon: <Video size={18} /> },
+  ];
 
   return (
     <div style={{ padding: '2rem' }}>
-      <h1 className="text-3xl font-bold mb-2">Store Settings</h1>
-      <p className="text-gray-500 mb-8">Manage public store information and contact details.</p>
+      <h1 className="text-3xl font-bold mb-2">System Settings</h1>
+      <p className="text-gray-500 mb-8">Manage all aspects of your store's configuration.</p>
 
-      <div style={{ background: 'white', padding: '2rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', maxWidth: '600px' }}>
-        <h2 className="text-xl font-bold mb-4">Contact Information</h2>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Store Address</label>
-            <input 
-              type="text" 
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
-            />
-          </div>
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
+        
+        {/* Sidebar Nav */}
+        <div style={{ 
+          width: '240px', 
+          background: 'white', 
+          borderRadius: '12px', 
+          padding: '1rem',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          flexShrink: 0
+        }}>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '8px',
+                  border: 'none',
+                  background: activeTab === tab.id ? '#fdf2f4' : 'transparent',
+                  color: activeTab === tab.id ? 'var(--color-burgundy)' : '#4b5563',
+                  fontWeight: activeTab === tab.id ? 600 : 500,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.2s ease'
+                }}
+                className={activeTab !== tab.id ? 'hover:bg-gray-50' : ''}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Phone Number</label>
-            <input 
-              type="text" 
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
-            />
-          </div>
+        {/* Content Area */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {activeTab === 'contact' && <ContactSettingsManager />}
+          {activeTab === 'delivery' && <DeliverySettingsManager />}
+          {activeTab === 'payment' && <PaymentSettingsManager />}
+          {activeTab === 'social' && <SocialLinksManager />}
+          {activeTab === 'video' && <FashionVideosManager />}
+        </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Email Address</label>
-            <input 
-              type="email" 
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Business Hours (Weekdays)</label>
-            <input 
-              type="text" 
-              name="businessHoursMain"
-              value={formData.businessHoursMain}
-              onChange={handleChange}
-              required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <label style={{ fontWeight: 500, fontSize: '0.875rem' }}>Business Hours (Weekends)</label>
-            <input 
-              type="text" 
-              name="businessHoursWeekend"
-              value={formData.businessHoursWeekend}
-              onChange={handleChange}
-              required
-              style={{ padding: '0.75rem', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '1rem' }}
-            />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
-            <button 
-              type="submit" 
-              disabled={isSaving}
-              style={{ 
-                padding: '0.75rem 2rem', 
-                background: 'var(--primary)', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '6px', 
-                fontWeight: 500,
-                cursor: isSaving ? 'not-allowed' : 'pointer',
-                opacity: isSaving ? 0.7 : 1
-              }}
-            >
-              {isSaving ? 'Saving...' : 'Save Settings'}
-            </button>
-            {saveSuccess && (
-              <span style={{ color: 'var(--success)', fontWeight: 500 }}>✓ Saved Successfully</span>
-            )}
-          </div>
-        </form>
       </div>
     </div>
   );

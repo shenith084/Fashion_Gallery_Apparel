@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import React from 'react';
 import styles from './FacebookFeed.module.css';
+import { getAdminDb } from '@/lib/firebase/admin';
 
 const FB_POSTS = [
   { id: 'post-1', image: '/prod-floral-maxi.png', views: '12.5K', isVideo: true },
@@ -11,7 +13,19 @@ const FB_POSTS = [
   { id: 'post-6', image: '/prod-office.png', views: '7.9K', isVideo: false },
 ];
 
-export default function FacebookFeed() {
+export default async function FacebookFeed() {
+  let social = { facebookUrl: 'https://www.facebook.com/FashionGalleryApparel' };
+  
+  try {
+    const adminDb = getAdminDb();
+    const docSnap = await adminDb.collection('settings').doc('social').get();
+    if (docSnap.exists) {
+      social = { ...social, ...docSnap.data() } as any;
+    }
+  } catch (error) {
+    console.error('Failed to fetch social links:', error);
+  }
+
   return (
     <section className={styles.section} id="facebook-feed">
       <div className="container">
@@ -28,7 +42,7 @@ export default function FacebookFeed() {
               Watch our latest styles, behind the scenes and happy moments with our customers.
             </p>
             <a
-              href="https://www.facebook.com/FashionGalleryApparel"
+              href={social.facebookUrl}
               target="_blank"
               rel="noopener noreferrer"
               className={`btn btn-primary ${styles.fbBtn}`}
@@ -46,7 +60,7 @@ export default function FacebookFeed() {
             {FB_POSTS.map((post) => (
               <a
                 key={post.id}
-                href="https://www.facebook.com/FashionGalleryApparel"
+                href={social.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.feedItem}

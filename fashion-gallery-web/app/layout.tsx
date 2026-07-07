@@ -13,14 +13,19 @@ export const metadata: Metadata = {
   },
 };
 
+import NextTopLoader from 'nextjs-toploader';
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <NextTopLoader color="var(--color-burgundy)" showSpinner={false} />
+        {children}
+      </body>
     </html>
   );
 }
