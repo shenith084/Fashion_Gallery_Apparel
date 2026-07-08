@@ -77,17 +77,18 @@ export default function ProductClient({ product }: ProductClientProps) {
               onClick={() => setActiveImage(img)}
               aria-label={`View image ${idx + 1}`}
             >
-              <Image src={img || fallbackImage} alt="" fill sizes="80px" className={styles.thumbImg} />
+              <Image src={img || fallbackImage} alt="" fill sizes="80px" className={styles.thumbImg} style={{ objectFit: !img || img === fallbackImage ? 'contain' : 'cover', padding: !img || img === fallbackImage ? '0.5rem' : '0' }} />
             </button>
           ))}
         </div>
         <div className={styles.mainImageWrap}>
           <Image
             src={activeImage || fallbackImage}
-            alt={product.name}
+            alt={product.name || 'Product Image'}
             fill
             sizes="(max-width: 900px) 100vw, 50vw"
             className={styles.mainImage}
+            style={{ objectFit: 'contain' }}
             priority
           />
           {product.isNew && <span className={styles.newBadge}>NEW</span>}

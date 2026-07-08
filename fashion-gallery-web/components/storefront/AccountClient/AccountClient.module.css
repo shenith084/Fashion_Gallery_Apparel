@@ -22,3 +22,73 @@
   flex: 1;
   min-width: 0;
 }
+
+/* ── MOBILE: toggle sidebar vs content ── */
+.sidebarHidden {
+  display: none;
+}
+
+.contentHidden {
+  display: none;
+}
+
+/* Back button — only shown on mobile */
+.backBtn {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-burgundy);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: var(--space-4);
+  letter-spacing: 0.02em;
+}
+
+.mobileContentTitle {
+  display: none;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 899px) {
+  .sidebarHidden {
+    display: none !important;
+  }
+  .contentHidden {
+    display: none !important;
+  }
+  .backBtn {
+    display: flex;
+  }
+  .mobileContentTitle {
+    display: block;
+  }
+  /* When sidebar is visible on mobile, show it full width */
+  .sidebar {
+    position: static;
+    width: 100%;
+  }
+}
+
+@media (min-width: 900px) {
+  /* On desktop: always show both, ignore mobile hidden classes */
+  .sidebarHidden {
+    display: block !important;
+  }
+  .contentHidden {
+    display: block !important;
+  }
+  .backBtn {
+    display: none !important;
+  }
+  .mobileContentTitle {
+    display: none !important;
+  }
+}

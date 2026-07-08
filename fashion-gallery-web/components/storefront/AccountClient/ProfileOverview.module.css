@@ -35,6 +35,26 @@
   object-fit: cover;
 }
 
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.avatarInitial {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--color-burgundy), #a84060);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
 .profileDetails {
   flex: 1;
 }

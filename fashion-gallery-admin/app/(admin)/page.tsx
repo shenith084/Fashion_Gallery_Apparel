@@ -118,7 +118,15 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
-  if (loading) return <div style={{ padding: '3rem', textAlign: 'center' }}>Loading dashboard metrics...</div>;
+  if (loading) return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', gap: '1rem', color: '#6b2335' }}>
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
+      <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+      <span style={{ fontWeight: 500, opacity: 0.8 }}>Loading dashboard metrics...</span>
+    </div>
+  );
 
   return (
     <div className={styles.container}>

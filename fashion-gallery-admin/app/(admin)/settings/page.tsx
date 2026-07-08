@@ -27,16 +27,16 @@ export default function SettingsPage() {
       <h1 className="text-3xl font-bold mb-2">System Settings</h1>
       <p className="text-gray-500 mb-8">Manage all aspects of your store's configuration.</p>
 
-      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
         
         {/* Sidebar Nav */}
         <div style={{ 
-          width: '240px', 
+          width: '240px',
+          flexShrink: 0,
           background: 'white', 
           borderRadius: '12px', 
           padding: '1rem',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          flexShrink: 0
         }}>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
             {tabs.map(tab => (

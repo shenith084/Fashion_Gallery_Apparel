@@ -110,7 +110,7 @@
 .formGroup textarea { resize: vertical; font-family: inherit; }
 
 /* Image Upload */
-.imageUploadGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 6px; }
+.imageUploadGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 6px; }
 .imageUploadSlot { aspect-ratio: 3/4; border-radius: 10px; border: 2px dashed #e5e7eb; background: #fafafa; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; transition: border-color 0.2s; }
 .imageUploadSlot:hover { border-color: #6b2335; }
 .imageUploadEmpty { opacity: 0.4; cursor: default; pointer-events: none; }

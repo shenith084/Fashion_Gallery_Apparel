@@ -295,3 +295,12 @@ input, textarea, select {
     --container-pad: 16px;
   }
 }
+
+/* =====================================================
+   MOBILE BOTTOM NAV SPACING
+   ===================================================== */
+@media (max-width: 1024px) {
+  body {
+    padding-bottom: 60px;
+  }
+}

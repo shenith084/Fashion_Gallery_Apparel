@@ -45,11 +45,28 @@
   background: var(--color-burgundy-dark);
 }
 
-/* ===================== GRID ===================== */
+/* ===================== GRID / SLIDER ===================== */
+.sliderContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin: 0 -10px; /* slight overflow for arrows */
+  padding: 0 10px;
+}
+
 .grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  display: flex;
+  overflow-x: auto;
   gap: var(--space-4);
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  width: 100%;
+  padding: 10px 0; /* space for box shadows */
+}
+
+.grid::-webkit-scrollbar {
+  display: none;
 }
 
 /* ===================== CARD ===================== */
@@ -59,6 +76,39 @@
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
+  flex: 0 0 calc((100% - (5 * var(--space-4))) / 6);
+  min-width: 160px;
+}
+
+.navBtn {
+  position: absolute;
+  z-index: 10;
+  background: white;
+  border: 1px solid #eaeaea;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  color: var(--color-charcoal);
+  transition: all 0.2s;
+}
+
+.navBtn:hover {
+  background: var(--color-burgundy);
+  color: white;
+  border-color: var(--color-burgundy);
+}
+
+.prevBtn {
+  left: -15px;
+}
+
+.nextBtn {
+  right: -15px;
 }
 
 .imageWrap {
@@ -137,14 +187,14 @@
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 1200px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
+  .card {
+    flex: 0 0 calc(23.5% - var(--space-4));
   }
 }
 
 @media (max-width: 900px) {
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
+  .card {
+    flex: 0 0 calc(31.5% - var(--space-4));
   }
   .headerRow {
     flex-direction: column;
@@ -154,8 +204,10 @@
 }
 
 @media (max-width: 600px) {
+  .card {
+    flex: 0 0 calc(45% - var(--space-3));
+  }
   .grid {
-    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-3);
   }
 }

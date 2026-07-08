@@ -55,7 +55,7 @@
 }
 
 .mainImage {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .newBadge {

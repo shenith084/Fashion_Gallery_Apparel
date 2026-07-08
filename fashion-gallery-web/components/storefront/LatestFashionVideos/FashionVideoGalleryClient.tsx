@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './LatestFashionVideos.module.css';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 export default function FashionVideoGalleryClient({ videos }: { videos: any[] }) {
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   // Close modal on escape key
   useEffect(() => {
@@ -30,11 +31,28 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
     }
   };
 
+  const scrollLeft = () => {
+    if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) scrollRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+  };
+
   if (!videos || videos.length === 0) return null;
 
   return (
     <>
-      <div className={styles.grid}>
+      <div className={styles.sliderContainer}>
+        <button 
+          className={`${styles.navBtn} ${styles.prevBtn}`} 
+          onClick={scrollLeft}
+          aria-label="Scroll left"
+        >
+          <ChevronLeft size={24} />
+        </button>
+
+        <div className={styles.grid} ref={scrollRef}>
         {videos.map((video, index) => (
           <div 
             key={video.id} 
@@ -76,6 +94,15 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
             </div>
           </div>
         ))}
+        </div>
+
+        <button 
+          className={`${styles.navBtn} ${styles.nextBtn}`} 
+          onClick={scrollRight}
+          aria-label="Scroll right"
+        >
+          <ChevronRight size={24} />
+        </button>
       </div>
 
       {playingIndex !== null && videos[playingIndex]?.videoUrl && (

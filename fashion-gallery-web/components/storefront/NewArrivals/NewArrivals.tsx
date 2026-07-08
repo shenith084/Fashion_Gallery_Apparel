@@ -1,28 +1,27 @@
 import Link from 'next/link';
 import ProductCard from '@/components/ui/ProductCard';
 import styles from './NewArrivals.module.css';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/firebase/admin';
 
 export default async function NewArrivals() {
-  let products: any[] = [];
+  let newArrivals: any[] = [];
   try {
-    // Firestore rules require the query to match the rule filters (Rules are not filters)
-    const q = query(collection(db, 'products'), where('status', '==', 'Active'));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      products.push({ id: doc.id, ...doc.data() });
+    const db = getAdminDb();
+    // Fetch latest 4 active products directly using Admin SDK (bypasses security rules for server components)
+    const snapshot = await db.collection('products')
+      .orderBy('createdAt', 'desc')
+      .limit(50)
+      .get();
+      
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.status === 'Active' && data.category === 'New Arrivals' && newArrivals.length < 5) {
+        newArrivals.push({ id: doc.id, href: `/product/${data.slug || doc.id}`, ...data });
+      }
     });
   } catch (error) {
     console.error("Error reading from Firestore:", error);
   }
-  
-  // Get latest 4 active products
-  const activeProducts = products.filter(p => p.status === 'Active');
-  const newArrivals = activeProducts
-    .slice(-4)
-    .reverse()
-    .map(p => ({ ...p, href: `/product/${p.slug}` }));
 
   return (
     <section className={styles.section} id="new-arrivals-section">

@@ -39,6 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   React.useEffect(() => {
     const fetchNewOrderCount = async () => {
+      if (!auth.currentUser) return; // Prevent unauthorized query before auth is initialized
       try {
         const querySnapshot = await getDocs(collection(db, 'orders'));
         let count = 0;
@@ -69,6 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               setUserPermissions(data.permissions);
             }
           }
+          fetchNewOrderCount(); // Fetch immediately once authenticated
         } catch (error) {
           console.error('Failed to fetch user permissions', error);
         }

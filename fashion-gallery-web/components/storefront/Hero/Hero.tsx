@@ -71,6 +71,7 @@ export default async function Hero() {
               src="/hero-bg-v6.jpg"
               alt="Fashion Gallery Apparel Models"
               fill
+              sizes="100vw"
               priority
               className={styles.heroImage}
             />

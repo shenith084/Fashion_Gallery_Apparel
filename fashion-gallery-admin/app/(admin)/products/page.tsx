@@ -134,7 +134,7 @@ export default function ProductsPage() {
     if (!editProduct) return;
     setSaving(true);
     try {
-      const payload = { ...editProduct, slug: editProduct.name?.toLowerCase().replace(/\s+/g, '-') };
+      const payload = { ...editProduct, slug: editProduct.name?.toLowerCase().replace(/\s+/g, '-') || '' };
       if (isEditing && payload.id) {
         const docRef = doc(db, 'products', payload.id);
         delete payload.id;
@@ -223,7 +223,15 @@ export default function ProductsPage() {
       </div>
 
       <div className={styles.tableCard}>
-        {loading ? <div className={styles.emptyState}>Loading products...</div> :
+        {loading ? (
+          <div className={styles.emptyState} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '4rem 0' }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b2335" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1s linear infinite' }}>
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+            <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+            <span style={{ opacity: 0.8 }}>Loading products...</span>
+          </div>
+        ) :
           paginated.length === 0 ? <div className={styles.emptyState}>No products found.</div> : (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
@@ -300,7 +308,7 @@ export default function ProductsPage() {
                 <div className={styles.formGroup}><label>Stock</label><input type="number" value={editProduct.stock??0} onChange={e=>{const stock=Number(e.target.value);setEditProduct(p=>({...p,stock,status:handleStockStatusSync(stock)}));}} /></div>
                 <div className={styles.formGroup}><label>Category</label>
                   <select value={editProduct.category||'Dresses'} onChange={e=>setEditProduct(p=>({...p,category:e.target.value,categorySlug:e.target.value.toLowerCase().replace(/\s+/g,'-')}))}>
-                    {['New Arrivals','Dresses','Office Wear','Tops','Bottoms','Jumpsuits'].map(c=><option key={c}>{c}</option>)}
+                    {['New Arrivals','Maxi Dresses','Midi Dresses','Office Wear','Tops','Bottoms','Jumpsuits'].map(c=><option key={c}>{c}</option>)}
                   </select>
                 </div>
                 <div className={styles.formGroup}><label>Status</label>
@@ -314,7 +322,7 @@ export default function ProductsPage() {
                 <div className={styles.formGroup}><label>Colors (comma separated)</label><input type="text" value={(editProduct.colors||[]).join(', ')} onChange={e=>setEditProduct(p=>({...p,colors:e.target.value.split(',').map(s=>s.trim())}))} /></div>
                 {/* IMAGE UPLOAD SECTION */}
                 <div className={styles.formGroup} style={{gridColumn:'1/-1'}}>
-                  <label>Product Images <span style={{fontWeight:400, color:'#999', textTransform:'none'}}>(Max 3 images — first image is the main card image)</span></label>
+                  <label>Product Images <span style={{fontWeight:400, color:'#999', textTransform:'none'}}>(Max 7 images — first image is the main card image)</span></label>
                   <div className={styles.imageUploadGrid}>
                     {/* Existing images */}
                     {(editProduct.images||[]).map((img, idx) => (
@@ -324,8 +332,8 @@ export default function ProductsPage() {
                         <button className={styles.removeImgBtn} onClick={() => removeImage(idx)} type="button"><X size={12} /></button>
                       </div>
                     ))}
-                    {/* Upload slot — show if less than 3 */}
-                    {(editProduct.images||[]).length < 3 && (
+                    {/* Upload slot — show if less than 7 */}
+                    {(editProduct.images||[]).length < 7 && (
                       <div
                         className={styles.imageUploadSlot}
                         onClick={() => fileInputRef.current?.click()}
@@ -348,13 +356,13 @@ export default function ProductsPage() {
                           <div className={styles.uploadPlaceholder}>
                             <ImagePlus size={24} color="#bbb" />
                             <span>Upload Image</span>
-                            <span style={{fontSize:'10px',color:'#ccc'}}>{3-(editProduct.images||[]).length} slot(s) left</span>
+                            <span style={{fontSize:'10px',color:'#ccc'}}>{7-(editProduct.images||[]).length} slot(s) left</span>
                           </div>
                         )}
                       </div>
                     )}
                     {/* Empty placeholder slots */}
-                    {Array.from({length: Math.max(0, 3 - Math.max((editProduct.images||[]).length, 1))}).map((_, i) => (
+                    {Array.from({length: Math.max(0, 7 - Math.max((editProduct.images||[]).length, 1))}).map((_, i) => (
                       <div key={`empty-${i}`} className={`${styles.imageUploadSlot} ${styles.imageUploadEmpty}`} />
                     ))}
                   </div>

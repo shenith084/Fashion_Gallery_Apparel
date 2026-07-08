@@ -4,26 +4,38 @@ import React from 'react';
 import styles from './FacebookFeed.module.css';
 import { getAdminDb } from '@/lib/firebase/admin';
 
-const FB_POSTS = [
-  { id: 'post-1', image: '/prod-floral-maxi.png', views: '12.5K', isVideo: true },
-  { id: 'post-2', image: '/prod-wrap-midi.png', views: '9.8K', isVideo: true },
-  { id: 'post-3', image: '/prod-printed-long.png', views: '15.3K', isVideo: true },
-  { id: 'post-4', image: '/prod-vneck.png', views: '8.2K', isVideo: true },
-  { id: 'post-5', image: '/prod-shirt.png', views: '11.6K', isVideo: true },
-  { id: 'post-6', image: '/prod-office.png', views: '7.9K', isVideo: false },
-];
+
 
 export default async function FacebookFeed() {
   let social = { facebookUrl: 'https://www.facebook.com/FashionGalleryApparel' };
+  let realPosts: { id: string, image: string, isVideo: boolean }[] = [];
   
   try {
     const adminDb = getAdminDb();
+    
+    // Fetch Social Settings
     const docSnap = await adminDb.collection('settings').doc('social').get();
     if (docSnap.exists) {
       social = { ...social, ...docSnap.data() } as any;
     }
+
+    // Fetch latest 6 active products to replace dummy posts
+    const productsSnap = await adminDb.collection('products')
+      .where('status', '==', 'Active')
+      .orderBy('createdAt', 'desc')
+      .limit(6)
+      .get();
+      
+    realPosts = productsSnap.docs.map(d => {
+      const data = d.data();
+      return {
+        id: d.id,
+        image: data.images?.[0]?.url || '/logo.svg',
+        isVideo: false // Assuming products don't have videos in this feed for now
+      };
+    });
   } catch (error) {
-    console.error('Failed to fetch social links:', error);
+    console.error('Failed to fetch data for FacebookFeed:', error);
   }
 
   return (
@@ -57,7 +69,7 @@ export default async function FacebookFeed() {
 
           {/* Right Grid */}
           <div className={styles.feedGrid}>
-            {FB_POSTS.map((post) => (
+            {realPosts.length > 0 ? realPosts.map((post) => (
               <a
                 key={post.id}
                 href={social.facebookUrl}
@@ -81,7 +93,11 @@ export default async function FacebookFeed() {
                   )}
                 </div>
               </a>
-            ))}
+            )) : (
+              <div style={{ gridColumn: '1 / -1', color: 'white', opacity: 0.7, padding: '2rem', textAlign: 'center' }}>
+                Loading our latest collections...
+              </div>
+            )}
 
             {/* Arrow navigation decorative */}
             <div className={styles.navArrow}>
