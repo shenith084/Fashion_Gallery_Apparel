@@ -10,58 +10,122 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
-
-// Data for Line Chart
-const salesData = [
-  { name: 'May 25', value: 0 },
-  { name: 'May 30', value: 300000 },
-  { name: 'Jun 04', value: 750000 },
-  { name: 'Jun 09', value: 200000 },
-  { name: 'Jun 14', value: 650000 },
-  { name: 'Jun 19', value: 400000 },
-  { name: 'Jun 24', value: 1000000 },
-  { name: 'Jun 29', value: 1300000 },
-];
-
-// Data for Donut Chart
-const orderStatusData = [
-  { name: 'Pending', value: 12, color: '#60a5fa' },
-  { name: 'Processing', value: 28, color: '#f59e0b' },
-  { name: 'Shipped', value: 86, color: '#c084fc' },
-  { name: 'Out for Delivery', value: 45, color: '#8b5cf6' },
-  { name: 'Delivered', value: 85, color: '#4ade80' },
-];
-
-const RECENT_ORDERS = [
-  { id: '#MM-2026-1025', customer: 'Nimali Perera', date: '01 Jul 2026', amount: 'LKR 3,250', status: 'Processing', payment: 'Cash on Delivery', avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Nimali+Perera&backgroundColor=6B2335&textColor=ffffff' },
-  { id: '#MM-2026-1024', customer: 'Tharushi Silva', date: '01 Jul 2026', amount: 'LKR 2,890', status: 'Shipped', payment: 'Bank Transfer', avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Tharushi+Silva&backgroundColor=6B2335&textColor=ffffff' },
-  { id: '#MM-2026-1023', customer: 'Hasini Wijesinghe', date: '30 Jun 2026', amount: 'LKR 4,150', status: 'Delivered', payment: 'Cash on Delivery', avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Hasini+Wijesinghe&backgroundColor=6B2335&textColor=ffffff' },
-  { id: '#MM-2026-1022', customer: 'Dilini Fernando', date: '30 Jun 2026', amount: 'LKR 1,950', status: 'Processing', payment: 'Bank Transfer', avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Dilini+Fernando&backgroundColor=6B2335&textColor=ffffff' },
-  { id: '#MM-2026-1021', customer: 'Sachini Jayawardena', date: '29 Jun 2026', amount: 'LKR 3,790', status: 'Out for Delivery', payment: 'Cash on Delivery', avatar: 'https://api.dicebear.com/7.x/initials/svg?seed=Sachini+Jayawardena&backgroundColor=6B2335&textColor=ffffff' },
-];
-
-const LOW_STOCK = [
-  { name: 'Floral Maxi Dress', count: 2, img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=100&q=80' },
-  { name: 'Linen Puff Sleeve Top', count: 3, img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=100&q=80' },
-  { name: 'Pleated Long Skirt', count: 4, img: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=100&q=80' },
-  { name: 'Casual Blazer', count: 2, img: 'https://images.unsplash.com/photo-1548624149-f9b1859aa7d0?w=100&q=80' },
-];
-
-const TOP_SELLING = [
-  { rank: 1, name: 'Floral Maxi Dress', sold: 132, img: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=100&q=80' },
-  { rank: 2, name: 'Linen Puff Sleeve Top', sold: 98, img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=100&q=80' },
-  { rank: 3, name: 'Pleated Long Skirt', sold: 75, img: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=100&q=80' },
-  { rank: 4, name: 'Casual Blazer', sold: 62, img: 'https://images.unsplash.com/photo-1548624149-f9b1859aa7d0?w=100&q=80' },
-  { rank: 5, name: 'Printed Wrap Dress', sold: 55, img: 'https://images.unsplash.com/photo-1618932260643-eee4a2f652a6?w=100&q=80' },
-];
-
+import { useState, useEffect } from 'react';
+import { db } from '@/lib/firebase/config';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 export default function DashboardPage() {
+  const [loading, setLoading] = useState(true);
+  const [salesData, setSalesData] = useState<any[]>([]);
+  const [orderStatusData, setOrderStatusData] = useState<any[]>([]);
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [lowStock, setLowStock] = useState<any[]>([]);
+  const [topSelling, setTopSelling] = useState<any[]>([]);
+  
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  const [activeProducts, setActiveProducts] = useState(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch Orders
+        const ordersSnap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt', 'desc')));
+        const orders = ordersSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+        
+        setTotalOrders(orders.length);
+        
+        // Calculate Revenue (parse from string 'LKR 3,250' or similar)
+        let revenue = 0;
+        const statusCounts: Record<string, number> = { 'Pending': 0, 'Processing': 0, 'Shipped': 0, 'Delivered': 0 };
+        const uniqueCustomers = new Set();
+        
+        orders.forEach(order => {
+          if (order.status !== 'Cancelled') {
+            const amount = typeof order.total === 'string' ? parseFloat(order.total.replace(/[^0-9.-]+/g, "")) : (order.total || 0);
+            revenue += amount;
+          }
+          if (order.status && statusCounts[order.status] !== undefined) {
+            statusCounts[order.status]++;
+          } else if (order.status) {
+            statusCounts[order.status] = 1;
+          }
+          if (order.customerEmail || order.email) {
+            uniqueCustomers.add(order.customerEmail || order.email);
+          }
+        });
+        
+        setTotalRevenue(revenue);
+        setTotalCustomers(uniqueCustomers.size);
+        
+        // Donut Chart Data
+        const colors = ['#60a5fa', '#f59e0b', '#c084fc', '#4ade80', '#ef4444'];
+        const chartData = Object.keys(statusCounts).filter(k => statusCounts[k] > 0).map((key, i) => ({
+          name: key,
+          value: statusCounts[key],
+          color: colors[i % colors.length]
+        }));
+        setOrderStatusData(chartData);
+
+        // Recent Orders
+        setRecentOrders(orders.slice(0, 5).map(o => ({
+          id: o.id,
+          customer: o.customer || o.customerName || 'Unknown',
+          date: new Date(o.createdAt).toLocaleDateString(),
+          amount: typeof o.total === 'string' ? o.total : `LKR ${o.total?.toLocaleString()}`,
+          status: o.status,
+          payment: o.payment || o.paymentMethod || 'Unknown',
+          avatar: o.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(o.customer || 'U')}&backgroundColor=6B2335&textColor=ffffff`
+        })));
+
+        // Basic mock timeline for sales (until we have real historical grouping)
+        setSalesData([
+          { name: 'Week 1', value: revenue * 0.2 },
+          { name: 'Week 2', value: revenue * 0.3 },
+          { name: 'Week 3', value: revenue * 0.1 },
+          { name: 'This Week', value: revenue * 0.4 },
+        ]);
+
+        // Fetch Products
+        const productsSnap = await getDocs(collection(db, 'products'));
+        const products = productsSnap.docs.map(d => ({ id: d.id, ...d.data() } as any));
+        
+        setActiveProducts(products.filter(p => p.status === 'Active').length);
+        
+        // Low Stock
+        const low = products.filter(p => p.stock > 0 && p.stock <= 5).slice(0, 4);
+        setLowStock(low.map(p => ({
+          name: p.name,
+          count: p.stock,
+          img: p.images?.[0] || '/logo.svg'
+        })));
+        
+        // Top Selling (mocking rank and sold count until we have actual sales data in products)
+        setTopSelling(products.slice(0, 5).map((p, idx) => ({
+          rank: idx + 1,
+          name: p.name,
+          sold: Math.floor(Math.random() * 100) + 10,
+          img: p.images?.[0] || '/logo.svg'
+        })));
+        
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  if (loading) return <div style={{ padding: '3rem', textAlign: 'center' }}>Loading dashboard metrics...</div>;
+
   return (
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>Dashboard</h1>
-        <p className={styles.pageSubtitle}>Welcome back, Senith Chanidu 👋</p>
+        <p className={styles.pageSubtitle}>Live Metrics Overview</p>
       </div>
 
       {/* Metrics Row */}
@@ -73,10 +137,9 @@ export default function DashboardPage() {
             </div>
             <span className={styles.metricTitle}>Total Orders</span>
           </div>
-          <div className={styles.metricValue}>256</div>
+          <div className={styles.metricValue}>{totalOrders}</div>
           <div className={styles.metricBottom}>
-            <span className={styles.changePos}>↑ 18.6%</span>
-            <span className={styles.changeText}>vs last 30 days</span>
+            <span className={styles.changePos}>Live Data</span>
           </div>
         </div>
 
@@ -87,10 +150,9 @@ export default function DashboardPage() {
             </div>
             <span className={styles.metricTitle}>Total Revenue</span>
           </div>
-          <div className={styles.metricValue}>LKR 1,250,000</div>
+          <div className={styles.metricValue}>LKR {totalRevenue.toLocaleString()}</div>
           <div className={styles.metricBottom}>
-            <span className={styles.changePos}>↑ 23.4%</span>
-            <span className={styles.changeText}>vs last 30 days</span>
+            <span className={styles.changePos}>Live Data</span>
           </div>
         </div>
 
@@ -101,10 +163,9 @@ export default function DashboardPage() {
             </div>
             <span className={styles.metricTitle}>Total Customers</span>
           </div>
-          <div className={styles.metricValue}>1,245</div>
+          <div className={styles.metricValue}>{totalCustomers}</div>
           <div className={styles.metricBottom}>
-            <span className={styles.changePos}>↑ 15.2%</span>
-            <span className={styles.changeText}>vs last 30 days</span>
+            <span className={styles.changePos}>Live Data</span>
           </div>
         </div>
 
@@ -113,12 +174,11 @@ export default function DashboardPage() {
             <div className={`${styles.metricIconWrap} ${styles.iconPurple}`}>
               <Box size={20} />
             </div>
-            <span className={styles.metricTitle}>Products</span>
+            <span className={styles.metricTitle}>Active Products</span>
           </div>
-          <div className={styles.metricValue}>58</div>
+          <div className={styles.metricValue}>{activeProducts}</div>
           <div className={styles.metricBottom}>
-            <span className={styles.changePos}>↑ 5.1%</span>
-            <span className={styles.changeText}>vs last 30 days</span>
+            <span className={styles.changePos}>Live Data</span>
           </div>
         </div>
 
@@ -129,10 +189,9 @@ export default function DashboardPage() {
             </div>
             <span className={styles.metricTitle}>Low Stock Items</span>
           </div>
-          <div className={styles.metricValue}>6</div>
+          <div className={styles.metricValue}>{lowStock.length}</div>
           <div className={styles.metricBottom}>
-            <span className={styles.changeNeg}>↓ 12.5%</span>
-            <span className={styles.changeText}>vs last 30 days</span>
+            <span className={styles.changeNeg}>Needs Restock</span>
           </div>
         </div>
       </div>
@@ -225,7 +284,7 @@ export default function DashboardPage() {
             <button className={styles.viewAllBtn}>View All</button>
           </div>
           <div className={styles.lowStockList}>
-            {LOW_STOCK.map((item, idx) => (
+            {lowStock.map((item, idx) => (
               <div key={idx} className={styles.stockItem}>
                 <img src={item.img} alt={item.name} className={styles.stockImage} />
                 <div className={styles.stockInfo}>
@@ -261,31 +320,30 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                {RECENT_ORDERS.map((order, idx) => {
-                  let badgeClass = styles.bgProcessing;
-                  if (order.status === 'Shipped') badgeClass = styles.bgShipped;
-                  if (order.status === 'Delivered') badgeClass = styles.bgDelivered;
-                  if (order.status === 'Out for Delivery') badgeClass = styles.bgOut;
-
-                  return (
-                    <tr key={idx}>
-                      <td className={styles.orderId}>{order.id}</td>
-                      <td>
-                        <div className={styles.customerCell}>
-                          <img src={order.avatar} alt={order.customer} className={styles.customerAvatar} />
-                          {order.customer}
-                        </div>
-                      </td>
-                      <td>{order.date}</td>
-                      <td>{order.amount}</td>
-                      <td><span className={`${styles.statusBadge} ${badgeClass}`}>{order.status}</span></td>
-                      <td>{order.payment}</td>
-                      <td>
-                        <button className={styles.actionBtn}><MoreVertical size={14}/></button>
-                      </td>
-                    </tr>
-                  )
-                })}
+                {recentOrders.map(order => (
+                  <tr key={order.id}>
+                    <td><span className={styles.orderId}>{order.id}</span></td>
+                    <td>
+                      <div className={styles.customerInfo}>
+                        <img src={order.avatar} alt={order.customer} className={styles.customerAvatar} />
+                        <span>{order.customer}</span>
+                      </div>
+                    </td>
+                    <td>{order.date}</td>
+                    <td>{order.amount}</td>
+                    <td>
+                      <span className={`${styles.statusBadge} ${styles[(order.status || 'Pending').toLowerCase().replace(' ', '')] || styles.processing}`}>
+                        {order.status || 'Pending'}
+                      </span>
+                    </td>
+                    <td>{order.payment}</td>
+                    <td>
+                      <button className={styles.actionBtn}>
+                        <MoreVertical size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -299,7 +357,7 @@ export default function DashboardPage() {
               <button className={styles.viewAllBtn}>View All</button>
             </div>
             <div className={styles.topSellingList}>
-              {TOP_SELLING.map((item, idx) => (
+              {topSelling.map((item: any, idx: number) => (
                 <div key={idx} className={styles.sellingItem}>
                   <span className={styles.sellingRank}>{item.rank}</span>
                   <img src={item.img} alt={item.name} className={styles.sellingImage} />

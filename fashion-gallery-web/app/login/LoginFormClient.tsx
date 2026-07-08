@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store/authStore';
 import Image from 'next/image';
 import styles from './login.module.css';
+import { auth, db } from '@/lib/firebase/client';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export default function LoginFormClient() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -23,33 +26,59 @@ export default function LoginFormClient() {
     setLoading(true);
     
     try {
-      const endpoint = isRegistering ? '/api/auth/register' : '/api/auth/login';
-      const body = isRegistering 
-        ? JSON.stringify({ name, email, password })
-        : JSON.stringify({ email, password });
-
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Authentication failed');
-        setLoading(false);
-        return;
+      let userCredential;
+      if (isRegistering) {
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: name });
+        
+        // Create user document in Firestore
+        const newUserDoc = {
+          uid: userCredential.user.uid,
+          name: name,
+          email: email,
+          phone: '',
+          address: '',
+          avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=6B2335&textColor=ffffff`,
+          wishlist: [],
+          addresses: [],
+          preferences: { orderUpdatesEmail: true, orderUpdatesSms: false, promotions: true, newsletter: true },
+          createdAt: new Date().toISOString()
+        };
+        await setDoc(doc(db, 'users', userCredential.user.uid), newUserDoc);
+        login(newUserDoc);
+      } else {
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userDocRef = doc(db, 'users', userCredential.user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        if (userDocSnap.exists()) {
+          login(userDocSnap.data() as any);
+        } else {
+          // Fallback if document doesn't exist for some reason
+          login({
+            uid: userCredential.user.uid,
+            name: userCredential.user.displayName || 'User',
+            email: userCredential.user.email || '',
+            phone: '',
+            address: '',
+            avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(userCredential.user.displayName || 'U')}&backgroundColor=6B2335&textColor=ffffff`
+          });
+        }
       }
-      
-      // Successfully authenticated
-      login(data.user);
-      
+
       // Redirect to account or back to previous page
       const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/account';
       router.push(returnUrl);
-    } catch (err) {
-      setError('A network error occurred. Please try again.');
+    } catch (err: any) {
+      console.error('Auth error:', err);
+      if (err.code === 'auth/email-already-in-use') {
+        setError('Email is already registered.');
+      } else if (err.code === 'auth/invalid-credential') {
+        setError('Invalid email or password.');
+      } else {
+        setError('Authentication failed. Please try again.');
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -59,20 +88,42 @@ export default function LoginFormClient() {
     setError(null);
     setLoading(true);
     
-    // Simulate network delay / OAuth popup for realism
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const googleUser = {
-      name: 'Google User',
-      email: 'user@gmail.com',
-      phone: '',
-      address: '',
-      avatar: `https://api.dicebear.com/7.x/initials/svg?seed=Google&backgroundColor=6B2335&textColor=ffffff`
-    };
-    
-    login(googleUser);
-    const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/account';
-    router.push(returnUrl);
+    try {
+      const { GoogleAuthProvider, signInWithPopup } = await import('firebase/auth');
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      
+      const userDocRef = doc(db, 'users', userCredential.user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      
+      if (userDocSnap.exists()) {
+        login(userDocSnap.data() as any);
+      } else {
+        // Create user doc for first-time Google login
+        const newUserDoc = {
+          uid: userCredential.user.uid,
+          name: userCredential.user.displayName || 'Google User',
+          email: userCredential.user.email || '',
+          phone: '',
+          address: '',
+          avatar: userCredential.user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=Google&backgroundColor=6B2335&textColor=ffffff`,
+          wishlist: [],
+          addresses: [],
+          preferences: { orderUpdatesEmail: true, orderUpdatesSms: false, promotions: true, newsletter: true },
+          createdAt: new Date().toISOString()
+        };
+        await setDoc(userDocRef, newUserDoc);
+        login(newUserDoc);
+      }
+      
+      const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/account';
+      router.push(returnUrl);
+    } catch (err: any) {
+      console.error('Google Auth error:', err);
+      setError('Google login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const toggleMode = (e: React.MouseEvent) => {

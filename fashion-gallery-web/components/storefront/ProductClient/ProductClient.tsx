@@ -6,6 +6,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { type Product } from '@/lib/data/products';
 import { useCartStore } from '@/lib/store/cartStore';
+import { useAuthStore } from '@/lib/store/authStore';
+import { db } from '@/lib/firebase/client';
+import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import styles from './ProductClient.module.css';
 
 interface ProductClientProps {
@@ -24,6 +27,30 @@ export default function ProductClient({ product }: ProductClientProps) {
 
   const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
+  const user = useAuthStore((state) => state.user);
+  const updateUser = useAuthStore((state) => state.updateUser);
+
+  const isWishlisted = user?.wishlist?.includes(product.id) || false;
+
+  const handleWishlist = async () => {
+    if (!user) {
+      router.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      if (isWishlisted) {
+        await updateDoc(userRef, { wishlist: arrayRemove(product.id) });
+        updateUser({ wishlist: (user.wishlist || []).filter(id => id !== product.id) });
+      } else {
+        await updateDoc(userRef, { wishlist: arrayUnion(product.id) });
+        updateUser({ wishlist: [...(user.wishlist || []), product.id] });
+      }
+    } catch (error) {
+      console.error('Error updating wishlist:', error);
+      setErrorMsg('Failed to update wishlist');
+    }
+  };
 
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
@@ -169,8 +196,12 @@ export default function ProductClient({ product }: ProductClientProps) {
           >
             {adding ? 'Added!' : 'Add to Cart'}
           </button>
-          <button className={styles.wishlistBtn} aria-label="Add to wishlist">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <button 
+            className={`${styles.wishlistBtn} ${isWishlisted ? styles.wishlisted : ''}`} 
+            onClick={handleWishlist}
+            aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
           </button>

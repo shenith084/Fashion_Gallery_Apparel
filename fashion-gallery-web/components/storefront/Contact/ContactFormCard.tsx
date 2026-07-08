@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/lib/store/authStore';
 import Link from 'next/link';
+import { submitInquiryAction } from '@/app/actions/inquiry';
 import styles from './ContactFormCard.module.css';
 
 export default function ContactFormCard() {
@@ -30,7 +31,6 @@ export default function ContactFormCard() {
     };
     
     try {
-      const { submitInquiryAction } = await import('@/app/actions/inquiry');
       const result = await submitInquiryAction(data);
       
       if (result.success) {

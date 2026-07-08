@@ -22,6 +22,7 @@ export default function FashionVideosManager() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [newVideoUrl, setNewVideoUrl] = useState('');
+  const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     fetchVideos();
@@ -161,10 +162,11 @@ export default function FashionVideosManager() {
     setNewVideoUrl('');
   };
 
-  const handleDeleteVideo = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this video item?')) return;
-    const updatedList = videos.filter(v => v.id !== id);
+  const handleDeleteVideo = async () => {
+    if (!videoToDelete) return;
+    const updatedList = videos.filter(v => v.id !== videoToDelete);
     await saveVideosList(updatedList);
+    setVideoToDelete(null);
   };
 
   const moveUp = async (index: number) => {
@@ -217,7 +219,7 @@ export default function FashionVideosManager() {
               </div>
 
               <button 
-                onClick={() => handleDeleteVideo(video.id)}
+                onClick={() => setVideoToDelete(video.id)}
                 style={{ color: 'var(--color-error)', padding: '0.5rem', borderRadius: '4px', background: 'rgba(162, 59, 59, 0.1)' }}
                 title="Remove Item"
               >
@@ -288,6 +290,41 @@ export default function FashionVideosManager() {
           {saving ? 'Adding...' : 'Add Item'}
         </button>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {videoToDelete && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: 'white', padding: '2rem', borderRadius: '12px', width: '90%', maxWidth: '400px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
+          }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--color-charcoal)' }}>
+              Confirm Deletion
+            </h3>
+            <p style={{ marginBottom: '1.5rem', color: 'var(--color-charcoal-light)' }}>
+              Are you sure you want to remove this video item? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+              <button 
+                onClick={() => setVideoToDelete(null)}
+                style={{ padding: '0.5rem 1rem', border: '1px solid #ddd', borderRadius: '6px', background: 'white', cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDeleteVideo}
+                style={{ padding: '0.5rem 1rem', border: 'none', borderRadius: '6px', background: 'var(--color-error)', color: 'white', cursor: 'pointer' }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

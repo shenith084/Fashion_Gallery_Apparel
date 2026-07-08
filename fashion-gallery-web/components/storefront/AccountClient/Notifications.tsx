@@ -1,18 +1,48 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuthStore } from '@/lib/store/authStore';
+import { db } from '@/lib/firebase/client';
+import { doc, updateDoc } from 'firebase/firestore';
 import styles from './AccountTabs.module.css';
 
 export default function Notifications() {
+  const user = useAuthStore(state => state.user);
+  const updateUser = useAuthStore(state => state.updateUser);
+  
   const [prefs, setPrefs] = useState({
     orderUpdatesEmail: true,
     orderUpdatesSms: false,
     promotions: true,
     newsletter: true
   });
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (user?.preferences) {
+      setPrefs(user.preferences);
+    }
+  }, [user]);
 
   const togglePref = (key: keyof typeof prefs) => {
     setPrefs(prev => ({ ...prev, [key]: !prev[key] }));
+    setSaved(false);
+  };
+
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      await updateDoc(doc(db, 'users', user.uid), { preferences: prefs });
+      updateUser({ preferences: prefs });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error('Failed to save preferences', error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -72,8 +102,11 @@ export default function Notifications() {
         </div>
       </div>
 
-      <div className={styles.submitRow}>
-        <button className="btn btn-primary">Save Preferences</button>
+      <div className={styles.submitRow} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '1rem' }}>
+        {saved && <span style={{ color: '#166534', fontSize: '0.9rem', fontWeight: 500 }}>Preferences saved!</span>}
+        <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
+          {saving ? 'Saving...' : 'Save Preferences'}
+        </button>
       </div>
     </div>
   );

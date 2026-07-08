@@ -89,7 +89,7 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
           onClick={() => setPlayingIndex(null)}
         >
           {/* Top Bar with Title and Close */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)' }} onClick={e => e.stopPropagation()}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)', zIndex: 20 }} onClick={e => e.stopPropagation()}>
             <h2 style={{ color: 'white', margin: 0, fontSize: '1.5rem', fontWeight: 600 }}>
               {videos[playingIndex].title}
             </h2>

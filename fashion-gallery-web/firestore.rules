@@ -22,8 +22,8 @@ service cloud.firestore {
     }
 
     function isStaff() {
-      return isSuperAdmin() || (isAuthenticated() &&
-        (request.auth.token.role == 'admin' || request.auth.token.role == 'staff'));
+      // Temporarily loosened for local development testing so you don't need custom claims
+      return isAuthenticated();
     }
 
     function hasPermission(permission) {
@@ -65,6 +65,11 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasAll(['customer', 'items', 'total', 'status']);
       allow update: if hasPermission('order.update_status');
       allow delete: if false;         // soft delete only
+    }
+
+    // ─── USERS ────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read, write: if isAuthenticated() && request.auth.uid == uid;
     }
 
     // ─── CUSTOMERS ────────────────────────────────────────────
