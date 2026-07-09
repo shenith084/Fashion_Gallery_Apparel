@@ -37,7 +37,7 @@ export default function ContactFormCard() {
         setSuccess(true);
         (e.target as HTMLFormElement).reset();
       } else {
-        setErrorMsg('Failed to send message. Please try again.');
+        setErrorMsg(result.error || 'Failed to send message. Please try again.');
       }
     } catch (err) {
       setErrorMsg('An error occurred. Please try again.');

@@ -33,6 +33,12 @@ export async function submitInquiryAction(formData: {
     return { success: true };
   } catch (error: any) {
     console.error('Error submitting inquiry in Server Action:', error);
-    return { success: false, error: error.message };
+    
+    // Check if it's a ZodError by looking for the issues array
+    if (error && Array.isArray(error.issues) && error.issues.length > 0) {
+      return { success: false, error: error.issues[0].message };
+    }
+    
+    return { success: false, error: error.message || 'Failed to send message' };
   }
 }
