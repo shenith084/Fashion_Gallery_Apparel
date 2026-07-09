@@ -37,7 +37,7 @@ export default async function Footer() {
   };
 
   let social = {
-    facebookUrl: 'https://www.facebook.com/FashionGalleryApparel',
+    facebookUrl: 'https://www.facebook.com/share/1DQucw4RmB/?mibextid=wwXIfr',
     instagramUrl: 'https://www.instagram.com/fashiongalleryapparel',
     tiktokUrl: 'https://www.tiktok.com/@fashiongalleryapparel',
     whatsappUrl: '',

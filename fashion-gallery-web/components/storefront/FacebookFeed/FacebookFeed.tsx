@@ -7,7 +7,7 @@ import { getAdminDb } from '@/lib/firebase/admin';
 
 
 export default async function FacebookFeed() {
-  let social = { facebookUrl: 'https://www.facebook.com/FashionGalleryApparel' };
+  let social = { facebookUrl: 'https://www.facebook.com/share/1DQucw4RmB/?mibextid=wwXIfr' };
   let realPosts: { id: string, image: string, isVideo: boolean }[] = [];
   
   try {

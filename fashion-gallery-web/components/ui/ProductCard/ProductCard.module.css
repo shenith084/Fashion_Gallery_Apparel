@@ -25,7 +25,7 @@
 }
 
 .image {
-  object-fit: contain !important;
+  object-fit: cover !important;
   transition: transform var(--transition-slow);
   padding: 0 !important;
 }

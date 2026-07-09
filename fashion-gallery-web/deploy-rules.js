@@ -1,7 +1,7 @@
 const { initializeApp, cert } = require('firebase-admin/app');
 const { getSecurityRules } = require('firebase-admin/security-rules');
 const fs = require('fs');
-require('dotenv').config({ path: '../fashion-gallery-admin/.env.local' });
+// Using node --env-file instead
 
 const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
 const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
@@ -21,18 +21,8 @@ const source = fs.readFileSync('./firestore.rules', 'utf8');
 async function deployRules() {
   try {
 const rules = getSecurityRules(app);
-    const ruleset = await rules.createRuleset({
-      source: {
-        files: [
-          {
-            name: 'firestore.rules',
-            content: source
-          }
-        ]
-      }
-    });
+    const ruleset = await rules.releaseFirestoreRulesetFromSource(source);
     console.log('Created ruleset:', ruleset.name);
-    await rules.createRelease(ruleset.name, 'cloud.firestore');
     console.log('Successfully deployed firestore rules!');
   } catch (error) {
     console.error('Error deploying rules:', error.message);

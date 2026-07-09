@@ -57,6 +57,14 @@ export default function ShopClient({
     return list;
   }, [activeCategory, activeSize, priceRange, sortBy, products]);
 
+  const itemsPerPage = 7 * columns;
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const currentProducts = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, activeSize, activeColor, priceRange, sortBy]);
+
   const getCategoryCount = (slug: string) => {
     if (slug === 'all') return products.length;
     if (slug === 'best-sellers') return products.filter((p) => p.isBestSeller).length;
@@ -251,9 +259,9 @@ export default function ShopClient({
           </div>
         </div>
 
-        {filtered.length > 0 ? (
+        {currentProducts.length > 0 ? (
           <div className={`${styles.grid} ${columns === 4 ? styles.grid4 : styles.grid3} ${viewMode === 'list' ? styles.list : ''}`}>
-            {filtered.map((p) => (
+            {currentProducts.map((p) => (
               <ProductCard
                 key={p.id}
                 id={p.id}
@@ -274,12 +282,30 @@ export default function ShopClient({
           </div>
         )}
 
-        {filtered.length > 0 && (
+        {totalPages > 1 && (
           <div className={styles.pagination}>
-            <button className={`${styles.pageBtn} ${styles.pageActive}`}>1</button>
-            <button className={styles.pageBtn}>2</button>
-            <button className={styles.pageBtn}>3</button>
-            <button className={styles.pageBtn}>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                className={`${styles.pageBtn} ${currentPage === i + 1 ? styles.pageActive : ''}`}
+                onClick={() => {
+                  setCurrentPage(i + 1);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button 
+              className={styles.pageBtn}
+              onClick={() => {
+                if (currentPage < totalPages) {
+                  setCurrentPage(currentPage + 1);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              disabled={currentPage === totalPages}
+            >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>

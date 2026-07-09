@@ -9,7 +9,7 @@ const FALLBACK_VIDEOS: any[] = [];
 
 export default async function LatestFashionVideos() {
   let videos = FALLBACK_VIDEOS;
-  let social = { facebookUrl: 'https://facebook.com/mymoonclothing' };
+  let social = { facebookUrl: 'https://www.facebook.com/share/1DQucw4RmB/?mibextid=wwXIfr' };
   
   try {
     const adminDb = getAdminDb();
