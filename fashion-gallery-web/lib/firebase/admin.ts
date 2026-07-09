@@ -16,9 +16,16 @@ function getAdminApp(): App {
 
   // Service account credentials — set via environment variables
   // Go to Firebase Console → Project Settings → Service Accounts → Generate new private key
-  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n');
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID?.replace(/^"|"$/g, '');
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL?.replace(/^"|"$/g, '');
+  let privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+  
+  if (privateKey) {
+    // Strip quotes if they exist
+    privateKey = privateKey.replace(/^"|"$/g, '');
+    // Handle newlines depending on how Vercel escaped them
+    privateKey = privateKey.replace(/\\n/g, '\n');
+  }
 
   if (!projectId || !clientEmail || !privateKey) {
     // During development without admin credentials, skip admin initialization

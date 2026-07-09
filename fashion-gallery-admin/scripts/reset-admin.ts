@@ -22,7 +22,7 @@ const db = getFirestore();
 
 async function resetAdmin() {
   try {
-    const email = 'admin@fashiongallery.lk';
+    const email = 'shenith222@gmail.com';
     const newPassword = 'password123';
     
     console.log(`Checking for user ${email}...`);
