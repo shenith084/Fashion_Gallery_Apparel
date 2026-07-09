@@ -36,7 +36,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['firebase-admin'],
+  serverExternalPackages: ['firebase-admin', 'jwks-rsa', 'jose'],
   experimental: {
     serverActions: {
       bodySizeLimit: '10mb',

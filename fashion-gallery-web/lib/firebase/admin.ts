@@ -3,11 +3,9 @@
 // Requires: FIREBASE_ADMIN_* environment variables (service account)
 import { initializeApp, getApps, cert, type App } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
-import { getAuth, type Auth } from 'firebase-admin/auth';
 
 let adminApp: App;
 let adminDb: Firestore;
-let adminAuth: Auth;
 
 function getAdminApp(): App {
   if (getApps().length > 0) {
@@ -50,10 +48,4 @@ function getAdminDb(): Firestore {
   return adminDb;
 }
 
-function getAdminAuth(): Auth {
-  if (!adminApp) adminApp = getAdminApp();
-  if (!adminAuth) adminAuth = getAuth(adminApp);
-  return adminAuth;
-}
-
-export { getAdminDb, getAdminAuth };
+export { getAdminDb };
