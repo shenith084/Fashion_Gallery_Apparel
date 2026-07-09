@@ -16,17 +16,27 @@ const firebaseConfig = {
 };
 
 // Prevent duplicate initialization in Next.js hot reload / SSR
-const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+let app: FirebaseApp | undefined;
+let db: Firestore = {} as Firestore;
+let auth: Auth = {} as Auth;
 
-const db: Firestore = getFirestore(app);
-const auth: Auth = getAuth(app);
+try {
+  if (!firebaseConfig.apiKey) {
+    console.warn("Firebase config is missing API key! Env vars not loaded.");
+  }
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+  db = getFirestore(app);
+  auth = getAuth(app);
+} catch (error) {
+  console.error("Firebase Client SDK Failed to Initialize", error);
+}
 
 // Analytics only runs in the browser
 let analytics: Analytics | null = null;
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && app) {
   isSupported().then((yes) => {
-    if (yes) analytics = getAnalytics(app);
-  });
+    if (yes && app) analytics = getAnalytics(app);
+  }).catch(() => {});
 }
 
 export { app, db, auth, analytics };

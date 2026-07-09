@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@/lib/store/cartStore';
 import styles from './Navbar.module.css';
@@ -31,7 +31,6 @@ export default function Navbar() {
 
   const totalItems = useCartStore((state) => state.getTotalItems());
   const pathname = usePathname();
-  const { useRouter } = require('next/navigation');
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
