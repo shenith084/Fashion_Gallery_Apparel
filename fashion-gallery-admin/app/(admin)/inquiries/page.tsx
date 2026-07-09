@@ -16,6 +16,13 @@ export default function InquiriesPage() {
 
   useEffect(() => {
     fetchInquiries();
+    
+    // Set up 10-second polling for real-time updates
+    const intervalId = setInterval(() => {
+      fetchInquiries();
+    }, 10000);
+    
+    return () => clearInterval(intervalId);
   }, []);
 
   const fetchInquiries = async () => {

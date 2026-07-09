@@ -83,7 +83,7 @@ export default function OrdersPage() {
     };
     
     fetchOrders();
-    const interval = setInterval(fetchOrders, 15000); // Real-time polling every 15s
+    const interval = setInterval(fetchOrders, 10000); // Real-time polling every 10s
     return () => clearInterval(interval);
   }, []);
 

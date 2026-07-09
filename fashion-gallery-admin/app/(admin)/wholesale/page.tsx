@@ -17,6 +17,13 @@ export default function WholesalePage() {
 
   useEffect(() => {
     subscribeToApplications();
+    
+    // Set up 10-second polling for real-time updates
+    const intervalId = setInterval(() => {
+      subscribeToApplications();
+    }, 10000);
+    
+    return () => clearInterval(intervalId);
   }, [subscribeToApplications]);
 
   if (loading) {
