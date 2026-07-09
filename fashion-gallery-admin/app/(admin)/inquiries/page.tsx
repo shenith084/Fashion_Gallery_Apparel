@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { db } from '@/lib/firebase/config';
 import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { Search, Eye, Trash2, Mail, Phone, Calendar, X, AlertTriangle } from 'lucide-react';
@@ -59,7 +60,7 @@ export default function InquiriesPage() {
       if (selectedInquiry?.id === id) setSelectedInquiry(null);
     } catch (err) {
       console.error('Failed to delete inquiry', err);
-      alert('Failed to delete message.');
+      toast.error('Failed to delete message.');
     }
   };
 

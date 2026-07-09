@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { Package, DollarSign, AlertCircle, Lock, Search, Plus } from 'lucide-react';
 import styles from './Stock.module.css';
 import { db } from '@/lib/firebase/config';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { toast } from 'react-hot-toast';
 
 interface Product {
   id: string; name: string; sku: string; price: number;
@@ -32,6 +33,53 @@ export default function StockPage() {
   const [lowStock, setLowStock] = useState(0);
   const [outOfStock, setOutOfStock] = useState(0);
 
+  // Modal State
+  const [selectedRow, setSelectedRow] = useState<StockRow | null>(null);
+  const [newStockValue, setNewStockValue] = useState<string | number>('');
+  const [isSavingStock, setIsSavingStock] = useState(false);
+
+  useEffect(() => {
+    if (selectedRow) {
+      setNewStockValue(selectedRow.stock);
+    }
+  }, [selectedRow]);
+
+  const handleSaveStock = async () => {
+    if (!selectedRow) return;
+    setIsSavingStock(true);
+    try {
+      const stockNum = parseInt(newStockValue as string, 10);
+      if (isNaN(stockNum) || stockNum < 0) {
+        toast.error('Invalid stock quantity');
+        return;
+      }
+      
+      const productRef = doc(db, 'products', selectedRow.productId);
+      const newStatus = stockNum === 0 ? 'Out of Stock' : (stockNum < 15 ? 'Low Stock' : 'Active');
+      
+      await updateDoc(productRef, {
+        stock: stockNum,
+        status: newStatus
+      });
+      
+      toast.success('Stock adjusted successfully!');
+      
+      // Update local state without fetching again to feel fast
+      setRows(prev => prev.map(r => r.productId === selectedRow.productId ? {
+        ...r, 
+        stock: stockNum,
+        status: newStatus
+      } : r));
+      
+      setSelectedRow(null);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to adjust stock');
+    } finally {
+      setIsSavingStock(false);
+    }
+  };
+
   useEffect(() => {
     const fetchStock = async () => {
       try {
@@ -41,7 +89,6 @@ export default function StockPage() {
           products.push({ id: doc.id, ...doc.data() } as Product);
         });
         
-        // Expand products into pseudo-variations for the stock view based on sizes/colors
         let expanded: StockRow[] = [];
         let tItems = 0;
         let tValue = 0;
@@ -50,32 +97,22 @@ export default function StockPage() {
           tItems += p.stock;
           tValue += (p.stock * p.price);
           
-          const sizes = p.sizes?.length ? p.sizes : ['Standard'];
-          const colors = p.colors?.length ? p.colors : ['Default'];
+          const sizes = p.sizes?.length ? p.sizes.join(', ') : 'Standard';
+          const colors = p.colors?.length ? p.colors.join(', ') : 'Default';
           
-          // Just take the first combination to avoid exploding the list too much,
-          // or take up to 2 variations per product to simulate the mockup's data.
-          const maxVars = Math.min(2, sizes.length * colors.length);
-          let count = 0;
-          for (const s of sizes) {
-            for (const c of colors) {
-              if (count >= maxVars) break;
-              expanded.push({
-                id: `${p.id}-${s}-${c}`,
-                productId: p.id,
-                name: p.name,
-                image: p.image,
-                sku: p.sku,
-                category: p.category,
-                price: p.price,
-                variation: `${s} / ${c}`,
-                stock: p.stock,
-                status: p.status,
-                lastUpdated: '01 Jul 2026, 09:15 AM' // static for mockup matching
-              });
-              count++;
-            }
-          }
+          expanded.push({
+            id: p.id,
+            productId: p.id,
+            name: p.name,
+            image: p.image,
+            sku: p.sku || '',
+            category: p.category,
+            price: p.price,
+            variation: `${sizes} / ${colors}`,
+            stock: p.stock,
+            status: p.status,
+            lastUpdated: '01 Jul 2026, 09:15 AM' // static for mockup matching
+          });
         });
         
         setTotalItems(tItems);
@@ -98,7 +135,7 @@ export default function StockPage() {
   }, []);
 
   let filtered = rows.filter(r => 
-    (r.name.toLowerCase().includes(search.toLowerCase()) || r.sku.toLowerCase().includes(search.toLowerCase())) &&
+    ((r.name || '').toLowerCase().includes(search.toLowerCase()) || (r.sku || '').toLowerCase().includes(search.toLowerCase())) &&
     (category === 'All Categories' || r.category === category)
   );
 
@@ -236,7 +273,7 @@ export default function StockPage() {
                     <td><span className={`${styles.badge} ${getStatusClass(row.status)}`}>{row.status}</span></td>
                     <td className={styles.dateCell}>{row.lastUpdated}</td>
                     <td>
-                      <button className={styles.actionBtn}>Adjust</button>
+                      <button className={styles.actionBtn} onClick={() => setSelectedRow(row)}>Adjust</button>
                     </td>
                   </tr>
                 ))}
@@ -260,6 +297,41 @@ export default function StockPage() {
           </div>
         )}
       </div>
+
+      {selectedRow && (
+        <div className={styles.modalOverlay} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className={styles.modalContent} style={{ background: '#fff', padding: '24px', borderRadius: '8px', width: '400px', maxWidth: '90%' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '18px', fontWeight: 600 }}>Adjust Stock</h3>
+            <div style={{ marginBottom: '16px' }}>
+              <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#4b5563' }}>Product: <strong>{selectedRow.name}</strong></p>
+              <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: '#4b5563' }}>SKU: <strong>{selectedRow.sku}</strong></p>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>New Stock Quantity</label>
+              <input 
+                type="number" 
+                value={newStockValue} 
+                onChange={e => setNewStockValue(e.target.value)}
+                style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #d1d5db', outline: 'none' }}
+                min="0"
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+              <button 
+                onClick={() => setSelectedRow(null)} 
+                style={{ padding: '8px 16px', background: '#f3f4f6', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSaveStock}
+                disabled={isSavingStock}
+                style={{ padding: '8px 16px', background: 'var(--color-burgundy)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}
+              >
+                {isSavingStock ? 'Saving...' : 'Save Stock'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -727,5 +727,57 @@
       "stock": 12,
       "status": "Low Stock"
     }
+  ],
+  "returns": [
+    {
+      "id": "#RTN-2026-8730",
+      "orderId": "duYh2MlAPed19boWF66p",
+      "customer": "Shenith Chanidu",
+      "reason": "Size doesn't fit",
+      "note": "djdjd",
+      "items": [
+        {
+          "id": "76kE9upXvb64oUU9IjJm-L-Navy Blue",
+          "product": {
+            "id": "76kE9upXvb64oUU9IjJm",
+            "description": "Merry & Stylish 🎅🎄☃️\nFabric: Cotton\nDelivery: Island wide cash on delivery",
+            "status": "Active",
+            "price": 3250,
+            "category": "Midi Dresses",
+            "images": [
+              "/prod-midi-knot-navy.png"
+            ],
+            "sizes": [
+              "M",
+              "L",
+              "XL",
+              "2XL"
+            ],
+            "stock": 50,
+            "colors": [
+              "Navy Blue"
+            ],
+            "slug": "elegant-midi-knot-dress-navy",
+            "image": "/prod-midi-knot-navy.png",
+            "costPrice": 1500,
+            "updatedAt": 1783511927693,
+            "categorySlug": "midi-dresses",
+            "fabric": "Cotton",
+            "createdAt": 1783511927693,
+            "title": "Elegant Midi Knot Dress - Navy",
+            "name": "Elegant Midi Knot Dress - Navy"
+          },
+          "qty": 1,
+          "color": "Navy Blue",
+          "size": "L"
+        }
+      ],
+      "total": "LKR 3,699",
+      "avatar": "https://api.dicebear.com/7.x/initials/svg?seed=Shenith%20Chanidu&backgroundColor=6B2335&textColor=ffffff",
+      "status": "Requested",
+      "date": "09 Jul 2026",
+      "createdAt": "2026-07-09T07:34:54.286Z",
+      "isNew": true
+    }
   ]
 }

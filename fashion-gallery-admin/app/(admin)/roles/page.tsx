@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import styles from './Roles.module.css';
 import { defaultAdminPermissions, defaultStaffPermissions, PermissionsMap } from '@/types/staff';
 import { useStaffStore } from '@/store/staffStore';
@@ -246,7 +247,7 @@ export default function RolesPage() {
                 setSaveSuccess(true);
               } catch (error) {
                 console.error(error);
-                alert("Failed to save permissions.");
+                toast.error("Failed to save permissions.");
               } finally {
                 setIsSaving(false);
               }
@@ -321,7 +322,7 @@ export default function RolesPage() {
                     setNewRoleName('');
                     setNewRoleDesc('');
                   } catch (error) {
-                    alert("Failed to create role");
+                    toast.error("Failed to create role");
                   } finally {
                     setIsCreating(false);
                   }

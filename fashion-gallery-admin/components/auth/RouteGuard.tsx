@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/lib/firebase/config';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function RouteGuard({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -11,13 +12,26 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
         // User is not signed in
         router.push('/login');
       } else {
-        // User is signed in
-        setLoading(false);
+        // User is signed in, check if they are staff
+        try {
+          const staffDoc = await getDoc(doc(db, 'staff', user.uid));
+          if (!staffDoc.exists() || !staffDoc.data()?.isActive) {
+            // Not a staff member or inactive
+            await signOut(auth);
+            router.push('/login?error=unauthorized');
+            return;
+          }
+          setLoading(false);
+        } catch (error) {
+          console.error('Error verifying staff status', error);
+          await signOut(auth);
+          router.push('/login?error=unauthorized');
+        }
       }
     });
 

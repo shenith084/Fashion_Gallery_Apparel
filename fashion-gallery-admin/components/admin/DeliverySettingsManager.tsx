@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '@/lib/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { toast } from 'react-hot-toast';
 
 type DeliverySettings = {
   standardDeliveryCharge: number;
@@ -86,7 +87,7 @@ export default function DeliverySettingsManager() {
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
       console.error('Save error', error);
-      alert('Failed to save delivery settings.');
+      toast.error('Failed to save delivery settings.');
     } finally {
       setIsSaving(false);
     }

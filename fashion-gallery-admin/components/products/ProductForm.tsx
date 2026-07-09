@@ -7,6 +7,7 @@ import { useStaffStore } from '@/store/staffStore';
 import { auth } from '@/lib/firebase/config';
 import { CldUploadWidget } from 'next-cloudinary';
 import { Trash2, Plus, UploadCloud } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import styles from './ProductForm.module.css';
 
 // Fix import
@@ -92,7 +93,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
       router.push('/products');
     } catch (error) {
       console.error(error);
-      alert('Failed to save product');
+      toast.error('Failed to save product');
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { db, storage, auth } from '@/lib/firebase/config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Trash2, Plus, GripVertical, Image as ImageIcon } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export type FashionVideo = {
   id: string;
@@ -65,11 +66,11 @@ export default function FashionVideosManager() {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       } else {
-        alert('Failed to save videos list');
+        toast.error('Failed to save videos list');
       }
     } catch (error) {
       console.error('Error saving videos list:', error);
-      alert('Error saving videos list');
+      toast.error('Error saving videos list');
     } finally {
       setSaving(false);
     }
@@ -82,12 +83,12 @@ export default function FashionVideosManager() {
     if (!file) return;
 
     if (!file.type.startsWith('video/')) {
-      alert('Please select a valid video file (MP4)');
+      toast.error('Please select a valid video file (MP4)');
       return;
     }
 
     if (file.size > 50 * 1024 * 1024) {
-      alert('File size must be under 50MB');
+      toast.error('File size must be under 50MB');
       return;
     }
 
@@ -115,11 +116,11 @@ export default function FashionVideosManager() {
             setNewVideoUrl(data.urls[0]);
           } else {
             console.error('No URL returned');
-            alert('Upload failed: No URL returned');
+            toast.error('Upload failed: No URL returned');
           }
         } else {
           console.error('Upload failed', xhr.responseText);
-          alert('Upload failed. Server returned ' + xhr.status);
+          toast.error('Upload failed. Server returned ' + xhr.status);
         }
         setUploadingVideo(false);
         setUploadProgress(0);
@@ -127,7 +128,7 @@ export default function FashionVideosManager() {
 
       xhr.onerror = () => {
         console.error('Upload failed');
-        alert('Upload failed. Please try again.');
+        toast.error('Upload failed. Please try again.');
         setUploadingVideo(false);
         setUploadProgress(0);
       };
@@ -136,7 +137,7 @@ export default function FashionVideosManager() {
 
     } catch (error) {
       console.error('Upload failed', error);
-      alert('Upload failed. Note: Node.js max body size limits might apply if the file is too large.');
+      toast.error('Upload failed. Note: Node.js max body size limits might apply if the file is too large.');
       setUploadingVideo(false);
       setUploadProgress(0);
     }
@@ -144,7 +145,7 @@ export default function FashionVideosManager() {
 
   const handleAddVideo = async () => {
     if (!newTitle || !newVideoUrl) {
-      alert('Please provide title and upload a video file.');
+      toast.error('Please provide title and upload a video file.');
       return;
     }
 

@@ -11,7 +11,7 @@ const CheckoutSchema = z.object({
   customerId: z.string().nullable().optional(),
   customerEmail: z.string().email(),
   customer: z.string().min(1, 'Name is required'),
-  phone: z.string().min(5, 'Phone is required'),
+  phone: z.string().min(1, 'Phone is required'),
   email: z.string().email('Invalid email address'),
   address: z.string().min(5, 'Address is required'),
   total: z.string().regex(/^LKR\s[\d,]+(\.\d{2})?$/, 'Invalid total format'),

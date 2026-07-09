@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useStaffStore } from '@/store/staffStore';
 import { StaffMember, Role } from '@/types/staff';
 import styles from './Modal.module.css';
+import { toast } from 'react-hot-toast';
 
 export default function PermissionsModal({ staff, onClose }: { staff: StaffMember; onClose: () => void }) {
   const [role, setRole] = useState<Role | 'super_admin'>(staff.role as Role | 'super_admin');
@@ -26,7 +27,7 @@ export default function PermissionsModal({ staff, onClose }: { staff: StaffMembe
       onClose();
     } catch (error: any) {
       console.error(error);
-      alert(error.message || 'Failed to save role');
+      toast.error(error.message || 'Failed to save role');
     } finally {
       setLoading(false);
     }
@@ -39,7 +40,7 @@ export default function PermissionsModal({ staff, onClose }: { staff: StaffMembe
       onClose();
     } catch (error: any) {
       console.error(error);
-      alert(error.message || 'Failed to delete staff member');
+      toast.error(error.message || 'Failed to delete staff member');
       setLoading(false);
     }
   };

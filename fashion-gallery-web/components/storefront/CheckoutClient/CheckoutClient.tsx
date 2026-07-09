@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useAuthStore } from '@/lib/store/authStore';
+import { toast } from 'react-hot-toast';
 import styles from './CheckoutClient.module.css';
 
 export default function CheckoutClient({ 
@@ -90,11 +91,20 @@ export default function CheckoutClient({
         setShowSuccessModal(true);
       } else {
         console.error(result.error);
-        alert('Failed to place order. Please try again.');
+        try {
+          const parsedErrors = JSON.parse(result.error);
+          if (Array.isArray(parsedErrors) && parsedErrors.length > 0) {
+            toast.error(parsedErrors[0].message || 'Validation failed. Please check your inputs.');
+          } else {
+            toast.error(result.error || 'Failed to place order. Please try again.');
+          }
+        } catch {
+          toast.error(result.error || 'Failed to place order. Please try again.');
+        }
       }
     } catch (error) {
       console.error(error);
-      alert('An error occurred. Please try again.');
+      toast.error('An error occurred. Please try again.');
     } finally {
       setSubmitting(false);
     }

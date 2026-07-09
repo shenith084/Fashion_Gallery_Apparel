@@ -1,15 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase/config';
 import styles from './Login.module.css';
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const searchParams = useSearchParams();
+  const urlError = searchParams?.get('error');
+  const [error, setError] = useState(urlError === 'unauthorized' ? 'Access denied. You must be an active staff member to log in.' : '');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -19,7 +21,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email.trim(), password);
       setTimeout(() => router.push('/'), 500);
     } catch (err: any) {
       console.error('Login error', err);
@@ -78,5 +80,13 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-soft-beige)' }}>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

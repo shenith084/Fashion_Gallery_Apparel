@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import styles from './MyOrders.module.css'; // Reusing for simplicity, or create ReturnModal.module.css
 
 export default function ReturnModal({ order, onClose, onSubmit }: { order: any, onClose: () => void, onSubmit: (data: any) => void }) {
@@ -31,7 +32,7 @@ export default function ReturnModal({ order, onClose, onSubmit }: { order: any, 
         const data = await res.json();
         onSubmit(data.returnData);
       } else {
-        alert('Failed to submit return');
+        toast.error('Failed to submit return');
       }
     } catch (error) {
       console.error(error);

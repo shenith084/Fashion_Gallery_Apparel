@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import { db, auth } from '@/lib/firebase/config';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { toast } from 'react-hot-toast';
 import { PermissionsMap } from '@/types/staff';
 
 type MenuItem = {
@@ -33,11 +34,55 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [newOrderCount, setNewOrderCount] = useState(0);
   const [newWholesaleCount, setNewWholesaleCount] = useState(0);
+  const [newReturnCount, setNewReturnCount] = useState(0);
   const [unreadMsgCount, setUnreadMsgCount] = useState(0);
   const [userPermissions, setUserPermissions] = useState<PermissionsMap | null>(null);
   const [userRole, setUserRole] = useState<string>('staff');
   const [userName, setUserName] = useState<string>('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentPassword) {
+      toast.error('Current password is required');
+      return;
+    }
+    if (!newPassword || newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters');
+      return;
+    }
+    
+    if (!auth.currentUser || !auth.currentUser.email) {
+      toast.error('You must be logged in');
+      return;
+    }
+    
+    setIsChangingPassword(true);
+    try {
+      const credential = EmailAuthProvider.credential(auth.currentUser.email, currentPassword);
+      await reauthenticateWithCredential(auth.currentUser, credential);
+      await updatePassword(auth.currentUser, newPassword);
+      toast.success('Password updated successfully');
+      setShowPasswordModal(false);
+      setCurrentPassword('');
+      setNewPassword('');
+    } catch (error: any) {
+      console.error('Password update error', error);
+      if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        toast.error('Incorrect current password');
+      } else if (error.code === 'auth/requires-recent-login') {
+        toast.error('Please log out and log back in before changing your password');
+      } else {
+        toast.error(error.message || 'Failed to update password');
+      }
+    } finally {
+      setIsChangingPassword(false);
+    }
+  };
 
   React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -86,6 +131,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             if (doc.data().isNew) orderCount++;
           });
           setNewOrderCount(orderCount);
+
+          const returnSnapshot = await getDocs(collection(db, 'returns'));
+          let returnCount = 0;
+          returnSnapshot.forEach((doc) => {
+            if (doc.data().isNew) returnCount++;
+          });
+          setNewReturnCount(returnCount);
         }
 
         if (isAdmin || (perms && perms['wholesale.view'])) {
@@ -103,8 +155,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           });
           setUnreadMsgCount(msgCount);
         }
-      } catch (error) {
-        console.error('Failed to fetch counts for badges', error);
+      } catch (error: any) {
+        if (error.code !== 'permission-denied') {
+          console.error('Failed to fetch counts for badges', error);
+        }
       }
     };
     
@@ -129,7 +183,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       title: 'SALES & ORDERS',
       items: [
         { name: 'Orders', path: '/orders', icon: <ShoppingBag size={18} />, badge: newOrderCount > 0 ? newOrderCount : undefined, permissionKey: 'order.view' },
-        { name: 'Returns', path: '/returns', icon: <RotateCcw size={18} />, permissionKey: 'order.view' },
+        { name: 'Returns', path: '/returns', icon: <RotateCcw size={18} />, badge: newReturnCount > 0 ? newReturnCount : undefined, permissionKey: 'order.view' },
         { name: 'Wholesale', path: '/wholesale', icon: <Briefcase size={18} />, badge: newWholesaleCount > 0 ? newWholesaleCount : undefined, permissionKey: 'wholesale.view' },
       ]
     },
@@ -244,6 +298,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   zIndex: 50
                 }}>
                   <button 
+                    onClick={() => {
+                      setShowProfileMenu(false);
+                      setShowPasswordModal(true);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      textAlign: 'left',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--text)',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    Change Password
+                  </button>
+                  <button 
                     onClick={() => auth.signOut()}
                     style={{
                       width: '100%',
@@ -269,6 +341,53 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {children}
         </main>
       </div>
+
+      {showPasswordModal && (
+        <div className={styles.overlay} style={{ zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: 'white', padding: '24px', borderRadius: '8px', width: '400px', maxWidth: '90%' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '16px', fontSize: '18px', fontWeight: 600 }}>Change Password</h3>
+            <form onSubmit={handleChangePassword}>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>Current Password</label>
+                <input 
+                  type="password" 
+                  value={currentPassword} 
+                  onChange={e => setCurrentPassword(e.target.value)}
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #d1d5db', outline: 'none' }}
+                  required
+                />
+              </div>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>New Password</label>
+                <input 
+                  type="password" 
+                  value={newPassword} 
+                  onChange={e => setNewPassword(e.target.value)}
+                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #d1d5db', outline: 'none' }}
+                  minLength={6}
+                  required
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                <button 
+                  type="button"
+                  onClick={() => setShowPasswordModal(false)} 
+                  style={{ padding: '8px 16px', background: '#f3f4f6', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={isChangingPassword}
+                  style={{ padding: '8px 16px', background: 'var(--color-burgundy)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}
+                >
+                  {isChangingPassword ? 'Updating...' : 'Update Password'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ export default function MyOrders() {
   const [loading, setLoading] = useState(true);
   const [returnOrder, setReturnOrder] = useState<any | null>(null);
   const user = useAuthStore(state => state.user);
+  const { toast } = require('react-hot-toast');
 
   useEffect(() => {
     if (!user) return;
@@ -28,7 +29,7 @@ export default function MyOrders() {
 
   const isEligibleForReturn = (order: any) => {
     if (order.status !== 'Delivered') return false;
-    if (!order.deliveryDate) return false;
+    if (!order.deliveryDate) return true; // Backwards compatibility for old orders
     
     const deliveryDate = new Date(order.deliveryDate);
     const now = new Date();
@@ -44,6 +45,7 @@ export default function MyOrders() {
       case 'Shipped': return styles.statusShipped;
       case 'Delivered': return styles.statusDelivered;
       case 'Cancelled': return styles.statusCancelled;
+      case 'Return Requested': return styles.statusReturnRequested;
       default: return '';
     }
   };
@@ -154,7 +156,9 @@ export default function MyOrders() {
           order={returnOrder} 
           onClose={() => setReturnOrder(null)} 
           onSubmit={(data) => {
-            alert('Return requested successfully!');
+            toast.success(`Return requested successfully! Your Return ID is ${data.id}.`);
+            // Update local state to reflect that it is now "Return Requested"
+            setOrders(prev => prev.map(o => o.id === returnOrder.id ? { ...o, status: 'Return Requested' } : o));
             setReturnOrder(null);
           }} 
         />

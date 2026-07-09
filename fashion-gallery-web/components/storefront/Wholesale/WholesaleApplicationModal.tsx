@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import styles from './WholesaleApplicationModal.module.css';
 import { db } from '@/lib/firebase/client';
+import { toast } from 'react-hot-toast';
 
 interface ModalProps {
   isOpen: boolean;
@@ -65,7 +66,7 @@ export default function WholesaleApplicationModal({ isOpen, onClose }: ModalProp
       setSuccess(true);
     } catch (error) {
       console.error('Error submitting application:', error);
-      alert('Failed to submit application. Please try again.');
+      toast.error('Failed to submit application. Please try again.');
     } finally {
       setLoading(false);
     }

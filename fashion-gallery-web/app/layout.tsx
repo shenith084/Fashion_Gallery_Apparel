@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 
 import NextTopLoader from 'nextjs-toploader';
 import { Suspense } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 export default function RootLayout({
   children,
@@ -33,6 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <NextTopLoader color="var(--color-burgundy)" showSpinner={false} />
+        <Toaster position="bottom-right" toastOptions={{ duration: 4000, style: { background: '#333', color: '#fff', fontSize: '14px', borderRadius: '8px' } }} />
         {children}
       </body>
     </html>

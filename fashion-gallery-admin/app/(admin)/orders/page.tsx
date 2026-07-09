@@ -90,8 +90,13 @@ export default function OrdersPage() {
   const handleUpdateStatus = async (status: string) => {
     if (!selectedOrderId) return;
     try {
-      await updateDoc(doc(db, 'orders', selectedOrderId), { status });
-      setOrders(prev => prev.map(o => o.id === selectedOrderId ? { ...o, status } : o));
+      const updateData: any = { status };
+      if (status === 'Delivered') {
+        updateData.deliveryDate = new Date().toISOString();
+      }
+      
+      await updateDoc(doc(db, 'orders', selectedOrderId), updateData);
+      setOrders(prev => prev.map(o => o.id === selectedOrderId ? { ...o, ...updateData } : o));
       
       setUpdateSuccess(true);
       setTimeout(() => setUpdateSuccess(false), 3000);
@@ -451,8 +456,12 @@ export default function OrdersPage() {
             </div>
             <div className={styles.modalBody}>
               {selectedOrder?.receiptImage ? (
-                <div style={{ textAlign: 'center' }}>
-                  <img src={selectedOrder.receiptImage} alt="Payment Receipt" style={{ maxWidth: '100%', maxHeight: '400px', objectFit: 'contain', borderRadius: '4px' }} />
+                <div style={{ textAlign: 'center', width: '100%', height: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                  {selectedOrder.receiptImage.startsWith('data:application/pdf') ? (
+                    <embed src={selectedOrder.receiptImage} type="application/pdf" width="100%" height="100%" />
+                  ) : (
+                    <img src={selectedOrder.receiptImage} alt="Payment Receipt" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }} />
+                  )}
                 </div>
               ) : (
                 <div className={styles.receiptBox}>

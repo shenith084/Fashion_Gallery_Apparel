@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSettingsStore, ContactSettings } from '@/store/settingsStore';
+import { toast } from 'react-hot-toast';
 
 export default function ContactSettingsManager() {
   const { contactSettings, loading, fetchContactSettings, updateContactSettings } = useSettingsStore();
@@ -34,7 +35,7 @@ export default function ContactSettingsManager() {
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
-      alert("Failed to save settings");
+      toast.error("Failed to save settings");
     } finally {
       setIsSaving(false);
     }
