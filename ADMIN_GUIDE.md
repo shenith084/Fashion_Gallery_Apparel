@@ -23,9 +23,20 @@ As an Admin, you can add new staff accounts and control their permissions in rea
 *   **Where to find it**: Click **Settings** in the sidebar.
 *   **What it does**: Manage Bank Account details for Bank Transfers, update business information (phone, social links), and manage Cloudinary configuration.
 
-### Audit Log
-*   **Where to find it**: Click **Audit Log** in the sidebar.
-*   **What it does**: See exactly who did what (e.g., "Nadeesha updated the price of Floral Maxi Dress to Rs. 4500").
+### Activity Logs
+*   **Where to find it**: Click **Activity Logs** in the sidebar.
+*   **What it does**: Monitor detailed, real-time records of all staff actions across the system. See exactly who performed an action (e.g., updating a wholesale application status), what time it happened, and what device they used.
+*   **KPI Tracking**: Includes a dashboard for tracking today's activities, active staff count, and critical actions.
+
+### Wholesale Management (`wholesale.view`)
+*   **Where to find it**: Click **Wholesale** in the sidebar.
+*   **What it does**: Review and process incoming B2B wholesale applications. 
+*   **Notifications**: The sidebar badge instantly updates when new applications are submitted. Clicking "View Details" on an application marks it as read.
+
+### Messages & Inquiries
+*   **Where to find it**: Click the **Messages** icon in the top right of the navigation bar.
+*   **What it does**: Read and respond to customer inquiries submitted through the contact forms.
+*   **Notifications**: A red notification dot will appear if there are unread messages, and disappear once they are opened.
 
 ---
 

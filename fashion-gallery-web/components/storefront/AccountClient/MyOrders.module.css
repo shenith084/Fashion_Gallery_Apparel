@@ -19,39 +19,49 @@
 }
 
 .orderCard {
-  border: 1px solid #f1f5f9;
-  border-radius: 8px;
-  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+
+.orderCard:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
 }
 
 .orderHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
-  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 16px;
 }
 
 .orderId {
+  font-family: var(--font-heading);
   font-weight: 700;
-  color: #1f2937;
-  font-size: 16px;
+  color: var(--color-burgundy);
+  font-size: 18px;
+  letter-spacing: 0.03em;
 }
 
 .orderDate {
   font-size: 13px;
-  color: #64748b;
-  margin-left: 8px;
+  color: #6b7280;
+  margin-left: 12px;
 }
 
 .orderStatus {
-  padding: 4px 10px;
-  border-radius: 12px;
+  padding: 6px 14px;
+  border-radius: 99px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .statusProcessing { background: #fef3c7; color: #d97706; }
@@ -62,24 +72,65 @@
 .orderBody {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .orderItem {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 14px;
-  color: #334155;
+  color: #374151;
+  padding: 8px 0;
+}
+
+.itemDetails {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.itemImageWrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+  border: 1px solid #f3f4f6;
+  flex-shrink: 0;
+}
+
+.itemImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itemName {
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.itemVariant {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.itemPrice {
+  font-weight: 600;
+  color: #374151;
 }
 
 .orderTotal {
   display: flex;
   justify-content: space-between;
   font-weight: 700;
-  color: #1f2937;
-  font-size: 16px;
-  border-top: 1px solid #f1f5f9;
-  padding-top: 12px;
+  color: #111827;
+  font-size: 18px;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 16px;
 }
 
 .orderActions {

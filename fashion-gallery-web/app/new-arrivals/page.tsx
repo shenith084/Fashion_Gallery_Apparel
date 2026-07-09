@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
+import { Suspense } from 'react';
 import ShopClient from '@/components/storefront/ShopClient/ShopClient';
 import styles from './NewArrivalsPage.module.css';
 
@@ -31,7 +32,9 @@ export default function Page() {
         </div>
       </div>
       <div className="container" style={{ padding: 'var(--space-12) 0' }}>
-        <ShopClient initialCategory="new-arrivals" />
+        <Suspense fallback={<div style={{textAlign:"center", padding: "4rem"}}>Loading...</div>}>
+          <ShopClient initialCategory="new-arrivals" />
+        </Suspense>
       </div>
       <Footer />
     </>

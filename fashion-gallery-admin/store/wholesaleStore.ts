@@ -16,6 +16,7 @@ export type WholesaleApplication = {
   additionalInfo: string;
   status: 'pending' | 'approved' | 'rejected';
   createdAt: number;
+  isNew?: boolean;
 };
 
 interface WholesaleStore {

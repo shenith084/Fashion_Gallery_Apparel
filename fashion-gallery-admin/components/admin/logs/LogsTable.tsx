@@ -90,8 +90,8 @@ export default function LogsTable({ logs, onRowClick }: LogsTableProps) {
                   </td>
                   <td style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem', color: '#9ca3af' }}>
-                      <Monitor size={16} title={log.device} />
-                      <Globe size={16} title={log.browser} />
+                      <span title={log.device}><Monitor size={16} /></span>
+                      <span title={log.browser}><Globe size={16} /></span>
                     </div>
                   </td>
                   <td style={{ padding: '1rem' }}>

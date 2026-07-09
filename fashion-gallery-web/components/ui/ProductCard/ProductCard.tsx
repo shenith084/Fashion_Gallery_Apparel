@@ -1,8 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuthStore } from '@/lib/store/authStore';
+import { db } from '@/lib/firebase/client';
+import { doc, updateDoc } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 import styles from './ProductCard.module.css';
 
 interface ProductCardProps {
@@ -30,7 +34,7 @@ function StarRating({ rating }: { rating: number }) {
           strokeWidth="1.5"
         >
           <defs>
-            <linearGradient id="half">
+            <linearGradient id={`half-${star}`}>
               <stop offset="50%" stopColor="var(--color-luxury-gold)"/>
               <stop offset="50%" stopColor="transparent"/>
             </linearGradient>
@@ -43,7 +47,47 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function ProductCard({ id, name, price, image, rating, reviewCount, isNew, href }: ProductCardProps) {
+  const user = useAuthStore(state => state.user);
+  const updateUser = useAuthStore(state => state.updateUser);
+  const router = useRouter();
+  
   const [wished, setWished] = useState(false);
+
+  useEffect(() => {
+    if (user && user.wishlist?.includes(id)) {
+      setWished(true);
+    } else {
+      setWished(false);
+    }
+  }, [user, id]);
+
+  const toggleWishlist = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      router.push('/login?returnUrl=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+    
+    const newWished = !wished;
+    setWished(newWished); // Optimistic UI update
+    
+    let currentWishlist = user.wishlist || [];
+    if (newWished) {
+      currentWishlist = [...currentWishlist, id];
+    } else {
+      currentWishlist = currentWishlist.filter(itemId => itemId !== id);
+    }
+    
+    updateUser({ wishlist: currentWishlist });
+    
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        wishlist: currentWishlist
+      });
+    } catch (err) {
+      console.error('Error updating wishlist:', err);
+    }
+  };
 
   return (
     <div className={styles.card} id={`product-card-${id}`}>
@@ -61,7 +105,7 @@ export default function ProductCard({ id, name, price, image, rating, reviewCoun
 
       <button
         className={`${styles.wishlistBtn} ${wished ? styles.wished : ''}`}
-        onClick={() => setWished(!wished)}
+        onClick={toggleWishlist}
         aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
         id={`wishlist-${id}`}
       >

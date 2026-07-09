@@ -1,10 +1,10 @@
 .main {
   background-color: #fafafa;
-  min-height: calc(100vh - 80px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 120px 20px 60px;
 }
 
 .container {
@@ -14,47 +14,7 @@
   box-shadow: 0 10px 40px rgba(0,0,0,0.05);
   overflow: hidden;
   width: 100%;
-  max-width: 1000px;
-  min-height: 600px;
-}
-
-.imageSection {
-  flex: 1.2;
-  position: relative;
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .imageSection {
-    display: block;
-  }
-}
-
-.imageOverlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.1) 100%);
-  display: flex;
-  align-items: flex-end;
-  padding: 60px 40px;
-}
-
-.overlayContent {
-  color: white;
-}
-
-.overlayContent h2 {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  line-height: 1.2;
-}
-
-.overlayContent p {
-  font-size: 16px;
-  line-height: 1.6;
-  opacity: 0.9;
-  max-width: 400px;
+  max-width: 480px;
 }
 
 .formSection {

@@ -40,7 +40,7 @@ export default function ChangePassword() {
       setConfirmPassword('');
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
-      console.error('Password change error:', err);
+      console.warn('Password change error:', err.message);
       if (err.code === 'auth/invalid-credential') {
         setError('Incorrect current password.');
       } else {

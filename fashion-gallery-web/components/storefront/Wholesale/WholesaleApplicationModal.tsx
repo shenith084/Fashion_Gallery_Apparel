@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './WholesaleApplicationModal.module.css';
-import { db } from '@/lib/firebase/config';
+import { db } from '@/lib/firebase/client';
 
 interface ModalProps {
   isOpen: boolean;

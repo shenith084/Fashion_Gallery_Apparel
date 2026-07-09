@@ -1,7 +1,9 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
 import ShopClient from '@/components/storefront/ShopClient/ShopClient';
+import { ProductGridSkeleton } from '@/components/ui/Skeletons';
 import styles from './shop.module.css';
 
 export const metadata: Metadata = {
@@ -13,20 +15,14 @@ export default function ShopPage() {
   return (
     <>
       <Navbar />
-      <div className={styles.pageHero}>
-        <div className="container">
-          <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-            <a href="/">Home</a>
-            <span>›</span>
-            <span>Shop</span>
-          </nav>
-          <h1 className={styles.pageTitle}>Our Collection</h1>
-          <p className={styles.pageDesc}>Discover elegant dresses crafted for confident women</p>
-        </div>
-      </div>
+
 
       <div className="container">
-        <ShopClient />
+        <Suspense fallback={<ProductGridSkeleton count={8} columns={3} />}>
+          <Suspense fallback={<div style={{textAlign:"center", padding: "4rem"}}>Loading...</div>}>
+          <ShopClient />
+        </Suspense>
+        </Suspense>
       </div>
       <Footer />
     </>

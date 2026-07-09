@@ -2,11 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 import { useWholesaleStore, WholesaleApplication } from '@/store/wholesaleStore';
+import { db } from '@/lib/firebase/config';
+import { doc, updateDoc } from 'firebase/firestore';
 import styles from './Wholesale.module.css';
 
 export default function WholesalePage() {
   const { applications, loading, subscribeToApplications, updateStatus } = useWholesaleStore();
+  const [localApps, setLocalApps] = useState<WholesaleApplication[]>([]);
   const [selectedApp, setSelectedApp] = useState<WholesaleApplication | null>(null);
+
+  useEffect(() => {
+    setLocalApps(applications);
+  }, [applications]);
 
   useEffect(() => {
     subscribeToApplications();
@@ -39,15 +46,18 @@ export default function WholesalePage() {
             </tr>
           </thead>
           <tbody>
-            {applications.length === 0 ? (
+            {localApps.length === 0 ? (
               <tr>
                 <td colSpan={7} className={styles.emptyState}>No applications found</td>
               </tr>
             ) : (
-              applications.map(app => (
-                <tr key={app.id}>
+              localApps.map(app => (
+                <tr key={app.id} className={app.isNew ? styles.newRow : ''}>
                   <td>{new Date(app.createdAt).toLocaleDateString()}</td>
-                  <td className={styles.fontMedium}>{app.businessName}</td>
+                  <td className={styles.fontMedium}>
+                    {app.businessName}
+                    {app.isNew && <span className={styles.newBadge}>New</span>}
+                  </td>
                   <td>{app.fullName}</td>
                   <td>{app.email}</td>
                   <td className={styles.capitalize}>{app.businessType}</td>
@@ -59,7 +69,27 @@ export default function WholesalePage() {
                   <td>
                     <button 
                       className={styles.viewBtn}
-                      onClick={() => setSelectedApp(app)}
+                      onClick={async () => {
+                        setSelectedApp(app);
+                        if (app.isNew !== false) {
+                          setLocalApps(prev => prev.map(a => a.id === app.id ? { ...a, isNew: false } : a));
+                          try {
+                            const { auth } = await import('@/lib/firebase/config');
+                            if (!auth.currentUser) return;
+                            const token = await auth.currentUser.getIdToken();
+                            await fetch(`/api/wholesale/${app.id}`, {
+                              method: 'PATCH',
+                              headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                              },
+                              body: JSON.stringify({ isNew: false })
+                            });
+                          } catch (e) {
+                            console.error('Failed to update isNew status', e);
+                          }
+                        }
+                      }}
                     >
                       View Details
                     </button>

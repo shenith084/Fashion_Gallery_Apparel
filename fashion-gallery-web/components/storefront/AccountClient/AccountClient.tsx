@@ -30,10 +30,19 @@ export default function AccountClient() {
 
   useEffect(() => {
     setMounted(true);
-    if (!user) {
-      router.push('/login?returnUrl=/account');
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !user) {
+      // Small delay to ensure Zustand has hydrated from localStorage
+      const timer = setTimeout(() => {
+        if (!useAuthStore.getState().user) {
+          router.push('/login?returnUrl=/account');
+        }
+      }, 200);
+      return () => clearTimeout(timer);
     }
-  }, [user, router]);
+  }, [user, mounted, router]);
 
   if (!mounted || !user) return (
     <div style={{ padding: '100px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', color: '#6b2335' }}>

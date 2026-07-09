@@ -22,8 +22,7 @@ service cloud.firestore {
     }
 
     function isStaff() {
-      // Temporarily loosened for local development testing so you don't need custom claims
-      return isAuthenticated();
+      return isAuthenticated() && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
     }
 
     function hasPermission(permission) {

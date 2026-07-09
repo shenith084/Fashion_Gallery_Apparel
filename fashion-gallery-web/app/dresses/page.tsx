@@ -2,6 +2,7 @@ import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
 import DressesHero from '@/components/storefront/DressesHero/DressesHero';
 import DressesCategories from '@/components/storefront/DressesCategories/DressesCategories';
+import { Suspense } from 'react';
 import ShopClient from '@/components/storefront/ShopClient/ShopClient';
 import InfoBar from '@/components/storefront/InfoBar';
 
@@ -14,7 +15,9 @@ export default function Page() {
       <DressesHero />
       <DressesCategories />
       <div className="container">
-        <ShopClient initialCategory="all" columns={3} />
+        <Suspense fallback={<div style={{textAlign:"center", padding: "4rem"}}>Loading...</div>}>
+          <ShopClient initialCategory="all" columns={3} />
+        </Suspense>
       </div>
       <InfoBar />
       <Footer />

@@ -1,5 +1,6 @@
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
+import { Suspense } from 'react';
 import ShopClient from '@/components/storefront/ShopClient/ShopClient';
 
 export const metadata = { title: 'Midi Dresses | Fashion Gallery Apparel' };
@@ -14,7 +15,9 @@ export default function Page() {
         </div>
       </div>
       <div className="container">
-        <ShopClient initialCategory="midi-dresses" />
+        <Suspense fallback={<div style={{textAlign:"center", padding: "4rem"}}>Loading...</div>}>
+          <ShopClient initialCategory="midi-dresses" />
+        </Suspense>
       </div>
       <Footer />
     </>

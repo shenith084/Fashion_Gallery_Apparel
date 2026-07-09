@@ -27,8 +27,10 @@ export async function GET(request: Request) {
       .orderBy('timestamp', 'desc')
       .limit(500)
       .get();
-
-    const logs = logsSnapshot.docs.map(doc => doc.data());
+    const logs = logsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
     return NextResponse.json({ success: true, data: logs });
   } catch (error: any) {

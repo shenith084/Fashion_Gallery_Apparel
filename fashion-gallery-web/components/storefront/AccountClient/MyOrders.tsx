@@ -48,7 +48,39 @@ export default function MyOrders() {
     }
   };
 
-  if (loading) return <div>Loading orders...</div>;
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <h2 className={styles.title}>My Orders</h2>
+        <div className={styles.orderList}>
+          {[1, 2].map((i) => (
+            <div key={i} className={styles.orderCard} style={{ opacity: 0.7, animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>
+              <div className={styles.orderHeader}>
+                <div style={{ width: '150px', height: '24px', background: '#f3f4f6', borderRadius: '4px' }}></div>
+                <div style={{ width: '100px', height: '24px', background: '#f3f4f6', borderRadius: '99px' }}></div>
+              </div>
+              <div className={styles.orderBody}>
+                <div className={styles.orderItem}>
+                  <div className={styles.itemDetails}>
+                    <div className={styles.itemImageWrap} style={{ background: '#f3f4f6' }}></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ width: '200px', height: '20px', background: '#f3f4f6', borderRadius: '4px' }}></div>
+                      <div style={{ width: '100px', height: '16px', background: '#f3f4f6', borderRadius: '4px' }}></div>
+                    </div>
+                  </div>
+                  <div style={{ width: '80px', height: '20px', background: '#f3f4f6', borderRadius: '4px' }}></div>
+                </div>
+              </div>
+              <div className={styles.orderTotal}>
+                <div style={{ width: '60px', height: '24px', background: '#f3f4f6', borderRadius: '4px' }}></div>
+                <div style={{ width: '100px', height: '24px', background: '#f3f4f6', borderRadius: '4px' }}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -62,21 +94,40 @@ export default function MyOrders() {
             <div key={order.id} className={styles.orderCard}>
               <div className={styles.orderHeader}>
                 <div>
-                  <span className={styles.orderId}>{order.id}</span>
-                  <span className={styles.orderDate}>Placed on {order.date}</span>
+                  <span className={styles.orderId}>#ORD-{order.id.slice(0, 8).toUpperCase()}</span>
+                  <span className={styles.orderDate}>Placed on {order.date || 'a previous date'}</span>
                 </div>
-                <span className={`${styles.orderStatus} ${getStatusClass(order.status)}`}>
-                  {order.status}
+                <span className={`${styles.orderStatus} ${getStatusClass(order.status || 'Processing')}`}>
+                  {order.status || 'Processing'}
                 </span>
               </div>
               
               <div className={styles.orderBody}>
-                {order.items?.map((item: any, idx: number) => (
-                  <div key={idx} className={styles.orderItem}>
-                    <span>{item.qty}x {item.name}</span>
-                    <span>LKR {(item.price * item.qty).toLocaleString('en-LK')}</span>
-                  </div>
-                ))}
+                {order.items?.map((item: any, idx: number) => {
+                  const product = item.product || item;
+                  const price = product.price || 0;
+                  const qty = item.qty || 1;
+                  return (
+                    <div key={idx} className={styles.orderItem}>
+                      <div className={styles.itemDetails}>
+                        <div className={styles.itemImageWrap}>
+                          <img src={product.images?.[0] || product.image || '/logo.svg'} alt={product.name || 'Product'} className={styles.itemImage} />
+                        </div>
+                        <div>
+                          <p className={styles.itemName}>{qty}x {product.name || 'Product'}</p>
+                          {(item.color || item.size) && (
+                            <p className={styles.itemVariant}>
+                              {item.color && <span>Color: {item.color}</span>}
+                              {item.color && item.size && <span> | </span>}
+                              {item.size && <span>Size: {item.size}</span>}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <span className={styles.itemPrice}>LKR {(price * qty).toLocaleString('en-LK', { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  );
+                })}
               </div>
               
               <div className={styles.orderTotal}>

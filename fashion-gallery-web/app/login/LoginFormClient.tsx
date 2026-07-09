@@ -70,7 +70,7 @@ export default function LoginFormClient() {
       const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/account';
       router.push(returnUrl);
     } catch (err: any) {
-      console.error('Auth error:', err);
+      console.warn('Auth error:', err.message);
       if (err.code === 'auth/email-already-in-use') {
         setError('Email is already registered.');
       } else if (err.code === 'auth/invalid-credential') {
@@ -119,7 +119,7 @@ export default function LoginFormClient() {
       const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/account';
       router.push(returnUrl);
     } catch (err: any) {
-      console.error('Google Auth error:', err);
+      console.warn('Google Auth error:', err.message);
       setError('Google login failed. Please try again.');
     } finally {
       setLoading(false);
@@ -135,21 +135,7 @@ export default function LoginFormClient() {
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        <div className={styles.imageSection}>
-          <Image 
-            src="/hero-bg-v6.jpg" 
-            alt="Fashion Gallery" 
-            fill 
-            style={{ objectFit: 'cover' }}
-            priority
-          />
-          <div className={styles.imageOverlay}>
-            <div className={styles.overlayContent}>
-              <h2>Discover Your Elegance</h2>
-              <p>Join My Moon Clothing to track orders, save favorite items, and enjoy a seamless shopping experience.</p>
-            </div>
-          </div>
-        </div>
+
         <div className={styles.formSection}>
           <div className={styles.formCard}>
             <h1 className={styles.title}>{isRegistering ? 'Create an Account' : 'Welcome Back'}</h1>

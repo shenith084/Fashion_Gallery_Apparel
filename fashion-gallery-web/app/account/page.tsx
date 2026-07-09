@@ -34,6 +34,7 @@ export default function Page() {
               fill 
               sizes="(max-width: 768px) 50vw, 35vw"
               priority
+              style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
             />
           </div>
         </div>

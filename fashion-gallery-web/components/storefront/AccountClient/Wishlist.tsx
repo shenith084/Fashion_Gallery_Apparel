@@ -62,10 +62,22 @@ export default function Wishlist() {
           {wishlist.map(item => (
             <div key={item.id} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', padding: '1rem', background: '#fff', textAlign: 'center' }}>
               <div style={{ position: 'relative', width: '100%', height: '200px', marginBottom: '1rem' }}>
-                <Image src={item.images?.[0] || '/logo.svg'} alt={item.name} fill style={{ objectFit: 'contain' }} />
+                <Image 
+                  src={
+                    item.image || 
+                    (item.images && item.images[0]?.secureUrl) || 
+                    (item.images && typeof item.images[0] === 'string' ? item.images[0] : null) || 
+                    '/logo.svg'
+                  } 
+                  alt={item.name} 
+                  fill 
+                  style={{ objectFit: 'contain' }} 
+                />
               </div>
               <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '1rem', color: 'var(--color-charcoal)' }}>{item.name}</h4>
-              <p style={{ margin: '0 0 1rem 0', fontWeight: 'bold', color: 'var(--color-burgundy)' }}>LKR {item.price.toLocaleString('en-LK')}</p>
+              <p style={{ margin: '0 0 1rem 0', fontWeight: 'bold', color: 'var(--color-burgundy)' }}>
+                LKR {(item.price || item.basePrice || 0).toLocaleString('en-LK')}
+              </p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <Link href={`/product/${item.slug}`} className="btn btn-primary" style={{ padding: '0.5rem', fontSize: '0.9rem' }}>

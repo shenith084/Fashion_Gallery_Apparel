@@ -11,6 +11,7 @@ type User = {
   wishlist?: string[];
   addresses?: any[];
   preferences?: any;
+  createdAt?: string | number | Date;
 };
 
 interface AuthState {

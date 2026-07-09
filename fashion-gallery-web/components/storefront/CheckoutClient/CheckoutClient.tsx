@@ -54,7 +54,10 @@ export default function CheckoutClient({
       const customer = `${formData.get('firstName')} ${formData.get('lastName')}`;
       const phone = formData.get('phone') as string;
       const email = formData.get('email') as string;
-      const address = formData.get('address') as string;
+      const street = formData.get('address') as string;
+      const city = formData.get('city') as string;
+      const postalCode = formData.get('postalCode') as string;
+      const address = [street, city, postalCode].filter(Boolean).join(', ');
       
       let receiptImage = null;
       if (receiptFile) {
@@ -66,6 +69,8 @@ export default function CheckoutClient({
       }
 
       const orderData = {
+        customerId: user?.uid || null,
+        customerEmail: user?.email || email,
         customer,
         phone,
         email,
@@ -97,6 +102,13 @@ export default function CheckoutClient({
 
   if (!mounted) return null;
 
+  const defaultAddr = user?.addresses?.find((a: any) => a.isDefault) || user?.addresses?.[0];
+  const defaultFirstName = defaultAddr?.name?.split(' ')[0] || user?.name?.split(' ')[0] || '';
+  const defaultLastName = defaultAddr?.name?.split(' ').slice(1).join(' ') || user?.name?.split(' ').slice(1).join(' ') || '';
+  const defaultPhone = defaultAddr?.phone || user?.phone || '';
+  const defaultStreet = defaultAddr?.street || user?.address || '';
+  const defaultCity = defaultAddr?.city || '';
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.formSection}>
@@ -111,7 +123,7 @@ export default function CheckoutClient({
               </div>
               <div className={styles.inputCol}>
                 <label htmlFor="phone">Phone Number *</label>
-                <input type="tel" id="phone" name="phone" defaultValue={user?.phone} required placeholder="07X XXX XXXX" />
+                <input type="tel" id="phone" name="phone" defaultValue={defaultPhone} required placeholder="07X XXX XXXX" />
               </div>
             </div>
           </div>
@@ -121,27 +133,27 @@ export default function CheckoutClient({
             <div className={styles.inputRow}>
               <div className={styles.inputCol}>
                 <label htmlFor="firstName">First Name *</label>
-                <input type="text" id="firstName" name="firstName" defaultValue={user?.name?.split(' ')[0]} required placeholder="First Name" />
+                <input type="text" id="firstName" name="firstName" defaultValue={defaultFirstName} required placeholder="First Name" />
               </div>
               <div className={styles.inputCol}>
                 <label htmlFor="lastName">Last Name *</label>
-                <input type="text" id="lastName" name="lastName" defaultValue={user?.name?.split(' ').slice(1).join(' ')} required placeholder="Last Name" />
+                <input type="text" id="lastName" name="lastName" defaultValue={defaultLastName} required placeholder="Last Name" />
               </div>
             </div>
             
             <div className={styles.inputCol}>
               <label htmlFor="address">Delivery Address *</label>
-              <input type="text" id="address" name="address" defaultValue={user?.address} required placeholder="House No, Street, City" />
+              <input type="text" id="address" name="address" defaultValue={defaultStreet} required placeholder="House No, Street" />
             </div>
 
             <div className={styles.inputRow}>
               <div className={styles.inputCol}>
                 <label htmlFor="city">Town / City *</label>
-                <input type="text" id="city" required />
+                <input type="text" id="city" name="city" defaultValue={defaultCity} required />
               </div>
               <div className={styles.inputCol}>
                 <label htmlFor="postalCode">Postal Code</label>
-                <input type="text" id="postalCode" />
+                <input type="text" id="postalCode" name="postalCode" />
               </div>
             </div>
           </div>

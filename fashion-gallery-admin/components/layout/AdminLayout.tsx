@@ -32,56 +32,91 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [newOrderCount, setNewOrderCount] = useState(0);
+  const [newWholesaleCount, setNewWholesaleCount] = useState(0);
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
   const [userPermissions, setUserPermissions] = useState<PermissionsMap | null>(null);
   const [userRole, setUserRole] = useState<string>('staff');
   const [userName, setUserName] = useState<string>('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   React.useEffect(() => {
-    const fetchNewOrderCount = async () => {
-      if (!auth.currentUser) return; // Prevent unauthorized query before auth is initialized
-      try {
-        const querySnapshot = await getDocs(collection(db, 'orders'));
-        let count = 0;
-        querySnapshot.forEach((doc) => {
-          if (doc.data().isNew) count++;
-        });
-        setNewOrderCount(count);
-      } catch (error) {
-        console.error('Failed to fetch orders for badge', error);
-      }
-    };
-    
-    fetchNewOrderCount();
-    const interval = setInterval(fetchNewOrderCount, 5000);
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
-          // Force refresh the token to pick up new claims immediately
           await user.getIdToken(true);
-          
           const userDoc = await getDoc(doc(db, 'staff', user.uid));
           if (userDoc.exists()) {
             const data = userDoc.data();
-            setUserRole(data.role);
+            setUserRole(data.role || 'staff');
             setUserName(data.name || user.displayName || 'Staff');
             if (data.permissions) {
               setUserPermissions(data.permissions);
+            } else {
+              setUserPermissions(null);
             }
+          } else {
+            setUserPermissions(null); // fallback for users without doc
           }
-          fetchNewOrderCount(); // Fetch immediately once authenticated
         } catch (error) {
           console.error('Failed to fetch user permissions', error);
+          setUserPermissions(null);
         }
+      } else {
+        setUserPermissions(null);
       }
     });
 
-    return () => {
-      clearInterval(interval);
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
+
+  React.useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    const fetchNewOrderCount = async () => {
+      if (!auth.currentUser) return; 
+      try {
+        const role = userRole;
+        const perms = userPermissions;
+        const isAdmin = role === 'admin' || role === 'super_admin';
+
+        if (isAdmin || (perms && perms['order.view'])) {
+          const querySnapshot = await getDocs(collection(db, 'orders'));
+          let orderCount = 0;
+          querySnapshot.forEach((doc) => {
+            if (doc.data().isNew) orderCount++;
+          });
+          setNewOrderCount(orderCount);
+        }
+
+        if (isAdmin || (perms && perms['wholesale.view'])) {
+          const wholesaleSnapshot = await getDocs(collection(db, 'wholesale_applications'));
+          let wholesaleCount = 0;
+          wholesaleSnapshot.forEach((doc) => {
+            if (doc.data().isNew) wholesaleCount++;
+          });
+          setNewWholesaleCount(wholesaleCount);
+
+          const inquiriesSnapshot = await getDocs(collection(db, 'inquiries'));
+          let msgCount = 0;
+          inquiriesSnapshot.forEach((doc) => {
+            if (doc.data().status === 'Unread') msgCount++;
+          });
+          setUnreadMsgCount(msgCount);
+        }
+      } catch (error) {
+        console.error('Failed to fetch counts for badges', error);
+      }
+    };
+    
+    if (userRole && userPermissions !== undefined) {
+      fetchNewOrderCount();
+      interval = setInterval(fetchNewOrderCount, 5000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [userRole, userPermissions]);
 
   const MENU_SECTIONS: MenuSection[] = [
     {
@@ -95,7 +130,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       items: [
         { name: 'Orders', path: '/orders', icon: <ShoppingBag size={18} />, badge: newOrderCount > 0 ? newOrderCount : undefined, permissionKey: 'order.view' },
         { name: 'Returns', path: '/returns', icon: <RotateCcw size={18} />, permissionKey: 'order.view' },
-        { name: 'Wholesale', path: '/wholesale', icon: <Briefcase size={18} />, permissionKey: 'wholesale.view' },
+        { name: 'Wholesale', path: '/wholesale', icon: <Briefcase size={18} />, badge: newWholesaleCount > 0 ? newWholesaleCount : undefined, permissionKey: 'wholesale.view' },
       ]
     },
     {
@@ -170,17 +205,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <header className={styles.header}>
           <button className={styles.menuBtn} onClick={() => setIsSidebarOpen(true)}>☰</button>
           
-          <div className={styles.searchBar}>
-            <Search size={16} className={styles.searchIcon} />
-            <input type="text" placeholder="Search anything..." />
-            <span className={styles.shortcut}>⌘K</span>
-          </div>
+          <div style={{ flex: 1 }}></div>
 
           <div className={styles.headerRight}>
             <Link href="/inquiries" className={styles.messagesBtn} style={{ textDecoration: 'none' }}>
               <div className={styles.msgIconWrap}>
                 <MessageSquare size={20} />
-                <span className={styles.msgBadge}>New</span>
+                {unreadMsgCount > 0 && <span className={styles.msgBadge}></span>}
               </div>
               <span className={styles.msgText}>Messages</span>
             </Link>

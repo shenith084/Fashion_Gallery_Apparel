@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { ProductGridSkeleton } from '@/components/ui/Skeletons';
 import ProductCard from '@/components/ui/ProductCard';
 import { CATEGORIES_LIST, SIZES_LIST } from '@/lib/data/products';
 import styles from './ShopClient.module.css';
@@ -24,6 +26,8 @@ export default function ShopClient({
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState<any[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams?.get('q') || '';
 
   useEffect(() => {
     fetch('/api/products')
@@ -49,13 +53,22 @@ export default function ShopClient({
     
     list = list.filter((p) => p.price >= priceRange[0] && p.price <= priceRange[1]);
 
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter((p) => 
+        p.name?.toLowerCase().includes(q) || 
+        p.category?.toLowerCase().includes(q) ||
+        p.categorySlug?.toLowerCase().includes(q)
+      );
+    }
+
     if (sortBy === 'price-asc') list.sort((a, b) => a.price - b.price);
     else if (sortBy === 'price-desc') list.sort((a, b) => b.price - a.price);
     else if (sortBy === 'popular') list.sort((a, b) => b.reviewCount - a.reviewCount);
     else list.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
 
     return list;
-  }, [activeCategory, activeSize, priceRange, sortBy, products]);
+  }, [activeCategory, activeSize, priceRange, sortBy, products, searchQuery]);
 
   const itemsPerPage = 7 * columns;
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
@@ -207,7 +220,11 @@ export default function ShopClient({
             <div className={styles.breadcrumbs}>
               <a href="/">Home</a>
               <span className={styles.breadcrumbSep}>›</span>
-              <span className={styles.breadcrumbActive}>{activeCategoryName}</span>
+              {searchQuery ? (
+                <span className={styles.breadcrumbActive}>Search Results for "{searchQuery}"</span>
+              ) : (
+                <span className={styles.breadcrumbActive}>{activeCategoryName}</span>
+              )}
             </div>
             <span className={styles.resultCount}>{filtered.length} Products Found</span>
           </div>
@@ -259,7 +276,9 @@ export default function ShopClient({
           </div>
         </div>
 
-        {currentProducts.length > 0 ? (
+        {productsLoading ? (
+          <ProductGridSkeleton count={8} columns={columns} />
+        ) : currentProducts.length > 0 ? (
           <div className={`${styles.grid} ${columns === 4 ? styles.grid4 : styles.grid3} ${viewMode === 'list' ? styles.list : ''}`}>
             {currentProducts.map((p) => (
               <ProductCard

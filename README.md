@@ -5,9 +5,12 @@ A production-grade, secure, mobile-first fashion e-commerce platform built for F
 ## 🌟 Key Features
 
 *   **Public Storefront**: Elegant, mobile-first shopping experience with category filtering, guest checkout, and responsive design.
+*   **Wholesale (B2B) Portal**: Dedicated wholesale application system with real-time admin review and custom B2B pricing capabilities.
 *   **Unified Admin Panel**: A single, role-based dashboard (`/admin`) shared by the Admin (Owner) and Staff. Features adapt in real-time based on the user's permissions.
+*   **Activity Logging**: Comprehensive, secure audit logging of all staff actions (e.g., status changes, stock updates) with device and timestamp tracking.
 *   **Real-Time Capabilities**: Live order feed, instant stock updates, and live permission changes (no logout required).
-*   **Global Notification System**: Shared toast/popup engine for both customers (e.g., cart additions, low stock) and admins (new orders, stock alerts).
+*   **Global Notification System**: Shared toast/popup engine for both customers (e.g., cart additions, low stock) and admins (new orders, wholesale alerts, unread messages).
+*   **Performance Optimized**: Utilizes intelligent Firestore parallel querying, `Suspense` boundaries, and highly-polished Skeleton loaders for perceived instant-load times.
 *   **Media Pipeline**: Powered by Cloudinary for automatic image optimization, responsive delivery, and signed secure uploads.
 
 ## 🏗️ Architecture overview

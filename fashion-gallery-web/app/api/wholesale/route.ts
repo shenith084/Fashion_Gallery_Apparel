@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     const docData = {
       ...data,
       status: 'pending',
+      isNew: true,
       createdAt: Date.now()
     };
 
