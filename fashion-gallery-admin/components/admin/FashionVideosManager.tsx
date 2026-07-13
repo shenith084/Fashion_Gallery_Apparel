@@ -25,10 +25,6 @@ export default function FashionVideosManager() {
   const [newVideoUrl, setNewVideoUrl] = useState('');
   const [videoToDelete, setVideoToDelete] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchVideos();
-  }, []);
-
   const fetchVideos = async () => {
     try {
       const idToken = await auth.currentUser?.getIdToken();
@@ -47,6 +43,10 @@ export default function FashionVideosManager() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchVideos();
+  }, []);
 
   const saveVideosList = async (newVideosList: FashionVideo[]) => {
     try {

@@ -16,6 +16,7 @@ export default function LoginFormClient() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
@@ -23,6 +24,7 @@ export default function LoginFormClient() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMsg(null);
     setLoading(true);
     
     try {
@@ -130,6 +132,30 @@ export default function LoginFormClient() {
     e.preventDefault();
     setIsRegistering(!isRegistering);
     setError(null);
+    setSuccessMsg(null);
+  };
+
+  const handleForgotPassword = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccessMsg(null);
+    
+    if (!email) {
+      setError('Please enter your email address in the field above to reset your password.');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      const { sendPasswordResetEmail } = await import('firebase/auth');
+      await sendPasswordResetEmail(auth, email);
+      setSuccessMsg('Password reset email sent! Please check your inbox.');
+    } catch (err: any) {
+      console.warn('Password reset error:', err.message);
+      setError('Failed to send password reset email. Please verify your email address.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -144,6 +170,12 @@ export default function LoginFormClient() {
             {error && (
               <div style={{ backgroundColor: '#fee2e2', color: '#dc2626', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', fontWeight: 500 }}>
                 {error}
+              </div>
+            )}
+            
+            {successMsg && (
+              <div style={{ backgroundColor: '#dcfce7', color: '#166534', padding: '12px', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', fontWeight: 500 }}>
+                {successMsg}
               </div>
             )}
 
@@ -202,7 +234,7 @@ export default function LoginFormClient() {
               
               {!isRegistering && (
                 <div className={styles.forgotPassword}>
-                  <a href="#">Forgot password?</a>
+                  <a href="#" onClick={handleForgotPassword}>Forgot password?</a>
                 </div>
               )}
               

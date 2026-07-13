@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
 import CheckoutClient from '@/components/storefront/CheckoutClient';
@@ -35,9 +36,9 @@ export default async function CheckoutPage() {
       <div className={styles.pageHero}>
         <div className="container">
           <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-            <a href="/">Home</a>
+            <Link href="/">Home</Link>
             <span>›</span>
-            <a href="/cart">Cart</a>
+            <Link href="/cart">Cart</Link>
             <span>›</span>
             <span>Checkout</span>
           </nav>

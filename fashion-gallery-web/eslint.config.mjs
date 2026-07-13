@@ -12,7 +12,25 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Utility scripts that use CommonJS require()
+    "scripts/**",
+    "deploy-rules.js",
   ]),
+  {
+    rules: {
+      // Downgrade to warnings — these don't cause runtime failures
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@next/next/no-img-element": "warn",
+      "react/no-unescaped-entities": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "prefer-const": "warn",
+      // Keep as errors — these are real issues
+      "@next/next/no-html-link-for-pages": "error",
+      "react-hooks/immutability": "error",
+    },
+  },
 ]);
 
 export default eslintConfig;

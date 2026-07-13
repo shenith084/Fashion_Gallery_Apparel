@@ -17,16 +17,6 @@ export default function ActivityLogsPage() {
   // Drawer state
   const [selectedLog, setSelectedLog] = useState<ActivityLog | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        fetchLogs(token);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
   const fetchLogs = async (token: string) => {
     try {
       const res = await fetch('/api/logs', {
@@ -44,6 +34,16 @@ export default function ActivityLogsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        fetchLogs(token);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Filter logs based on search query
   const filteredLogs = useMemo(() => {
@@ -73,8 +73,8 @@ export default function ActivityLogsPage() {
   if (loading) return <div className="p-8">Loading audit logs...</div>;
 
   return (
-    <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+    <div style={{ padding: '0', maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>
         <div>
           <h1 className="text-3xl font-bold mb-2">Activity Logs</h1>
           <p className="text-gray-500">Monitor system events, staff actions, and security alerts.</p>
@@ -117,7 +117,7 @@ export default function ActivityLogsPage() {
       </div>
 
       {/* Filter Bar */}
-      <div style={{ background: 'white', padding: '1rem 1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <div style={{ background: 'white', padding: '1rem 1.5rem', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
         
         <div style={{ position: 'relative', flex: '1 1 auto' }}>
           <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} />

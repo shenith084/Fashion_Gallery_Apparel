@@ -308,6 +308,24 @@
   margin-top: var(--space-4);
 }
 
-.modalFooterBtns button {
+.modalActions button {
   flex: 1;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .rolesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .checkboxGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modalContent {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
 }

@@ -22,7 +22,7 @@ service cloud.firestore {
     }
 
     function isStaff() {
-      return isAuthenticated() && exists(/databases/$(database)/documents/staff/$(request.auth.uid));
+      return isAdmin() || (isAuthenticated() && exists(/databases/$(database)/documents/staff/$(request.auth.uid)));
     }
 
     function hasPermission(permission) {
@@ -63,7 +63,7 @@ service cloud.firestore {
       // Guests can create orders directly from the client checkout
       allow create: if request.resource.data.keys().hasAll(['customer', 'items', 'total', 'status']);
       allow update: if hasPermission('order.update_status');
-      allow delete: if false;         // soft delete only
+      allow delete: if isAdmin();
     }
 
     // ─── RETURNS ──────────────────────────────────────────────

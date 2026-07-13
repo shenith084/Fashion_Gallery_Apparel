@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/lib/store/cartStore';
 import { useAuthStore } from '@/lib/store/authStore';
 import { toast } from 'react-hot-toast';
@@ -21,7 +22,6 @@ export default function CheckoutClient({
   const [mounted, setMounted] = useState(false);
   const [paymentSettings, setPaymentSettings] = useState<any>(initialPaymentSettings || null);
   const { items, getSubtotal, clearCart } = useCartStore();
-  const { useRouter } = require('next/navigation');
   const router = useRouter();
   const user = useAuthStore(state => state.user);
 

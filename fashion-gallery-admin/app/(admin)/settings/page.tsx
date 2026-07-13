@@ -8,6 +8,7 @@ import DeliverySettingsManager from '@/components/admin/DeliverySettingsManager'
 import PaymentSettingsManager from '@/components/admin/PaymentSettingsManager';
 import SocialLinksManager from '@/components/admin/SocialLinksManager';
 import FashionVideosManager from '@/components/admin/FashionVideosManager';
+import styles from './settings.module.css';
 
 type Tab = 'contact' | 'delivery' | 'payment' | 'social' | 'video';
 
@@ -23,41 +24,20 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1 className="text-3xl font-bold mb-2">System Settings</h1>
-      <p className="text-gray-500 mb-8">Manage all aspects of your store's configuration.</p>
+    <div className={styles.container}>
+      <h1 className={styles.title}>System Settings</h1>
+      <p className={styles.subtitle}>Manage all aspects of your store's configuration.</p>
 
-      <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      <div className={styles.contentWrapper}>
         
         {/* Sidebar Nav */}
-        <div style={{ 
-          width: '240px',
-          flexShrink: 0,
-          background: 'white', 
-          borderRadius: '12px', 
-          padding: '1rem',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-        }}>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+        <div className={styles.sidebar}>
+          <nav className={styles.nav}>
             {tabs.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: activeTab === tab.id ? '#fdf2f4' : 'transparent',
-                  color: activeTab === tab.id ? 'var(--color-burgundy)' : '#4b5563',
-                  fontWeight: activeTab === tab.id ? 600 : 500,
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                  transition: 'all 0.2s ease'
-                }}
-                className={activeTab !== tab.id ? 'hover:bg-gray-50' : ''}
+                className={`${styles.tabBtn} ${activeTab === tab.id ? styles.active : ''}`}
               >
                 {tab.icon}
                 {tab.label}
@@ -67,7 +47,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Content Area */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className={styles.mainArea}>
           {activeTab === 'contact' && <ContactSettingsManager />}
           {activeTab === 'delivery' && <DeliverySettingsManager />}
           {activeTab === 'payment' && <PaymentSettingsManager />}

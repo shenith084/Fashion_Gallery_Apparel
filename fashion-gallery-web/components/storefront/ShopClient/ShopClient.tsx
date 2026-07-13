@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { ProductGridSkeleton } from '@/components/ui/Skeletons';
 import ProductCard from '@/components/ui/ProductCard';
 import { CATEGORIES_LIST, SIZES_LIST } from '@/lib/data/products';
@@ -218,7 +219,7 @@ export default function ShopClient({
         <div className={styles.toolbar}>
           <div className={styles.breadcrumbAndCount}>
             <div className={styles.breadcrumbs}>
-              <a href="/">Home</a>
+              <Link href="/">Home</Link>
               <span className={styles.breadcrumbSep}>›</span>
               {searchQuery ? (
                 <span className={styles.breadcrumbActive}>Search Results for "{searchQuery}"</span>

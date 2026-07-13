@@ -36,7 +36,7 @@
 
 /* Table Card */
 .tableCard { background: white; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f0f0f0; overflow: hidden; }
-.tableWrapper { overflow-x: auto; }
+.tableWrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -20px; padding: 0 20px; }
 .emptyState { padding: 60px; text-align: center; color: #aaa; font-size: 15px; }
 
 .table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -137,3 +137,63 @@
 .confirmActions { display: flex; gap: 12px; justify-content: center; }
 .deleteBtn { background: #ef4444; color: white; border: none; padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 .deleteBtn:hover { background: #dc2626; }
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .pageHeader {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchWrap, .filterSelect {
+    width: 100%;
+  }
+  
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .tableWrapper {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+  
+  .modal {
+    max-height: 90vh;
+    height: 90vh;
+    border-radius: 16px 16px 0 0;
+    margin-top: auto;
+  }
+  
+  .modalOverlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+  
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .imageUploadGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .statLabel {
+    font-size: 10px;
+  }
+  .statValue {
+    font-size: 18px;
+  }
+}

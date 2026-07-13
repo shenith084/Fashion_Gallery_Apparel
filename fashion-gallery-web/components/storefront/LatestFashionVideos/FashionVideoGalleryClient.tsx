@@ -8,17 +8,6 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Close modal on escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPlayingIndex(null);
-      if (e.key === 'ArrowRight' && playingIndex !== null) handleNext();
-      if (e.key === 'ArrowLeft' && playingIndex !== null) handlePrev();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [playingIndex]);
-
   const handleNext = () => {
     if (playingIndex !== null && playingIndex < videos.length - 1) {
       setPlayingIndex(playingIndex + 1);
@@ -30,6 +19,17 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
       setPlayingIndex(playingIndex - 1);
     }
   };
+
+  // Close modal on escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPlayingIndex(null);
+      if (e.key === 'ArrowRight' && playingIndex !== null) handleNext();
+      if (e.key === 'ArrowLeft' && playingIndex !== null) handlePrev();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [playingIndex, handleNext, handlePrev]);
 
   const scrollLeft = () => {
     if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: 'smooth' });

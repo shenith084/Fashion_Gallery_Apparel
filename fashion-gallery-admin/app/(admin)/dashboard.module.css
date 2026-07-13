@@ -236,6 +236,16 @@
 /* --- Table --- */
 .tableWrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -24px;
+  padding: 0 24px;
+}
+
+@media (max-width: 768px) {
+  .tableWrap {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
 }
 
 .table {
@@ -399,4 +409,11 @@
 
 @media (max-width: 768px) {
   .metricsGrid { grid-template-columns: 1fr 1fr; }
+  .card { padding: var(--space-4); }
+}
+
+@media (max-width: 480px) {
+  .metricsGrid { grid-template-columns: 1fr 1fr; }
+  .metricValue { font-size: 18px; }
+  .metricTitle { font-size: 10px; }
 }

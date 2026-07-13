@@ -2,16 +2,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Hero.module.css';
 
-import { db } from '@/lib/firebase/client';
-import { doc, getDoc } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/firebase/admin';
+
+// Cache the banner fetch for 60 seconds — revalidates in the background (stale-while-revalidate)
+export const revalidate = 60;
 
 export default async function Hero() {
-  let videoUrl = null;
+  let videoUrl: string | null = null;
   try {
-    const docRef = doc(db, 'settings', 'banner');
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      videoUrl = docSnap.data()?.videoUrl;
+    const db = getAdminDb();
+    const docSnap = await db.collection('settings').doc('banner').get();
+    if (docSnap.exists) {
+      videoUrl = docSnap.data()?.videoUrl ?? null;
     }
   } catch (e) {
     console.error('Error fetching banner', e);
@@ -71,7 +73,7 @@ export default async function Hero() {
               src="/hero-bg-v6.jpg"
               alt="Fashion Gallery Apparel Models"
               fill
-              sizes="100vw"
+              sizes="(max-width: 768px) 100vw, 50vw"
               priority
               className={styles.heroImage}
             />

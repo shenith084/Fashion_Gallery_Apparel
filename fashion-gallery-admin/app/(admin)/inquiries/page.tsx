@@ -14,17 +14,6 @@ export default function InquiriesPage() {
   const [selectedInquiry, setSelectedInquiry] = useState<any | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchInquiries();
-    
-    // Set up 10-second polling for real-time updates
-    const intervalId = setInterval(() => {
-      fetchInquiries();
-    }, 10000);
-    
-    return () => clearInterval(intervalId);
-  }, []);
-
   const fetchInquiries = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, 'inquiries'));
@@ -46,6 +35,17 @@ export default function InquiriesPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchInquiries();
+    
+    // Set up 10-second polling for real-time updates
+    const intervalId = setInterval(() => {
+      fetchInquiries();
+    }, 10000);
+    
+    return () => clearInterval(intervalId);
+  }, []);
 
   const handleView = async (inquiry: any) => {
     setSelectedInquiry(inquiry);
@@ -83,23 +83,23 @@ export default function InquiriesPage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 className="section-title">Messages & Inquiries</h1>
-        <div style={{ position: 'relative', width: '300px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        <h1 className="section-title" style={{ margin: 0 }}>Messages & Inquiries</h1>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '300px' }}>
           <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-charcoal-light)' }} />
           <input 
             type="text" 
             placeholder="Search messages..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', borderRadius: '8px', border: '1px solid var(--color-gray-200)' }}
+            style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.5rem', borderRadius: '8px', border: '1px solid var(--color-gray-200)', outline: 'none' }}
           />
         </div>
       </div>
 
       {/* Table */}
-      <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+      <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <table style={{ width: '100%', minWidth: '600px', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-gray-200)', background: 'var(--color-sand)', color: 'var(--color-charcoal)', fontSize: '0.875rem' }}>
               <th style={{ padding: '1rem', fontWeight: 600 }}>Date</th>
@@ -156,7 +156,7 @@ export default function InquiriesPage() {
       {/* View Modal */}
       {selectedInquiry && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '1rem' }}>
-          <div style={{ background: 'white', borderRadius: '12px', width: '100%', maxWidth: '600px', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
+          <div style={{ background: 'white', borderRadius: '12px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--color-gray-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Message Details</h2>
               <button onClick={() => setSelectedInquiry(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-charcoal-light)' }}><X size={24} /></button>

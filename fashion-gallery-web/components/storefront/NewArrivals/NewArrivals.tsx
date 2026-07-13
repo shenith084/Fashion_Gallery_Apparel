@@ -7,17 +7,18 @@ export default async function NewArrivals() {
   let newArrivals: any[] = [];
   try {
     const db = getAdminDb();
-    // Fetch latest 4 active products directly using Admin SDK (bypasses security rules for server components)
+    // Fully optimized — uses composite index (category + status + createdAt)
+    // Index created at: Firebase Console → Firestore → Indexes
     const snapshot = await db.collection('products')
+      .where('category', '==', 'New Arrivals')
+      .where('status', '==', 'Active')
       .orderBy('createdAt', 'desc')
-      .limit(50)
+      .limit(5)
       .get();
-      
+
     snapshot.forEach((doc) => {
       const data = doc.data();
-      if (data.status === 'Active' && data.category === 'New Arrivals' && newArrivals.length < 5) {
-        newArrivals.push({ id: doc.id, href: `/product/${data.slug || doc.id}`, ...data });
-      }
+      newArrivals.push({ id: doc.id, href: `/product/${data.slug || doc.id}`, ...data });
     });
   } catch (error) {
     console.error("Error reading from Firestore:", error);

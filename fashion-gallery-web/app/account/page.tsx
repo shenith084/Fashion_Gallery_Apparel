@@ -1,6 +1,7 @@
 import Navbar from '@/components/storefront/Navbar';
 import Footer from '@/components/storefront/Footer';
 import Image from 'next/image';
+import Link from 'next/link';
 import AccountClient from '@/components/storefront/AccountClient/AccountClient';
 import Newsletter from '@/components/storefront/Newsletter/Newsletter';
 import styles from './account.module.css';
@@ -19,7 +20,7 @@ export default function Page() {
               <div className={styles.heroContent}>
                 <h1 className={styles.title}>My Profile</h1>
                 <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-                  <a href="/">Home</a>
+                  <Link href="/">Home</Link>
                   <span>›</span>
                   <span>My Profile</span>
                 </nav>

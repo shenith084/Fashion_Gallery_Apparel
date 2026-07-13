@@ -1,6 +1,31 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+// ─── next/font — loaded at build time, self-hosted by Vercel, zero render-block
+import { Inter, Playfair_Display, Dancing_Script } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
+
+const dancing = Dancing_Script({
+  subsets: ['latin'],
+  weight: ['400', '600'],
+  variable: '--font-dancing',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://fashiongalleryapparel.lk'),
   title: "Fashion Gallery Apparel | My Moon Clothing — Women's Dresses Sri Lanka",
@@ -31,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${playfair.variable} ${dancing.variable}`}>
       <body suppressHydrationWarning>
         <NextTopLoader color="var(--color-burgundy)" showSpinner={false} />
         <Toaster position="bottom-right" toastOptions={{ duration: 4000, style: { background: '#333', color: '#fff', fontSize: '14px', borderRadius: '8px' } }} />

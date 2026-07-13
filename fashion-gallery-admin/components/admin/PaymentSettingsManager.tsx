@@ -29,17 +29,6 @@ export default function PaymentSettingsManager() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [idToken, setIdToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        setIdToken(token);
-        fetchPaymentSettings(token);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
   const fetchPaymentSettings = async (token: string) => {
     try {
       const res = await fetch('/api/settings?docId=payment', {
@@ -57,6 +46,17 @@ export default function PaymentSettingsManager() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setIdToken(token);
+        fetchPaymentSettings(token);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

@@ -24,17 +24,6 @@ export default function DeliverySettingsManager() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [idToken, setIdToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        setIdToken(token);
-        fetchDeliverySettings(token);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
   const fetchDeliverySettings = async (token: string) => {
     try {
       const res = await fetch('/api/settings?docId=delivery', {
@@ -52,6 +41,17 @@ export default function DeliverySettingsManager() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setIdToken(token);
+        fetchDeliverySettings(token);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

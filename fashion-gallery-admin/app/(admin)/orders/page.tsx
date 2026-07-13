@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import styles from './orders.module.css';
 import { Search, ChevronDown, Calendar, MoreVertical, X, CheckCircle, ChevronLeft, ChevronRight, FileText, Eye, Trash2, AlertTriangle } from 'lucide-react';
 import { db } from '@/lib/firebase/config';
@@ -145,8 +146,10 @@ export default function OrdersPage() {
       await deleteDoc(doc(db, 'orders', deleteConfirmId));
       setOrders(prev => prev.filter(o => o.id !== deleteConfirmId));
       setDeleteConfirmId(null);
-    } catch (err) {
+      toast.success('Order deleted successfully');
+    } catch (err: any) {
       console.error('Failed to delete order', err);
+      toast.error(err.message || 'Failed to delete order due to permission or network issue.');
     }
   };
 

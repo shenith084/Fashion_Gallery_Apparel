@@ -146,6 +146,7 @@
 
 .tableWrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .table {
@@ -278,4 +279,48 @@
 .actionBtn:hover {
   background: #f3f4f6;
   color: #4b5563;
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .header {
+    justify-content: stretch;
+  }
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchWrap, .roleSelect {
+    width: 100%;
+    max-width: none;
+  }
+
+  .tableWrapper {
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .statValue {
+    font-size: 18px;
+  }
+  .statTitle {
+    font-size: 10px;
+  }
 }

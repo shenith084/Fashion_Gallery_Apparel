@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import { useAuthStore } from '@/lib/store/authStore';
 import styles from './MyOrders.module.css';
 import ReturnModal from './ReturnModal';
@@ -10,7 +11,6 @@ export default function MyOrders() {
   const [loading, setLoading] = useState(true);
   const [returnOrder, setReturnOrder] = useState<any | null>(null);
   const user = useAuthStore(state => state.user);
-  const { toast } = require('react-hot-toast');
 
   useEffect(() => {
     if (!user) return;

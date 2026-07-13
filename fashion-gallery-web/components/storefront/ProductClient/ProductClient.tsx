@@ -98,7 +98,7 @@ export default function ProductClient({ product }: ProductClientProps) {
       {/* ──── PRODUCT INFO ──── */}
       <div className={styles.info}>
         <nav className={styles.breadcrumb}>
-          <a href="/">Home</a> <span>›</span>
+          <Link href="/">Home</Link> <span>›</span>
           <Link href="/dresses">Dresses</Link> <span>›</span>
           <a href={`/category/${product.categorySlug}`}>{product.category}</a> <span>›</span>
           <span>{product.name}</span>

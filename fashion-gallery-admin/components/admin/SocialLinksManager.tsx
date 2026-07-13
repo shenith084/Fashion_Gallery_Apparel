@@ -28,17 +28,6 @@ export default function SocialLinksManager() {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [idToken, setIdToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        setIdToken(token);
-        fetchSocialLinks(token);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
   const fetchSocialLinks = async (token: string) => {
     try {
       const res = await fetch('/api/settings?docId=social', {
@@ -54,6 +43,17 @@ export default function SocialLinksManager() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setIdToken(token);
+        fetchSocialLinks(token);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
