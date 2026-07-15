@@ -99,6 +99,7 @@ export default function ProductCard({ id, name, price, image, rating, reviewCoun
           fill
           sizes="(max-width: 768px) 45vw, 16vw"
           className={styles.image}
+          unoptimized={true}
         />
         <div className={styles.overlay} />
       </Link>

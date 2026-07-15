@@ -1,9 +1,9 @@
 /* =====================================================
    FASHION GALLERY APPAREL — ADMIN GLOBAL STYLES
-   My Moon Clothing | Brand Design System v1.0
+   My Moon Clothing | Brand Design System v2.0
    ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   /* Brand Colors */
@@ -14,16 +14,27 @@
   --color-rose-gold-light: #d9b49a;
   --color-warm-ivory: #FAF8F5;
   --color-soft-beige: #F4EEE8;
-  --color-charcoal: #2B2B2B;
-  --color-charcoal-light: #4a4a4a;
+  --color-charcoal: #1e293b;
+  --color-charcoal-light: #64748b;
   --color-luxury-gold: #D4A373;
   --color-white: #FFFFFF;
 
+  /* Sidebar Theme Colors */
+  --sidebar-bg-start: #0f172a;
+  --sidebar-bg-end: #162035;
+  --sidebar-accent: #C89B7B;
+  --sidebar-text: rgba(255, 255, 255, 0.55);
+  --sidebar-text-active: #ffffff;
+
   /* Semantic Colors */
-  --color-success: #5C7A5C;
-  --color-warning: #D4A373;
-  --color-error: #A23B3B;
-  --color-info: #6B8CAE;
+  --color-success: #059669;
+  --color-success-bg: rgba(5, 150, 105, 0.08);
+  --color-warning: #d97706;
+  --color-warning-bg: rgba(217, 119, 6, 0.08);
+  --color-error: #dc2626;
+  --color-error-bg: rgba(220, 38, 38, 0.08);
+  --color-info: #2563eb;
+  --color-info-bg: rgba(37, 99, 235, 0.08);
 
   /* Typography */
   --font-heading: 'Playfair Display', Georgia, serif;
@@ -42,17 +53,18 @@
   --space-16: 64px;
 
   /* Border Radius */
-  --radius-sm: 6px;
+  --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(107, 35, 53, 0.08);
-  --shadow-md: 0 4px 16px rgba(107, 35, 53, 0.10);
-  --shadow-lg: 0 8px 32px rgba(107, 35, 53, 0.12);
-  --shadow-card: 0 2px 12px rgba(43, 43, 43, 0.08);
+  --shadow-sm: 0 1px 4px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 16px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 8px 32px rgba(15, 23, 42, 0.12);
+  --shadow-card: 0 2px 12px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover: 0 8px 28px rgba(15, 23, 42, 0.12);
 
   /* Transitions */
   --transition-fast: 0.15s ease;
@@ -76,10 +88,10 @@ html {
 
 body {
   font-family: var(--font-body);
-  font-size: 14px; /* Slightly smaller for admin */
+  font-size: 14px;
   line-height: 1.5;
   color: var(--color-charcoal);
-  background-color: var(--color-soft-beige); /* More practical for admin dashboard */
+  background-color: #f0f2f7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -101,6 +113,20 @@ input, textarea, select {
   font-size: 14px;
 }
 
+/* ── Shared Card Component ── */
+.card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ── Button System ── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -113,42 +139,67 @@ input, textarea, select {
   border-radius: var(--radius-sm);
   transition: all var(--transition-base);
   cursor: pointer;
+  letter-spacing: 0.01em;
 }
 
 .btn-primary {
-  background: var(--color-burgundy);
+  background: linear-gradient(135deg, var(--color-burgundy) 0%, var(--color-burgundy-dark) 100%);
   color: var(--color-white);
   border: 1px solid var(--color-burgundy);
+  box-shadow: 0 2px 8px rgba(107, 35, 53, 0.25);
 }
 
 .btn-primary:hover {
-  background: var(--color-burgundy-dark);
-  border-color: var(--color-burgundy-dark);
+  background: linear-gradient(135deg, var(--color-burgundy-dark) 0%, #3e1320 100%);
+  box-shadow: 0 4px 16px rgba(107, 35, 53, 0.35);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: white;
   color: var(--color-charcoal);
-  border: 1px solid rgba(43,43,43,0.2);
+  border: 1.5px solid rgba(30, 41, 59, 0.15);
 }
 
 .btn-secondary:hover {
-  background: var(--color-soft-beige);
+  background: #f8fafc;
+  border-color: rgba(30, 41, 59, 0.25);
 }
+
+/* ── Status Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.badge-success { background: var(--color-success-bg); color: var(--color-success); }
+.badge-warning { background: var(--color-warning-bg); color: var(--color-warning); }
+.badge-error { background: var(--color-error-bg); color: var(--color-error); }
+.badge-info { background: var(--color-info-bg); color: var(--color-info); }
 
 /* Utilities */
 .text-success { color: var(--color-success); }
 .text-error { color: var(--color-error); }
 .text-warning { color: var(--color-warning); }
 
+/* ── Scrollbar ── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-soft-beige);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-rose-gold);
+  background: rgba(200, 155, 123, 0.35);
   border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 155, 123, 0.55);
 }

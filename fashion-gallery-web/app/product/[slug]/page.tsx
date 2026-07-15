@@ -39,7 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const product = await getProductBySlug(resolvedParams.slug);
   if (!product) return { title: 'Product Not Found' };
 
-  const ogImage = product.images?.[0]?.secureUrl || 'https://fashiongalleryapparel.lk/logo.svg';
+  const getImageUrl = (img: any): string => {
+    if (!img) return '';
+    if (typeof img === 'string') return img;
+    return img.secureUrl || img.url || '';
+  };
+  const ogImage = getImageUrl(product.images?.[0]) || 'https://fashiongalleryapparel.lk/logo.svg';
 
   return {
     title: `${product.name} | Fashion Gallery Apparel`,
@@ -77,7 +82,7 @@ export default async function ProductPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
-    image: product.images?.map((img: any) => img.secureUrl) || [],
+    image: product.images?.map((img: any) => typeof img === 'string' ? img : (img.secureUrl || img.url || '')) || [],
     description: product.description,
     offers: {
       '@type': 'Offer',

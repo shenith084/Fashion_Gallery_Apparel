@@ -8,6 +8,29 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const closeModal = () => {
+    setPlayingIndex(null);
+    if (window.location.hash === '#video') {
+      window.history.back();
+    }
+  };
+
+  useEffect(() => {
+    if (playingIndex !== null && window.location.hash !== '#video') {
+      window.history.pushState(null, '', window.location.pathname + window.location.search + '#video');
+    }
+  }, [playingIndex]);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (window.location.hash !== '#video') {
+        setPlayingIndex(null);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const handleNext = () => {
     if (playingIndex !== null && playingIndex < videos.length - 1) {
       setPlayingIndex(playingIndex + 1);
@@ -23,7 +46,7 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
   // Close modal on escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPlayingIndex(null);
+      if (e.key === 'Escape') closeModal();
       if (e.key === 'ArrowRight' && playingIndex !== null) handleNext();
       if (e.key === 'ArrowLeft' && playingIndex !== null) handlePrev();
     };
@@ -113,7 +136,7 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             padding: '2rem'
           }}
-          onClick={() => setPlayingIndex(null)}
+          onClick={closeModal}
         >
           {/* Top Bar with Title and Close */}
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)', zIndex: 20 }} onClick={e => e.stopPropagation()}>
@@ -121,7 +144,7 @@ export default function FashionVideoGalleryClient({ videos }: { videos: any[] })
               {videos[playingIndex].title}
             </h2>
             <button 
-              onClick={() => setPlayingIndex(null)}
+              onClick={closeModal}
               style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', cursor: 'pointer', padding: '0.5rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}
               onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
               onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}

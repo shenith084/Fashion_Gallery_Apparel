@@ -285,13 +285,13 @@ export default function ShopClient({
               <ProductCard
                 key={p.id}
                 id={p.id}
-                name={p.name}
+                name={p.name || p.title}
                 price={p.price}
-                image={p.image}
-                rating={p.rating}
-                reviewCount={p.reviewCount}
+                image={p.image || p.images?.[0]?.secureUrl || p.images?.[0]?.url || ''}
+                rating={p.rating || 0}
+                reviewCount={p.reviewCount || 0}
                 isNew={p.isNew}
-                href={`/product/${p.slug}`}
+                href={`/product/${p.slug || p.id}`}
               />
             ))}
           </div>

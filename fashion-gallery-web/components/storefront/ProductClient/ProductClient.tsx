@@ -16,7 +16,15 @@ interface ProductClientProps {
 }
 
 export default function ProductClient({ product }: ProductClientProps) {
-  const validImages = product.images.filter(Boolean);
+  // Normalize images — handle both plain URL strings and Cloudinary objects {url, secureUrl, ...}
+  const normalizeImage = (img: any): string => {
+    if (!img) return '';
+    if (typeof img === 'string') return img;
+    return img.secureUrl || img.url || img.cloudinaryUrl || '';
+  };
+  const validImages = product.images
+    .map(normalizeImage)
+    .filter(Boolean);
   const fallbackImage = '/logo.svg'; // Fallback if no images are present
   const [activeImage, setActiveImage] = useState(validImages[0] || fallbackImage);
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -77,7 +85,7 @@ export default function ProductClient({ product }: ProductClientProps) {
               onClick={() => setActiveImage(img)}
               aria-label={`View image ${idx + 1}`}
             >
-              <Image src={img || fallbackImage} alt="" fill sizes="80px" className={styles.thumbImg} style={{ objectFit: !img || img === fallbackImage ? 'contain' : 'cover', padding: !img || img === fallbackImage ? '0.5rem' : '0' }} />
+              <Image src={img || fallbackImage} alt="" fill sizes="80px" className={styles.thumbImg} style={{ objectFit: !img || img === fallbackImage ? 'contain' : 'cover', padding: !img || img === fallbackImage ? '0.5rem' : '0' }} unoptimized={true} />
             </button>
           ))}
         </div>
@@ -90,6 +98,7 @@ export default function ProductClient({ product }: ProductClientProps) {
             className={styles.mainImage}
             style={{ objectFit: 'contain' }}
             priority
+            unoptimized={true}
           />
           {product.isNew && <span className={styles.newBadge}>NEW</span>}
         </div>

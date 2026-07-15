@@ -18,7 +18,17 @@ export default async function NewArrivals() {
 
     snapshot.forEach((doc) => {
       const data = doc.data();
-      newArrivals.push({ id: doc.id, href: `/product/${data.slug || doc.id}`, ...data });
+      newArrivals.push({
+        id: doc.id,
+        href: `/product/${data.slug || doc.id}`,
+        name: data.name || data.title,
+        image: data.image || data.images?.[0]?.secureUrl || data.images?.[0]?.url || '',
+        price: data.price,
+        rating: data.rating || 0,
+        reviewCount: data.reviewCount || 0,
+        isNew: data.isNew,
+        slug: data.slug || doc.id,
+      });
     });
   } catch (error) {
     console.error("Error reading from Firestore:", error);
