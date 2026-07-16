@@ -84,8 +84,7 @@ export default function OrdersPage() {
     };
     
     fetchOrders();
-    const interval = setInterval(fetchOrders, 10000); // Real-time polling every 10s
-    return () => clearInterval(interval);
+
   }, []);
 
   const handleUpdateStatus = async (status: string) => {

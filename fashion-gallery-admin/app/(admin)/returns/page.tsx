@@ -33,8 +33,7 @@ export default function ReturnsPage() {
     };
     
     fetchReturns();
-    const interval = setInterval(fetchReturns, 15000); // Polling every 15s
-    return () => clearInterval(interval);
+
   }, []);
 
   const TABS = [
