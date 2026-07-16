@@ -94,8 +94,11 @@ export default function StockPage() {
         let tValue = 0;
         
         products.forEach(p => {
-          tItems += p.stock;
-          tValue += (p.stock * p.price);
+          const stockVal = typeof p.stock === 'number' ? p.stock : parseInt(String(p.stock)) || 0;
+          const priceVal = typeof p.price === 'number' ? p.price : parseFloat(String(p.price)) || 0;
+          
+          tItems += stockVal;
+          tValue += (stockVal * priceVal);
           
           const sizes = p.sizes?.length ? p.sizes.join(', ') : 'Standard';
           const colors = p.colors?.length ? p.colors.join(', ') : 'Default';
@@ -103,14 +106,14 @@ export default function StockPage() {
           expanded.push({
             id: p.id,
             productId: p.id,
-            name: p.name,
-            image: p.image,
+            name: p.name || 'Unknown',
+            image: typeof p.image === 'string' ? p.image : ((p as any).images?.[0]?.url || (p as any).images?.[0]?.secureUrl || ''),
             sku: p.sku || '',
             category: p.category,
-            price: p.price,
+            price: priceVal,
             variation: `${sizes} / ${colors}`,
-            stock: p.stock,
-            status: p.status,
+            stock: stockVal,
+            status: p.status || (stockVal === 0 ? 'Out of Stock' : 'Active'),
             lastUpdated: '01 Jul 2026, 09:15 AM' // static for mockup matching
           });
         });
