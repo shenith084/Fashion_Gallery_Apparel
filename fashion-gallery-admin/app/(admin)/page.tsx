@@ -375,19 +375,6 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
-          
-          <div className={styles.bannerCard}>
-            <div className={styles.bannerTitle}>
-              <span style={{ fontSize: '16px' }}>❝</span> New Collection Alert!
-            </div>
-            <p className={styles.bannerDesc}>Summer Collection '24 is live now. Update banners and announcements to promote your new arrivals.</p>
-            <button className={styles.bannerBtn}>Manage Banners</button>
-            <img 
-              src="https://images.unsplash.com/photo-1490750967868-88cb44cb2720?w=200&q=80" 
-              alt="Flowers" 
-              className={styles.bannerDecor} 
-            />
-          </div>
         </div>
 
       </div>

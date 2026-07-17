@@ -40,16 +40,12 @@ export default function ShopByCategory() {
     <section className={styles.section} id="shop-by-category">
       <div className="container">
         <div className={styles.heading}>
-          <div className="section-title-line">
-            <span className="section-title" style={{ textTransform: 'uppercase', color: 'var(--color-burgundy)', letterSpacing: '0.05em' }}>SHOP BY CATEGORY</span>
-          </div>
-          <div className={styles.ornament}>
-            <span />
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="3" fill="var(--color-rose-gold)"/>
-              <circle cx="8" cy="8" r="6" stroke="var(--color-rose-gold)" strokeWidth="1" fill="none" strokeDasharray="2 2"/>
-            </svg>
-            <span />
+          <p className={styles.subtitle}>Explore Our</p>
+          <h2 className={styles.title}>Shop By Category</h2>
+          <div className={styles.divider}>
+            <span className={styles.dividerLine} />
+            <span className={styles.dividerDot} />
+            <span className={styles.dividerLine} />
           </div>
         </div>
 
@@ -72,9 +68,6 @@ export default function ShopByCategory() {
                 <div className={styles.overlay} />
                 <div className={styles.content}>
                   <h3 className={styles.label}>{cat.label}</h3>
-                  <span className={styles.shopNow}>
-                    Shop Now
-                  </span>
                 </div>
               </div>
             </Link>

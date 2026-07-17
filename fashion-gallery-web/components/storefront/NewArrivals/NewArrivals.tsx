@@ -13,7 +13,7 @@ export default async function NewArrivals() {
       .where('category', '==', 'New Arrivals')
       .where('status', '==', 'Active')
       .orderBy('createdAt', 'desc')
-      .limit(5)
+      .limit(4)
       .get();
 
     snapshot.forEach((doc) => {

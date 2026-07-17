@@ -8,19 +8,51 @@
   text-align: center;
 }
 
-.ornament {
+.subtitle {
+  font-family: var(--font-script);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--color-rose-gold);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  color: var(--color-charcoal);
+  letter-spacing: 0.01em;
+  margin-bottom: var(--space-5);
+  line-height: 1.15;
+}
+
+.divider {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-3);
-  margin-top: var(--space-3);
 }
 
-.ornament span {
+.dividerLine {
   display: block;
-  width: 40px;
-  height: 1px;
-  background: var(--color-rose-gold);
+  width: 64px;
+  height: 1.5px;
+  background: linear-gradient(to right, transparent, var(--color-rose-gold));
+}
+
+.divider .dividerLine:last-child {
+  background: linear-gradient(to left, transparent, var(--color-rose-gold));
+}
+
+.dividerDot {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-burgundy);
+  box-shadow: 0 0 0 2px rgba(107, 35, 53, 0.2);
 }
 
 /* ===================== GRID ===================== */
@@ -49,7 +81,7 @@
 
 .imageWrap {
   position: relative;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 2 / 3;
   overflow: hidden;
 }
 
@@ -67,9 +99,9 @@
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(43, 43, 43, 0.72) 0%,
-    rgba(43, 43, 43, 0.15) 50%,
-    transparent 100%
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.05) 100%
   );
   transition: background var(--transition-base);
 }
@@ -77,9 +109,9 @@
 .card:hover .overlay {
   background: linear-gradient(
     to top,
-    rgba(107, 35, 53, 0.75) 0%,
-    rgba(107, 35, 53, 0.2) 50%,
-    transparent 100%
+    rgba(107, 35, 53, 0.90) 0%,
+    rgba(107, 35, 53, 0.40) 55%,
+    rgba(0, 0, 0, 0.05) 100%
   );
 }
 
@@ -100,34 +132,16 @@
 
 .label {
   font-family: var(--font-heading);
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   color: white;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   margin: 0;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7), 0 1px 3px rgba(0,0,0,0.9);
 }
 
-.shopNow {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: white;
-  border: 1px solid rgba(255,255,255,0.6);
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition-fast);
-}
 
-.card:hover .shopNow {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: white;
-}
 
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 1024px) {

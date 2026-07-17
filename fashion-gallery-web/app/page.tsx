@@ -7,6 +7,7 @@ import InfoBar from '@/components/storefront/InfoBar';
 import ShopByCategory from '@/components/storefront/ShopByCategory';
 import NewArrivals from '@/components/storefront/NewArrivals';
 import LatestFashionVideos from '@/components/storefront/LatestFashionVideos';
+import PromoBanner from '@/components/storefront/PromoBanner';
 import Newsletter from '@/components/storefront/Newsletter';
 import Footer from '@/components/storefront/Footer';
 import { HeroSkeleton, ProductGridSkeleton, VideoGallerySkeleton } from '@/components/ui/Skeletons';
@@ -65,6 +66,7 @@ export default function HomePage() {
       }>
         <NewArrivals />
       </Suspense>
+      <PromoBanner />
       <Suspense fallback={
         <section className="container" style={{ padding: '80px 0' }}>
           <h2 style={{ marginBottom: '32px' }}>LATEST FASHION VIDEOS</h2>

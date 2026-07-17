@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Phone, Truck, CreditCard, Share2, Video } from 'lucide-react';
+import { Phone, Truck, CreditCard, Share2, Video, Megaphone } from 'lucide-react';
 
 import ContactSettingsManager from '@/components/admin/ContactSettingsManager';
 import DeliverySettingsManager from '@/components/admin/DeliverySettingsManager';
 import PaymentSettingsManager from '@/components/admin/PaymentSettingsManager';
 import SocialLinksManager from '@/components/admin/SocialLinksManager';
 import FashionVideosManager from '@/components/admin/FashionVideosManager';
+import PromoBannerManager from '@/components/admin/PromoBannerManager';
 import styles from './settings.module.css';
 
-type Tab = 'contact' | 'delivery' | 'payment' | 'social' | 'video';
+type Tab = 'contact' | 'delivery' | 'payment' | 'social' | 'video' | 'banner';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('contact');
@@ -21,6 +22,7 @@ export default function SettingsPage() {
     { id: 'payment', label: 'Payment Methods', icon: <CreditCard size={18} /> },
     { id: 'social', label: 'Social Links', icon: <Share2 size={18} /> },
     { id: 'video', label: 'Video Gallery', icon: <Video size={18} /> },
+    { id: 'banner', label: 'Promo Banner', icon: <Megaphone size={18} /> },
   ];
 
   return (
@@ -53,6 +55,7 @@ export default function SettingsPage() {
           {activeTab === 'payment' && <PaymentSettingsManager />}
           {activeTab === 'social' && <SocialLinksManager />}
           {activeTab === 'video' && <FashionVideosManager />}
+          {activeTab === 'banner' && <PromoBannerManager />}
         </div>
 
       </div>
